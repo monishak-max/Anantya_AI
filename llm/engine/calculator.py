@@ -55,7 +55,7 @@ ENGINE = "DE440"  # Change to "SWISS" to switch back
 
 if ENGINE == "DE440":
     # DE440 engine -- JPL ephemeris, full control, no license constraints
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "hope_this_is_final"))
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "de440_engine"))
     from pl7astro.astro.jpl_ephemeris import JPLEphemerisReader
     from pl7astro.astro.corrections import DeltaTTable
     from pl7astro.astro.pipeline import Pipeline as DE440Pipeline

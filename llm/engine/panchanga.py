@@ -20,7 +20,7 @@ from datetime import date
 from llm.engine.constants import RASHIS, NAKSHATRAS, NAKSHATRA_SPAN
 
 # Use DE440 pipeline for Sun/Moon positions
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "hope_this_is_final"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "de440_engine"))
 from pl7astro.astro.julian import date_to_jd
 
 # ── Yoga names (27 luni-solar yogas) ─────────────────────────────

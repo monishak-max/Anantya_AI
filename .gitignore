@@ -37,7 +37,7 @@ tests/
 *.pdf
 
 # DE440 engine backup (not production)
-hope_this_is_final/
+de440_engine/
 
 # Old research/comparison files
 research_co_star_and_pattern.md
