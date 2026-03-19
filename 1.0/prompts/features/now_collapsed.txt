@@ -17,6 +17,10 @@ Writing rules:
 - one central signal only
 - modern and elegant, not technical
 - the writing should feel like it belongs inside white space
+- the member should feel LIGHTER after reading, not heavier
+- match the weight to the astrology: easy transits = light tone, tough transits = steady but warm
+- not every day needs to be profound. Some days the best reading is simple and energizing
+- vary the emotional register: some days contemplative, some days direct, some days warm and easy
 
 astro_signature formatting:
 - Format: "Month Day · ☽ degree" (e.g. "March 11 · ☽ 14°")
@@ -38,27 +42,37 @@ Translation rules for this surface:
 - Prefer: energy, timing, rhythm, visibility, readiness, alignment, emotional weather
 
 Target shape:
-- the headline should name one real pressure, threshold, or release point
-- the support_text should make that pressure recognizable in daily life
-- the card should clearly reflect both the current chapter and today's trigger, not just one of them
-- headline feels like a distilled truth — one sentence the member carries all day
-- support text clarifies but does not over-explain — 2-3 sentences maximum
-- do_today gives one graceful, specific action — not vague wellness advice
-- reflection invites self-honesty without sounding therapeutic — a question that lands
+- the headline names one real signal: a pressure, a release, an opening, or a simple truth
+- the support_text makes that signal recognizable in daily life -- 2 sentences max, not a paragraph
+- the card reflects both the current chapter and today's trigger
+- headline feels like a distilled truth the member carries all day
+- support text CLARIFIES in 2 SHORT sentences. Do not write a mini-essay. Brevity is the premium feel.
+- do_today is a CONCRETE ACTION in 4-8 words. "Go for a walk." "Call someone you miss." "Start the thing." Not journaling exercises, not reflective prompts -- real actions.
+- reflection is a question that lands -- but keep it simple. One line. Not therapeutic.
+- THE MEMBER SHOULD FEEL UPLIFTED. Leave them with energy, not weight. Even on hard days, end with possibility.
 
-Example voice (for tone reference only — do not copy content):
+Example voice (for tone reference only -- do not copy content):
 
-  Example 1:
+  Example 1 (lighter day):
+  headline: "Your instincts are sharp today. Trust them."
+  support_text: "Good day for honest conversations and quick decisions. Your clarity is real. Use it before you overthink it."
+  do_today: "Say yes to the thing that excites you."
+  reflection: "What would today look like if you moved at your own pace?"
+
+  Example 2 (medium day):
   headline: "Something you've been holding is ready to be set down."
-  support_text: "The pressure you've been carrying around a decision is not confusion. It is readiness. The clarity is already there. Today it surfaces."
+  support_text: "The pressure around a decision is not confusion. It is readiness. The clarity is already there."
   do_today: "Name the thing you've been avoiding."
-  reflection: "What would you do if you trusted yourself fully today?"
+  reflection: "What would change if you trusted yourself fully today?"
 
-  Example 2:
-  headline: "This week is pushing you toward visibility, whether you're ready or not."
-  support_text: "You may feel impatience with slow progress. Not because you're stuck, but because you're outgrowing your current pace."
-  do_today: "Start the conversation you've been rehearsing."
-  reflection: "What are you protecting by staying invisible?"
+  Example 3 (heavier day):
+  headline: "Today asks for patience with something that cannot be rushed."
+  support_text: "You may feel the pull to force progress. But what is building needs more time. Steadiness now will pay off."
+  do_today: "Finish one thing properly instead of starting three."
+  reflection: "Where are you pushing when the moment is asking you to hold?"
+
+Notice the range: Example 1 is warm and energizing. Example 2 is reflective.
+Example 3 is steady but grounded. All three are valid. Match the tone to the transit.
 
 Notice: no planet names, no signs, no astrology vocabulary anywhere in the
 member-facing fields. The astrology drives the insight — it never appears in it.

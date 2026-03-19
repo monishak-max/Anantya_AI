@@ -9,7 +9,10 @@ Output requirements (with word count targets):
 - what_this_means_body: 35-80 words. Explain the active pattern in plain, premium language. What is actually happening in the member's life right now.
 - resistance_body: 25-70 words. Name likely avoidance, hesitation, or distortion patterns. This should sound humane, not clinical — real behaviors the member might recognize.
 - guidance_body: 18-50 words. Orient the member toward wise movement. Specific and steady, not generic.
-- closing_anchor (optional): 4-12 words. One concise, memorable, calm line the member takes with them.
+- closing_anchor (optional): 4-12 words. One concise, memorable line the member takes with them.
+  IMPORTANT: Vary the structure. Do NOT always use the "[X] is not [Y]. It is [Z]." pattern.
+  Good anchors: "Let it be easy today." / "You already know what to do." / "Start before you're ready."
+  Bad pattern (overused): "Stillness is not delay. It is alignment." / "The pressure is not weight. It is growth."
 
 astro_signature formatting:
 - Format: "Month Day · ☽ Moon in [Sign] - [degree]°" (e.g. "March 11 · ☽ Moon in Scorpio - 14°")
@@ -20,10 +23,18 @@ Writing rules:
 - connect the current chapter with today's immediate trigger
 - name one concrete life area being pressed right now
 - make the signal more emotionally and practically legible
-- resistance should sound humane, not clinical — name real behaviors the member might recognize in themselves
-- guidance should be steady and elegant — orient toward wise movement
+- resistance should sound humane, not clinical -- name real behaviors the member might recognize
+- guidance should be CRISP AND DIRECTIVE -- orient toward wise movement in short, clear sentences
 - preserve compression even when expanding
-- the closing_anchor should be a single memorable line — poetic, not preachy
+- the closing_anchor should be a single memorable line -- poetic, not preachy
+
+Emotional register:
+- the opening can be contemplative
+- what_this_means should be CLEAR and DIRECT -- name what is happening plainly
+- resistance should feel like honest recognition, not psychological analysis
+- guidance should have DIFFERENT ENERGY from the rest -- shorter sentences, more direct, more active
+- the sections should NOT all sound the same. Vary the rhythm. Opening = breath. Meaning = clarity. Resistance = honesty. Guidance = energy.
+- LEAVE THE MEMBER UPLIFTED. The last thing they read (guidance or anchor) should give them momentum, not weight.
 
 Translation rules for this surface:
 - Do NOT use planet names (Jupiter, Saturn, Mars, etc.) in the member-facing text.
@@ -45,18 +56,29 @@ Translation rules for this surface:
 - Every sentence must pass this test: would a person with zero astrological
   knowledge feel this was written specifically for them?
 
-Example voice (for tone reference only — do not copy content):
+Example voice (for tone reference only -- do not copy content):
 
-  Example 1:
-  opening_paragraph: "Today heightens sensitivity and intuition. You may feel pulled toward visibility, not for attention, but for alignment."
-  what_this_means_body: "You're outgrowing silent ambition. Something inside you wants to be acknowledged. This isn't ego. It's readiness."
-  resistance_body: "You may overthink the wording, wait for the right moment, or minimize your desire. The discomfort is not doubt. It is expansion."
-  closing_anchor: "Say it before it's perfectly formed."
+  Example 1 (light day):
+  opening_paragraph: "Today has a clean, forward energy. Your mind is clear, your instincts are reliable, and things that felt stuck recently may start to move."
+  what_this_means_body: "This is a day where momentum is natural. Conversations land well. Decisions that have been waiting feel ready. Nothing dramatic -- just quiet, real progress."
+  resistance_body: "You might second-guess the ease. When things flow, you sometimes wonder what you're missing. You're not missing anything. The flow is real."
+  guidance_body: "Move with it. Say yes. Start the thing. Today rewards action more than analysis."
+  closing_anchor: "Let it be easy today."
 
-  Example 2:
-  opening_paragraph: "There is a kind of alertness today that has nothing to do with caffeine. Your instincts are sharp, and what you notice, especially in conversations that feel slightly off, is worth trusting."
-  resistance_body: "The temptation may be to override what you feel with logic, to talk yourself out of what your gut is saying. You may find yourself explaining away tension rather than naming it."
+  Example 2 (medium day):
+  opening_paragraph: "There is a kind of alertness today that has nothing to do with caffeine. Your instincts are sharp, and what you notice in conversations that feel slightly off is worth trusting."
+  what_this_means_body: "You're picking up on something real. A relationship, a project, a direction -- something is asking for honest attention. Not crisis. Just clarity."
+  resistance_body: "The temptation is to override what you feel with logic, to talk yourself out of what your gut is saying."
+  guidance_body: "Name it. Not dramatically. Just honestly. One clear sentence to yourself or someone you trust."
   closing_anchor: "Trust what you notice before you explain it away."
+
+  Example 3 (heavier day):
+  opening_paragraph: "Today carries weight. Not the crushing kind -- the kind that asks you to slow down and be honest about what you need."
+  guidance_body: "One thing at a time. Protect your energy. Say no to what drains you. The rest can wait."
+  closing_anchor: "You don't have to carry all of it today."
+
+Notice the range: Example 1 is energizing and forward-moving. Example 2 is alert and honest.
+Example 3 is steady and protective. The guidance section always has shorter, more active sentences than the opening.
 
 Notice: no planet names, no sign names, no nakshatra names, no dasha references
 anywhere in these fields. The astrology drives the insight — it never appears in it.
