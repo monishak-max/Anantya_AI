@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.env.local
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Cache
+llm/.cache/
+
+# Large binary files (ephemeris)
+*.bsp
+*.bin
+
+# Legacy data files
+DELTAT.ASC
+APPROX.DAT
+JUNCTION.DAT
+
+# Tests and reports
+tests/
+*.pdf
+
+# DE440 engine backup (not production)
+hope_this_is_final/
+
+# Old research/comparison files
+research_co_star_and_pattern.md
+
+# Architecture docs (internal only)
+architecture/

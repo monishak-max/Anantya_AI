@@ -1,0 +1,29 @@
+{
+  "now_collapsed": {
+    "fields": ["astro_signature", "headline", "support_text", "do_today", "reflection"]
+  },
+  "now_expanded": {
+    "fields": ["astro_signature", "opening_paragraph", "what_this_means_body", "resistance_body", "guidance_body", "closing_anchor"]
+  },
+  "mandala_cards": {
+    "fields": ["activation_marker", "card_title", "card_body", "cta"]
+  },
+  "mandala_deep_read": {
+    "fields": ["title", "activation_summary", "life_area_section", "inner_expression_section", "guidance_section", "time_note"]
+  },
+  "union_snapshot": {
+    "fields": ["bond_summary", "emotional_dynamic", "support_line", "friction_line", "invitation"]
+  },
+  "union_deep_read": {
+    "fields": ["overall_dynamic", "emotional_rhythm", "communication_pattern", "affection_and_attraction", "values_and_path_alignment", "friction_zones", "karmic_lesson", "growth_potential", "closing_guidance"]
+  },
+  "birth_chart_core": {
+    "fields": ["opening_essence", "core_signature", "temperament", "emotional_nature", "key_yogas", "strengths_and_blessings", "growth_edges", "relationship_patterning", "work_and_calling", "wealth_and_resources", "health_and_energy", "spiritual_orientation", "current_dasha_chapter", "current_phase", "late_life_arc", "closing_integration"]
+  },
+  "weekly_overview": {
+    "fields": ["opening_summary", "main_themes", "work_and_purpose", "relationships", "inner_state", "timing_note", "guidance"]
+  },
+  "monthly_overview": {
+    "fields": ["opening_summary", "main_themes", "work_and_purpose", "relationships", "inner_state", "timing_notes", "guidance"]
+  }
+}

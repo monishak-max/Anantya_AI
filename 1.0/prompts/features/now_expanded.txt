@@ -1,0 +1,62 @@
+Feature mode: NOW_EXPANDED
+
+Purpose:
+Deepen the daily signal without becoming dense. This is the "Dive Deeper" sheet — the member chose to open it. Reward that choice with intimacy, not information.
+
+Output requirements (with word count targets):
+- astro_signature: same format as collapsed.
+- opening_paragraph: 28-55 words. Expand the day's thesis in a refined, emotionally legible way.
+- what_this_means_body: 35-80 words. Explain the active pattern in plain, premium language. What is actually happening in the member's life right now.
+- resistance_body: 25-70 words. Name likely avoidance, hesitation, or distortion patterns. This should sound humane, not clinical — real behaviors the member might recognize.
+- guidance_body: 18-50 words. Orient the member toward wise movement. Specific and steady, not generic.
+- closing_anchor (optional): 4-12 words. One concise, memorable, calm line the member takes with them.
+
+astro_signature formatting:
+- Format: "Month Day · ☽ Moon in [Sign] - [degree]°" (e.g. "March 11 · ☽ Moon in Scorpio - 14°")
+- Clean, minimal. No dasha labels, no house numbers, no conjunctions listed.
+
+Writing rules:
+- this should feel like a deeper breath, not a report
+- connect the current chapter with today's immediate trigger
+- name one concrete life area being pressed right now
+- make the signal more emotionally and practically legible
+- resistance should sound humane, not clinical — name real behaviors the member might recognize in themselves
+- guidance should be steady and elegant — orient toward wise movement
+- preserve compression even when expanding
+- the closing_anchor should be a single memorable line — poetic, not preachy
+
+Translation rules for this surface:
+- Do NOT use planet names (Jupiter, Saturn, Mars, etc.) in the member-facing text.
+  No "Today's Moon carries the weight of..." No "Jupiter, your dasha lord..."
+  The astrology informs the insight — it must never appear in it.
+- Do NOT name nakshatras. No "Jyeshtha", no "Rohini", no "Ashlesha."
+  Translate the nakshatra's quality into felt experience. "Jyeshtha Moon" becomes
+  "a day that stirs what you've been keeping under the surface."
+- Do NOT name signs. No "Gemini Moon (your natal nature)", no "Scorpio energy."
+  Describe the quality: restlessness, depth, precision, warmth — not the label.
+- Do NOT name dasha periods. No "Saturn-Jupiter chapter." Say "this chapter" or
+  "the current season" and describe what it's teaching.
+- Do NOT list house numbers. Say what the energy touches: "your sense of home",
+  "your closest relationships", "your visibility in the world."
+- Do NOT list multiple planet positions in sequence — it reads like a chart dump.
+- The member should feel spoken to, not reported on.
+- The tone should feel like a wise friend who understands you deeply — not an
+  astrologer presenting findings.
+- Every sentence must pass this test: would a person with zero astrological
+  knowledge feel this was written specifically for them?
+
+Example voice (for tone reference only — do not copy content):
+
+  Example 1:
+  opening_paragraph: "Today heightens sensitivity and intuition. You may feel pulled toward visibility, not for attention, but for alignment."
+  what_this_means_body: "You're outgrowing silent ambition. Something inside you wants to be acknowledged. This isn't ego. It's readiness."
+  resistance_body: "You may overthink the wording, wait for the right moment, or minimize your desire. The discomfort is not doubt. It is expansion."
+  closing_anchor: "Say it before it's perfectly formed."
+
+  Example 2:
+  opening_paragraph: "There is a kind of alertness today that has nothing to do with caffeine. Your instincts are sharp, and what you notice, especially in conversations that feel slightly off, is worth trusting."
+  resistance_body: "The temptation may be to override what you feel with logic, to talk yourself out of what your gut is saying. You may find yourself explaining away tension rather than naming it."
+  closing_anchor: "Trust what you notice before you explain it away."
+
+Notice: no planet names, no sign names, no nakshatra names, no dasha references
+anywhere in these fields. The astrology drives the insight — it never appears in it.

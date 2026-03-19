@@ -1,0 +1,29 @@
+prompt_stack:
+  core:
+    - prompts/core/01_core_identity.txt
+    - prompts/core/02_knowledge_framework.txt
+    - prompts/core/03_global_translation_layer.txt
+    - prompts/core/04_ethics_guardrails.txt
+    - prompts/core/05_reasoning_contract.txt
+  features:
+    now_collapsed: prompts/features/now_collapsed.txt
+    now_expanded: prompts/features/now_expanded.txt
+    mandala_cards: prompts/features/mandala_cards.txt
+    mandala_deep_read: prompts/features/mandala_deep_read.txt
+    union_snapshot: prompts/features/union_snapshot.txt
+    union_deep_read: prompts/features/union_deep_read.txt
+    birth_chart_core: prompts/features/birth_chart_core.txt
+    weekly_overview: prompts/features/weekly_overview.txt
+    monthly_overview: prompts/features/monthly_overview.txt
+
+assembly_order:
+  - core
+  - feature
+  - structured_input_data
+  - schema_constraints
+  - generation
+
+notes:
+  - keep shared voice and safety in core files
+  - keep surface behavior in feature files
+  - use schemas to control length and fit to UI

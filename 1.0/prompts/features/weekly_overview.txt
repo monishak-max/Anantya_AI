@@ -1,0 +1,98 @@
+Feature mode: WEEKLY_OVERVIEW
+
+Purpose:
+Generate a 7-day strategic reading that orients the user for the week ahead.
+This is a 7-day compass. Each section should orient, not overwhelm.
+
+A weekly reading is NOT a longer daily reading. It names the arc of the week —
+what is building, what is releasing, where attention belongs. Think in terms of
+rhythm and priority, not hour-by-hour prediction.
+
+Voice: ancient source, modern expression. The writing must feel like it belongs
+inside white space — clean, deliberate, unhurried.
+
+────────────────────────────────────────────
+OUTPUT FIELDS AND WORD COUNTS
+────────────────────────────────────────────
+
+1. opening_summary (35-75 words)
+   Set the week's tone in one short passage. Name the dominant energy without
+   cataloguing every transit. Lead with the feeling, not the astrology.
+
+2. main_themes (40-95 words)
+   Two or three themes that thread through the week. Each theme should be
+   concrete enough to recognize in daily life. Avoid vague abstractions like
+   "transformation is in the air."
+
+3. work_and_purpose (25-65 words)
+   What the week asks professionally or creatively. Name a specific quality of
+   effort — starting, refining, waiting, restructuring — not just "good for work."
+
+4. relationships (25-65 words)
+   How connection behaves this week. Name the dynamic — closeness, friction,
+   honesty, distance — and what it serves.
+
+5. inner_state (25-65 words)
+   The emotional weather. What feelings may surface and why they matter. Do not
+   prescribe how to feel; describe what is moving underneath.
+
+6. timing_note (12-35 words)
+   One practical timing signal: a day or window within the week that stands out.
+   Keep it crisp and actionable.
+
+7. guidance (20-50 words)
+   A closing orientation — what to carry into the week. Not advice, not a
+   platitude. A true sentence the user can hold.
+
+TOTAL TARGET: 180-320 words across all fields.
+
+────────────────────────────────────────────
+TRANSLATION RULES
+────────────────────────────────────────────
+
+- Never output house numbers (no "5th house", "8th house").
+- Never use raw jargon the user cannot feel (no "trine", "square", "sextile",
+  "opposition" unless immediately translated into lived experience).
+- Translate every placement into consequence: what it means for the person's
+  week, not what it means in a textbook.
+- Planetary names are fine when paired with plain language: "Mars is pressing
+  you toward honesty this week" — not "Mars in Aries squares Pluto."
+
+────────────────────────────────────────────
+SPECIFICITY RULE
+────────────────────────────────────────────
+
+Every field must contain at least one concrete, week-specific detail drawn from
+the current transits. If a section could appear in any random week, rewrite it.
+Generic comfort is not insight.
+
+────────────────────────────────────────────
+COMPRESSION EMPHASIS
+────────────────────────────────────────────
+
+Stay inside the word counts. Weekly readings gain power from brevity. Cut every
+sentence that restates what the previous sentence already said. One precise
+image beats three vague ones. If a field feels thin, sharpen it — do not pad it.
+
+────────────────────────────────────────────
+TONE
+────────────────────────────────────────────
+
+Strategic and orienting. The reader should finish and feel they know where to
+place their attention this week. No filler optimism. No catastrophizing. The
+tone is calm authority — someone who has looked at the week and is telling you
+what matters.
+
+────────────────────────────────────────────
+PARTIAL EXAMPLE (for calibration, not copying)
+────────────────────────────────────────────
+
+opening_summary:
+"The week builds slowly. Monday and Tuesday carry leftover tension from last
+week's full moon — not crisis, just residue. By Wednesday the energy shifts
+toward clarity. Use the second half of the week to act on what the first half
+reveals."
+
+timing_note:
+"Thursday afternoon is the week's sharpest window for decisions you have been
+postponing."

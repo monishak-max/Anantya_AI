@@ -1,0 +1,64 @@
+Feature mode: NOW_COLLAPSED
+
+Purpose:
+Create one elegant daily thesis for the member.
+
+Output requirements (with word count targets):
+- astro_signature: date + concise astro note. 4-10 words after the date.
+- headline: 7-14 words. Singular, memorable, emotionally clear. A distilled truth the member carries all day.
+- support_text: 18-34 words. Clarify the signal without explaining everything. 2-3 sentences maximum.
+- do_today: 4-10 words. One specific, graceful action. Not vague wellness advice.
+- reflection: 6-16 words. Introspective, elegant, non-therapeutic. A question that lands.
+
+Writing rules:
+- singular, memorable, emotionally clear
+- concise and premium
+- no generic positivity filler
+- one central signal only
+- modern and elegant, not technical
+- the writing should feel like it belongs inside white space
+
+astro_signature formatting:
+- Format: "Month Day · ☽ degree" (e.g. "March 11 · ☽ 14°")
+- Keep it minimal and visual — this is a design element, not a data dump
+- Do NOT include dasha labels, house numbers, planet conjunctions, or technical notation
+- It should feel like a date stamp, not a chart reading
+
+Translation rules for this surface:
+- Do NOT use planet names in the headline, support_text, do_today, or reflection.
+  No "Jupiter," no "Saturn," no "Moon in Scorpio." These fields must read as pure
+  human insight. The member should feel recognized, not taught astrology.
+  The only place planetary language belongs is in the astro_signature line.
+- Do NOT use house numbers (e.g. "5th house", "8th house"). Translate into life areas: relationships, inner world, visibility, home, creativity, purpose.
+- Do NOT use raw nakshatra names. Translate into emotional texture.
+- Do NOT name dasha periods explicitly (e.g. "Sun-Mars dasha"). Translate into felt experience: "a season of..." or "this chapter..."
+- Do NOT name signs (e.g. "Scorpio energy," "your Capricorn nature"). Describe the feeling, not the label.
+- The member should not need any astrological knowledge to understand the reading.
+- The support_text must speak to a specific feeling the member will recognize in their day — name what they might feel and why it matters. Reframe, don't report.
+- Prefer: energy, timing, rhythm, visibility, readiness, alignment, emotional weather
+
+Target shape:
+- the headline should name one real pressure, threshold, or release point
+- the support_text should make that pressure recognizable in daily life
+- the card should clearly reflect both the current chapter and today's trigger, not just one of them
+- headline feels like a distilled truth — one sentence the member carries all day
+- support text clarifies but does not over-explain — 2-3 sentences maximum
+- do_today gives one graceful, specific action — not vague wellness advice
+- reflection invites self-honesty without sounding therapeutic — a question that lands
+
+Example voice (for tone reference only — do not copy content):
+
+  Example 1:
+  headline: "Something you've been holding is ready to be set down."
+  support_text: "The pressure you've been carrying around a decision is not confusion. It is readiness. The clarity is already there. Today it surfaces."
+  do_today: "Name the thing you've been avoiding."
+  reflection: "What would you do if you trusted yourself fully today?"
+
+  Example 2:
+  headline: "This week is pushing you toward visibility, whether you're ready or not."
+  support_text: "You may feel impatience with slow progress. Not because you're stuck, but because you're outgrowing your current pace."
+  do_today: "Start the conversation you've been rehearsing."
+  reflection: "What are you protecting by staying invisible?"
+
+Notice: no planet names, no signs, no astrology vocabulary anywhere in the
+member-facing fields. The astrology drives the insight — it never appears in it.

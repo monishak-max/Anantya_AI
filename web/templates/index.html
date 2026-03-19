@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Astro</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ═══════════ ONBOARDING ═══════════ -->
+  <div id="onboarding" class="screen active">
+
+    <!-- Step 1: Date of Birth -->
+    <div class="ob-step active" data-step="1">
+      <div class="ob-top">
+        <div class="ob-dots">
+          <span class="dot active">✦</span>
+          <span class="dot">•</span>
+          <span class="dot">•</span>
+        </div>
+        <h1 class="ob-question">When did your story begin?</h1>
+      </div>
+      <div class="ob-body">
+        <div class="ob-input-group">
+          <input type="date" id="ob-dob" required>
+        </div>
+      </div>
+      <div class="ob-bottom">
+        <button class="btn-next" id="btn-step1">Next</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Time of Birth -->
+    <div class="ob-step" data-step="2">
+      <div class="ob-top">
+        <div class="ob-dots">
+          <span class="dot done">✦</span>
+          <span class="dot active">✧</span>
+          <span class="dot">•</span>
+        </div>
+        <h1 class="ob-question">What time were you born?</h1>
+      </div>
+      <div class="ob-body">
+        <div class="time-picker-wrap">
+          <div class="time-picker-card">
+            <div class="tp-highlight"></div>
+            <div class="tp-col" id="tp-hour" data-col="hour"></div>
+            <div class="tp-col" id="tp-minute" data-col="minute"></div>
+            <div class="tp-col" id="tp-ampm" data-col="ampm"></div>
+          </div>
+        </div>
+        <input type="hidden" id="ob-time" value="">
+        <button class="btn-unsure" id="btn-unsure-time">I'm not sure</button>
+      </div>
+      <div class="ob-bottom">
+        <button class="btn-next" id="btn-step2">Next</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Place + Name -->
+    <div class="ob-step" data-step="3">
+      <div class="ob-top">
+        <div class="ob-dots">
+          <span class="dot done">✦</span>
+          <span class="dot done">✦</span>
+          <span class="dot active">✧</span>
+        </div>
+        <h1 class="ob-question">Where did you arrive on earth?</h1>
+      </div>
+      <div class="ob-body">
+        <div class="ob-input-group">
+          <input type="text" id="ob-name" placeholder="Your name" required>
+        </div>
+        <div class="ob-input-group">
+          <input type="text" id="ob-place" placeholder="Search city...">
+        </div>
+        <div class="ob-coords">
+          <div class="ob-input-group half">
+            <input type="number" step="any" id="ob-lat" placeholder="Latitude" required>
+          </div>
+          <div class="ob-input-group half">
+            <input type="number" step="any" id="ob-lng" placeholder="Longitude" required>
+          </div>
+        </div>
+      </div>
+      <div class="ob-bottom">
+        <button class="btn-next" id="btn-generate">
+          <span class="btn-text">Generate my mandala</span>
+          <span class="btn-loading" style="display:none">
+            <span class="spinner-dark"></span> Computing your sky...
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ CHART REVEAL ═══════════ -->
+  <div id="reveal" class="screen">
+    <div class="reveal-scroll">
+      <div class="zodiac-wheel-wrap">
+        <canvas id="wheel-canvas" width="320" height="320"></canvas>
+        <div class="wheel-glow"></div>
+      </div>
+
+      <h1 class="reveal-headline" id="reveal-headline"></h1>
+
+      <div class="reveal-signs" id="reveal-signs"></div>
+      <p class="reveal-arrived" id="reveal-arrived"></p>
+
+      <div class="reveal-traits" id="reveal-traits">
+        <p class="traits-label">This means:</p>
+        <ul class="traits-list" id="traits-list"></ul>
+      </div>
+
+      <button class="btn-next" id="btn-explore">Explore more →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════ MAIN APP ═══════════ -->
+  <div id="app" class="screen">
+
+    <!-- ══════ NOW TAB ══════ -->
+    <section id="tab-now" class="tab-content active">
+      <div class="now-loading content-loading">
+        <div class="pulse-ring"></div>
+        <p>Reading today's sky...</p>
+      </div>
+      <div class="now-content" style="display:none">
+        <!-- Sky arc -->
+        <div class="now-sky">
+          <canvas id="sky-arc-canvas" width="360" height="160"></canvas>
+          <div class="now-moon-img">🌘</div>
+        </div>
+
+        <div class="now-sig" id="now-sig"></div>
+        <h1 class="now-headline" id="now-headline"></h1>
+        <p class="now-support" id="now-support"></p>
+
+        <div class="now-do-today">
+          <span class="do-label">Do today:</span>
+          <p class="do-text" id="now-do-today"></p>
+        </div>
+
+        <button class="btn-dive" id="btn-dive-deeper">Dive Deeper</button>
+
+        <div class="now-reflection-card">
+          <span class="reflection-label">Reflection</span>
+          <p class="reflection-text" id="now-reflection"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Expanded bottom sheet -->
+    <div class="expanded-overlay" id="expanded-overlay" style="display:none">
+      <div class="expanded-sheet" id="now-expanded-sheet">
+        <div class="sheet-drag-handle"></div>
+        <div class="exp-header">
+          <div class="exp-moon">🌘</div>
+          <button class="btn-close-round" id="btn-close-expanded">✕</button>
+        </div>
+        <div class="exp-sig" id="exp-sig"></div>
+        <p class="exp-opening" id="exp-opening"></p>
+
+        <div class="exp-section">
+          <h3>What this means:</h3>
+          <p id="exp-what-this-means"></p>
+        </div>
+
+        <div class="exp-section">
+          <h3>The Resistance</h3>
+          <p id="exp-resistance"></p>
+        </div>
+
+        <div class="exp-section">
+          <h3>Guidance</h3>
+          <p id="exp-guidance"></p>
+        </div>
+
+        <p class="exp-anchor" id="exp-anchor"></p>
+      </div>
+    </div>
+
+    <!-- ══════ MANDALA TAB ══════ -->
+    <section id="tab-mandala" class="tab-content">
+      <div class="mandala-loading content-loading">
+        <div class="pulse-ring"></div>
+        <p>Mapping your activations...</p>
+      </div>
+      <div class="mandala-content" style="display:none">
+        <div class="mandala-profile">
+          <h2 class="mandala-name" id="mandala-name"></h2>
+          <div class="mandala-signs" id="mandala-signs"></div>
+          <p class="mandala-arrived" id="mandala-arrived"></p>
+        </div>
+
+        <div class="zodiac-wheel-wrap small">
+          <canvas id="mandala-canvas" width="280" height="280"></canvas>
+          <div class="wheel-glow"></div>
+        </div>
+
+        <div class="mandala-cards" id="mandala-cards"></div>
+      </div>
+    </section>
+
+    <!-- ══════ UNION TAB ══════ -->
+    <section id="tab-union" class="tab-content">
+      <div class="union-empty" id="union-empty">
+        <div class="union-orbs">
+          <div class="orb-circle filled"></div>
+          <div class="orb-circle add"><span>+</span></div>
+        </div>
+        <p class="union-prompt-text">Add another soul to explore your bond</p>
+      </div>
+
+      <div class="union-form-wrap" id="union-form-wrap" style="display:none">
+        <button class="btn-back-text" id="btn-union-cancel">← Back</button>
+        <h2 class="section-title">Their details</h2>
+        <form id="union-form">
+          <div class="ob-input-group"><input type="text" id="u-name" placeholder="Their name" required></div>
+          <div class="ob-coords">
+            <div class="ob-input-group half"><input type="date" id="u-dob" required></div>
+            <div class="ob-input-group half"><input type="time" id="u-time" required></div>
+          </div>
+          <div class="ob-input-group">
+            <input type="text" id="u-place" placeholder="Search city...">
+          </div>
+          <div class="ob-coords">
+            <div class="ob-input-group half"><input type="number" step="any" id="u-lat" placeholder="Lat" required></div>
+            <div class="ob-input-group half"><input type="number" step="any" id="u-lng" placeholder="Lng" required></div>
+          </div>
+          <button type="submit" class="btn-next">
+            <span class="btn-text">Read our connection</span>
+            <span class="btn-loading" style="display:none"><span class="spinner-dark"></span> Reading...</span>
+          </button>
+        </form>
+      </div>
+
+      <div class="union-result" id="union-result" style="display:none">
+        <div class="union-orbs small">
+          <div class="orb-circle filled sm"></div>
+          <div class="orb-circle filled sm"></div>
+        </div>
+        <h2 class="union-bond" id="union-bond"></h2>
+        <p class="union-dynamic" id="union-dynamic"></p>
+        <div class="union-blocks">
+          <div class="union-block support">
+            <h4>What flows</h4>
+            <p id="union-support"></p>
+          </div>
+          <div class="union-block friction">
+            <h4>Where to be aware</h4>
+            <p id="union-friction"></p>
+          </div>
+        </div>
+        <p class="union-invitation" id="union-invitation"></p>
+        <button class="btn-back-text" id="btn-union-new">← Read another connection</button>
+      </div>
+    </section>
+
+    <!-- ══════ BIRTH CHART TAB ══════ -->
+    <section id="tab-birth-chart" class="tab-content">
+      <div class="bc-loading content-loading" style="display:none">
+        <div class="pulse-ring"></div>
+        <p>Composing your Janam Patri...</p>
+      </div>
+      <div class="bc-intro" id="bc-intro">
+        <div class="premium-badge">Premium</div>
+        <h2 class="section-title">Your Birth Chart</h2>
+        <p class="section-sub">A complete reading of your natal sky — nature, path, gifts, and growth edges.</p>
+        <button class="btn-next" id="btn-gen-bc">
+          <span class="btn-text">Generate my birth chart</span>
+          <span class="btn-loading" style="display:none"><span class="spinner-dark"></span> This takes a moment...</span>
+        </button>
+      </div>
+      <div class="bc-content" id="bc-content" style="display:none"></div>
+    </section>
+
+    <!-- Bottom tab bar -->
+    <nav class="bottom-tabs">
+      <button class="btab active" data-tab="now"><span>Now</span></button>
+      <button class="btab" data-tab="mandala"><span>Mandala</span></button>
+      <button class="btab" data-tab="union"><span>Union</span></button>
+      <button class="btab" data-tab="birth-chart"><span>Chart</span></button>
+    </nav>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
