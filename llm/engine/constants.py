@@ -61,21 +61,29 @@ VIMSHOTTARI_SEQUENCE = [
 
 VIMSHOTTARI_TOTAL_YEARS = 120  # sum of all periods
 
-# ── Planet IDs for Swiss Ephemeris ─────────────────────────────────
-import swisseph as swe
-
-PLANET_IDS = {
-    "Sun":     swe.SUN,
-    "Moon":    swe.MOON,
-    "Mars":    swe.MARS,
-    "Mercury": swe.MERCURY,
-    "Jupiter": swe.JUPITER,
-    "Venus":   swe.VENUS,
-    "Saturn":  swe.SATURN,
-    "Rahu":    swe.MEAN_NODE,  # Mean Rahu (north node)
+# ── Planet IDs ────────────────────────────────────────────────────
+# DE440 engine uses pl7astro body IDs (1-8)
+PLANET_IDS_DE440 = {
+    "Sun": 1, "Moon": 2, "Mars": 3, "Mercury": 4,
+    "Jupiter": 5, "Venus": 6, "Saturn": 7, "Rahu": 8,
 }
 
-# Ketu is always 180° from Rahu
+# Swiss Ephemeris IDs (commented out -- kept for backup)
+# import swisseph as swe
+# PLANET_IDS_SWISS = {
+#     "Sun":     swe.SUN,
+#     "Moon":    swe.MOON,
+#     "Mars":    swe.MARS,
+#     "Mercury": swe.MERCURY,
+#     "Jupiter": swe.JUPITER,
+#     "Venus":   swe.VENUS,
+#     "Saturn":  swe.SATURN,
+#     "Rahu":    swe.MEAN_NODE,
+# }
+
+PLANET_IDS = PLANET_IDS_DE440
+
+# Ketu is always 180 degrees from Rahu
 PLANETS_COMPUTED = list(PLANET_IDS.keys()) + ["Ketu"]
 
 

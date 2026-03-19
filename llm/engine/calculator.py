@@ -1,7 +1,8 @@
 """
-Astro Computation Engine — computes all Jyotish data from birth details.
+Astro Computation Engine -- computes all Jyotish data from birth details.
 
-Uses Swiss Ephemeris (pyswisseph) with Lahiri ayanamsa and sidereal zodiac.
+PRIMARY ENGINE: DE440 (JPL ephemeris via pl7astro pipeline)
+BACKUP ENGINE:  Swiss Ephemeris (commented out, kept for reference/validation)
 
 Computes:
   - Lagna (Ascendant) and house cusps
@@ -19,11 +20,12 @@ Computes:
 from __future__ import annotations
 
 import math
+import os
+import sys
 from datetime import datetime, date, timedelta
 from dataclasses import dataclass, field
 from typing import Optional
 
-import swisseph as swe
 from timezonefinder import TimezoneFinder
 import pytz
 
@@ -34,7 +36,6 @@ from llm.engine.constants import (
     PADA_SPAN,
     VIMSHOTTARI_SEQUENCE,
     VIMSHOTTARI_TOTAL_YEARS,
-    PLANET_IDS,
     SIGN_LORDS,
     EXALTATION,
     DEBILITATION,
@@ -46,8 +47,35 @@ from llm.engine.constants import (
     NATURAL_MALEFICS,
 )
 
-# Initialize Swiss Ephemeris with Lahiri ayanamsa
-swe.set_sid_mode(swe.SIDM_LAHIRI)
+# ═══════════════════════════════════════════════════════════════════
+# ENGINE SELECTION: DE440 (primary) or Swiss (backup)
+# ═══════════════════════════════════════════════════════════════════
+
+ENGINE = "DE440"  # Change to "SWISS" to switch back
+
+if ENGINE == "DE440":
+    # DE440 engine -- JPL ephemeris, full control, no license constraints
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "hope_this_is_final"))
+    from pl7astro.astro.jpl_ephemeris import JPLEphemerisReader
+    from pl7astro.astro.corrections import DeltaTTable
+    from pl7astro.astro.pipeline import Pipeline as DE440Pipeline
+    from pl7astro.astro.julian import J2000, JULIAN_CENTURY, date_to_jd, normalize_degrees
+    from pl7astro.vedic.ayanamsha import calc_ayanamsha
+
+    # Initialize DE440 pipeline (singleton)
+    _DE440_BSP = os.path.join(os.path.dirname(__file__), "..", "..", "de440.bsp")
+    _DELTAT_ASC = os.path.join(os.path.dirname(__file__), "..", "..", "DELTAT.ASC")
+    _de440_eph = JPLEphemerisReader(_DE440_BSP)
+    _de440_dt = DeltaTTable(_DELTAT_ASC)
+    _de440_pipe = DE440Pipeline(_de440_eph, _de440_dt)
+
+# ── Swiss Ephemeris (commented out -- kept as backup) ──────────────
+# To switch back: change ENGINE = "SWISS" above
+#
+# if ENGINE == "SWISS":
+#     import swisseph as swe
+#     from llm.engine.constants import PLANET_IDS
+#     swe.set_sid_mode(swe.SIDM_LAHIRI)
 
 tf = TimezoneFinder()
 
@@ -106,7 +134,7 @@ class AntarDasha:
 
 @dataclass
 class NatalChart:
-    """Complete natal chart data — everything the LLM layer needs."""
+    """Complete natal chart data -- everything the LLM layer needs."""
     birth_dt: datetime
     latitude: float
     longitude: float
@@ -145,7 +173,7 @@ class NatalChart:
 
 @dataclass
 class TransitSnapshot:
-    """Current planetary positions — computed for a given date."""
+    """Current planetary positions -- computed for a given date."""
     date: date
     planets: dict[str, PlanetPosition]
     moon_sign: str
@@ -153,7 +181,7 @@ class TransitSnapshot:
     moon_house_from_natal: Optional[int] = None
 
 
-# ── Core computation functions ─────────────────────────────────────
+# ── Shared helpers (engine-independent) ───────────────────────────
 
 def _get_timezone(lat: float, lng: float) -> str:
     """Get timezone string from coordinates."""
@@ -161,30 +189,13 @@ def _get_timezone(lat: float, lng: float) -> str:
     return tz or "UTC"
 
 
-def _to_julian_day(dt: datetime) -> float:
-    """Convert datetime to Julian Day for Swiss Ephemeris."""
-    hour = dt.hour + dt.minute / 60.0 + dt.second / 3600.0
-    return swe.julday(dt.year, dt.month, dt.day, hour)
-
-
-def _calc_planet(jd: float, planet_id: int) -> tuple[float, bool]:
-    """
-    Calculate sidereal longitude and retrograde status for a planet.
-    Returns (longitude, is_retrograde).
-    """
-    result = swe.calc_ut(jd, planet_id, swe.FLG_SIDEREAL)
-    longitude = result[0][0] % 360
-    speed = result[0][3]  # daily speed in longitude
-    return longitude, speed < 0
-
-
 def _longitude_to_position(planet_name: str, longitude: float, retrograde: bool = False) -> PlanetPosition:
     """Convert a sidereal longitude to full position data."""
-    sign_idx = int(longitude / 30)
+    sign_idx = int(longitude / 30) % 12
     degree_in_sign = longitude % 30
 
     # Nakshatra
-    nak_idx = int(longitude / NAKSHATRA_SPAN)
+    nak_idx = int(longitude / NAKSHATRA_SPAN) % 27
     nak_data = NAKSHATRAS[nak_idx]
     degree_in_nak = longitude - nak_data["start"]
     pada = min(int(degree_in_nak / PADA_SPAN) + 1, 4)
@@ -202,30 +213,10 @@ def _longitude_to_position(planet_name: str, longitude: float, retrograde: bool 
 
 
 def _house_from_moon(planet_sign: str, moon_sign: str) -> int:
-    """
-    Calculate house number using whole sign houses from Moon.
-    Moon's sign = house 1.
-    """
+    """Calculate house number using whole sign houses from Moon."""
     moon_idx = RASHIS.index(moon_sign)
     planet_idx = RASHIS.index(planet_sign)
     return ((planet_idx - moon_idx) % 12) + 1
-
-
-# ── Lagna (Ascendant) computation ──────────────────────────────────
-
-def _calc_lagna(jd: float, lat: float, lng: float) -> tuple[float, str, str]:
-    """
-    Calculate the sidereal Ascendant (Lagna).
-    Returns (degree, sign, nakshatra).
-    """
-    # Get tropical ascendant, then subtract ayanamsa for sidereal
-    cusps, ascmc = swe.houses(jd, lat, lng, b'W')  # Whole sign houses
-    tropical_asc = ascmc[0]
-    ayanamsa = swe.get_ayanamsa(jd)
-    sidereal_asc = (tropical_asc - ayanamsa) % 360
-
-    pos = _longitude_to_position("Lagna", sidereal_asc)
-    return sidereal_asc, pos.sign, pos.nakshatra
 
 
 def _house_from_lagna(planet_sign: str, lagna_sign: str) -> int:
@@ -235,40 +226,139 @@ def _house_from_lagna(planet_sign: str, lagna_sign: str) -> int:
     return ((planet_idx - lagna_idx) % 12) + 1
 
 
-# ── House lordships ────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════
+# DE440 ENGINE -- Position computation
+# ═══════════════════════════════════════════════════════════════════
+
+# DE440 body ID mapping: name -> pl7astro body_id
+_DE440_BODY_IDS = {
+    "Sun": 1, "Moon": 2, "Mars": 3, "Mercury": 4,
+    "Jupiter": 5, "Venus": 6, "Saturn": 7,
+}
+
+
+def _de440_to_julian_day(dt: datetime) -> float:
+    """Convert datetime to Julian Day."""
+    hour = dt.hour + dt.minute / 60.0 + dt.second / 3600.0
+    return date_to_jd(dt.year, dt.month, dt.day, hour)
+
+
+def _de440_calc_positions(jd_ut: float) -> dict[str, tuple[float, bool]]:
+    """Compute all planet sidereal positions via DE440 pipeline.
+
+    Returns dict of planet_name -> (sidereal_longitude, is_retrograde).
+    """
+    result = _de440_pipe.calc_all(jd_ut, timezone=0.0, latitude=0.0, longitude=0.0, ayanamsha_system=1)
+
+    positions = {}
+    name_map = {1: "Sun", 2: "Moon", 3: "Mars", 4: "Mercury", 5: "Jupiter", 6: "Venus", 7: "Saturn"}
+
+    for body_id, name in name_map.items():
+        planet = result.planets[body_id]
+        sid_lon = planet.sidereal_lon
+        # Compute velocity for retrograde detection
+        T = result.T
+        try:
+            pos1, vel1 = _de440_eph.geocentric_ecliptic_with_velocity(body_id, T)
+            daily_speed = vel1[0]  # degrees per day (approximate from km/day)
+            is_retro = daily_speed < 0
+        except Exception:
+            is_retro = False
+        positions[name] = (sid_lon, is_retro)
+
+    # Rahu
+    rahu_lon = result.planets[8].sidereal_lon
+    positions["Rahu"] = (rahu_lon, False)
+
+    return positions
+
+
+def _de440_calc_lagna(jd_ut: float, lat: float, lng: float) -> tuple[float, str, str]:
+    """Calculate sidereal Ascendant via DE440 pipeline.
+
+    The pipeline computes GAST -> LST -> Ascendant internally.
+    """
+    # Pipeline expects west-positive longitude internally, but we pass through calc_all
+    # which handles the sign convention. Use longitude=0 and let the pipeline compute.
+    # For accurate lagna, we need the full pipeline with location.
+
+    # Convert east-positive (user) to west-positive (PL7 internal)
+    pl7_lng = -lng
+    pl7_tz = 0.0  # We pass JD_UT, so timezone offset is 0
+
+    result = _de440_pipe.calc_all(jd_ut, timezone=pl7_tz, latitude=lat, longitude=pl7_lng, ayanamsha_system=1)
+    asc_sid = result.ascendant  # Already sidereal
+
+    pos = _longitude_to_position("Lagna", asc_sid)
+    return asc_sid, pos.sign, pos.nakshatra
+
+
+def _de440_calc_planet_at(jd_ut: float, planet_name: str) -> tuple[float, bool]:
+    """Get a single planet's sidereal position from DE440."""
+    result = _de440_pipe.calc_all(jd_ut, timezone=0.0, latitude=0.0, longitude=0.0, ayanamsha_system=1)
+
+    body_map = {"Sun": 1, "Moon": 2, "Mars": 3, "Mercury": 4,
+                "Jupiter": 5, "Venus": 6, "Saturn": 7, "Rahu": 8}
+
+    body_id = body_map.get(planet_name)
+    if body_id is None:
+        return 0.0, False
+
+    planet = result.planets[body_id]
+    return planet.sidereal_lon, False
+
+
+# ═══════════════════════════════════════════════════════════════════
+# SWISS ENGINE -- Position computation (COMMENTED OUT)
+# ═══════════════════════════════════════════════════════════════════
+
+# def _swiss_to_julian_day(dt: datetime) -> float:
+#     """Convert datetime to Julian Day for Swiss Ephemeris."""
+#     hour = dt.hour + dt.minute / 60.0 + dt.second / 3600.0
+#     return swe.julday(dt.year, dt.month, dt.day, hour)
+#
+#
+# def _swiss_calc_planet(jd: float, planet_id: int) -> tuple[float, bool]:
+#     """Calculate sidereal longitude and retrograde status via Swiss."""
+#     result = swe.calc_ut(jd, planet_id, swe.FLG_SIDEREAL)
+#     longitude = result[0][0] % 360
+#     speed = result[0][3]
+#     return longitude, speed < 0
+#
+#
+# def _swiss_calc_lagna(jd: float, lat: float, lng: float) -> tuple[float, str, str]:
+#     """Calculate sidereal Ascendant via Swiss Ephemeris."""
+#     cusps, ascmc = swe.houses(jd, lat, lng, b'W')
+#     tropical_asc = ascmc[0]
+#     ayanamsa = swe.get_ayanamsa(jd)
+#     sidereal_asc = (tropical_asc - ayanamsa) % 360
+#     pos = _longitude_to_position("Lagna", sidereal_asc)
+#     return sidereal_asc, pos.sign, pos.nakshatra
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Engine-independent: House lordships, Dignities, Yogas, Dasha
+# (These work on sidereal positions regardless of which engine produced them)
+# ═══════════════════════════════════════════════════════════════════
 
 def _calc_house_lords(lagna_sign: str, planets: dict[str, PlanetPosition]) -> list[HouseLord]:
-    """
-    Calculate house lordships from Lagna.
-    Each house is a whole sign; the lord is the ruler of that sign.
-    """
+    """Calculate house lordships from Lagna."""
     lagna_idx = RASHIS.index(lagna_sign)
     lords = []
-
     for house_num in range(1, 13):
         sign_idx = (lagna_idx + house_num - 1) % 12
         sign = RASHIS[sign_idx]
         lord_planet = SIGN_LORDS[sign]
-
-        # Where is this lord placed?
         if lord_planet in planets:
             placed_house = planets[lord_planet].house_from_lagna or 1
             placed_sign = planets[lord_planet].sign
         else:
             placed_house = house_num
             placed_sign = sign
-
-        lords.append(HouseLord(
-            house=house_num,
-            lord=lord_planet,
-            placed_in_house=placed_house,
-            placed_in_sign=placed_sign,
-        ))
-
+        lords.append(HouseLord(house=house_num, lord=lord_planet,
+                               placed_in_house=placed_house, placed_in_sign=placed_sign))
     return lords
 
-
-# ── Dignity check ──────────────────────────────────────────────────
 
 def _set_dignities(planets: dict[str, PlanetPosition]):
     """Set exaltation/debilitation/own-sign flags on planet positions."""
@@ -281,16 +371,10 @@ def _set_dignities(planets: dict[str, PlanetPosition]):
             pos.is_own_sign = True
 
 
-# ── Yoga detection ─────────────────────────────────────────────────
-
 def _detect_yogas(planets: dict[str, PlanetPosition], lagna_sign: str) -> list[Yoga]:
-    """
-    Detect major classical yogas from the natal chart.
-    Returns a list of Yoga objects with human-readable descriptions.
-    """
+    """Detect major classical yogas from the natal chart."""
     yogas = []
 
-    # Helper: get house from lagna for a planet
     def h(planet: str) -> int:
         return planets[planet].house_from_lagna or 0
 
@@ -300,51 +384,37 @@ def _detect_yogas(planets: dict[str, PlanetPosition], lagna_sign: str) -> list[Y
     def same_sign(p1: str, p2: str) -> bool:
         return sign(p1) == sign(p2)
 
-    # ── Gaja Kesari Yoga ──────────────────────────────────────
-    # Jupiter in kendra from Moon
+    # Gaja Kesari Yoga
     moon_sign = planets["Moon"].sign
     jup_house_from_moon = _house_from_moon(sign("Jupiter"), moon_sign)
     if jup_house_from_moon in KENDRA_HOUSES:
-        yogas.append(Yoga(
-            name="Gaja Kesari Yoga",
-            category="lunar",
+        yogas.append(Yoga(name="Gaja Kesari Yoga", category="lunar",
             planets_involved=["Jupiter", "Moon"],
-            description="Jupiter in an angular house from Moon — brings wisdom, reputation, and emotional resilience. The person carries a natural dignity and is respected in their community.",
-        ))
+            description="Jupiter in an angular house from Moon -- brings wisdom, reputation, and emotional resilience. The person carries a natural dignity and is respected in their community."))
 
-    # ── Budhaditya Yoga ───────────────────────────────────────
-    # Sun and Mercury in the same sign
+    # Budhaditya Yoga
     if same_sign("Sun", "Mercury"):
-        yogas.append(Yoga(
-            name="Budhaditya Yoga",
-            category="solar",
+        yogas.append(Yoga(name="Budhaditya Yoga", category="solar",
             planets_involved=["Sun", "Mercury"],
-            description="Sun-Mercury conjunction — sharpens intellect and communication. The person thinks clearly, expresses well, and may excel in fields requiring articulation or analytical skill.",
-        ))
+            description="Sun-Mercury conjunction -- sharpens intellect and communication. The person thinks clearly, expresses well, and may excel in fields requiring articulation or analytical skill."))
 
-    # ── Pancha Mahapurusha Yogas ──────────────────────────────
-    # Mars/Mercury/Jupiter/Venus/Saturn in own sign or exalted AND in kendra from lagna
+    # Pancha Mahapurusha Yogas
     mahapurusha = {
-        "Mars":    ("Ruchaka",    "Ruchaka Yoga — Mars in power. Courage, physical vitality, leadership quality, and a capacity to act decisively. Thrives in competitive or pioneering environments."),
-        "Mercury": ("Bhadra",     "Bhadra Yoga — Mercury in power. Exceptional communication, learning ability, business acumen. A sharp, adaptable mind that processes complexity with ease."),
-        "Jupiter": ("Hamsa",      "Hamsa Yoga — Jupiter in power. Wisdom, spiritual depth, good fortune, and natural teaching ability. The person radiates ethical clarity and expansive vision."),
-        "Venus":   ("Malavya",    "Malavya Yoga — Venus in power. Refined taste, artistic sensibility, relational grace, and material comfort. Life carries a quality of beauty and harmony."),
-        "Saturn":  ("Sasha",      "Sasha Yoga — Saturn in power. Discipline, endurance, organizational mastery, and authority earned through effort. A slow but formidable builder."),
+        "Mars":    ("Ruchaka",  "Ruchaka Yoga -- Mars in power. Courage, physical vitality, leadership quality, and a capacity to act decisively."),
+        "Mercury": ("Bhadra",   "Bhadra Yoga -- Mercury in power. Exceptional communication, learning ability, business acumen."),
+        "Jupiter": ("Hamsa",    "Hamsa Yoga -- Jupiter in power. Wisdom, spiritual depth, good fortune, and natural teaching ability."),
+        "Venus":   ("Malavya",  "Malavya Yoga -- Venus in power. Refined taste, artistic sensibility, relational grace, and material comfort."),
+        "Saturn":  ("Sasha",    "Sasha Yoga -- Saturn in power. Discipline, endurance, organizational mastery, and authority earned through effort."),
     }
     for planet, (yoga_name, yoga_desc) in mahapurusha.items():
         pos = planets[planet]
         in_kendra = pos.house_from_lagna in KENDRA_HOUSES
         in_power = pos.is_exalted or pos.is_own_sign
         if in_kendra and in_power:
-            yogas.append(Yoga(
-                name=yoga_name,
-                category="pancha_mahapurusha",
-                planets_involved=[planet],
-                description=yoga_desc,
-            ))
+            yogas.append(Yoga(name=yoga_name, category="pancha_mahapurusha",
+                planets_involved=[planet], description=yoga_desc))
 
-    # ── Raja Yogas (Kendra-Trikona lord connections) ──────────
-    # When a kendra lord and a trikona lord are conjunct or the same planet
+    # Raja Yogas
     lagna_idx = RASHIS.index(lagna_sign)
     kendra_lords = set()
     trikona_lords = set()
@@ -356,136 +426,86 @@ def _detect_yogas(planets: dict[str, PlanetPosition], lagna_sign: str) -> list[Y
         if house_num in TRIKONA_HOUSES:
             trikona_lords.add((lord, house_num))
 
-    # Check for conjunctions between kendra and trikona lords
     raja_found = set()
     for kl, kh in kendra_lords:
         for tl, th in trikona_lords:
             if kl == tl:
-                # Same planet rules both kendra and trikona — strong raja yoga
                 key = frozenset([kl])
                 if key not in raja_found:
                     raja_found.add(key)
-                    yogas.append(Yoga(
-                        name=f"Raja Yoga ({kl})",
-                        category="raja",
+                    yogas.append(Yoga(name=f"Raja Yoga ({kl})", category="raja",
                         planets_involved=[kl],
-                        description=f"{kl} rules both a kendra (house {kh}) and a trikona (house {th}) — a powerful combination for worldly success, authority, and recognition. Life offers genuine opportunities for rise.",
-                    ))
+                        description=f"{kl} rules both a kendra (house {kh}) and a trikona (house {th}) -- a powerful combination for worldly success, authority, and recognition."))
             elif same_sign(kl, tl) if (kl in planets and tl in planets) else False:
                 key = frozenset([kl, tl])
                 if key not in raja_found:
                     raja_found.add(key)
-                    yogas.append(Yoga(
-                        name=f"Raja Yoga ({kl}-{tl})",
-                        category="raja",
+                    yogas.append(Yoga(name=f"Raja Yoga ({kl}-{tl})", category="raja",
                         planets_involved=[kl, tl],
-                        description=f"Kendra lord {kl} (house {kh}) conjunct trikona lord {tl} (house {th}) — creates conditions for meaningful achievement, leadership, or social elevation.",
-                    ))
+                        description=f"Kendra lord {kl} (house {kh}) conjunct trikona lord {tl} (house {th}) -- creates conditions for meaningful achievement, leadership, or social elevation."))
 
-    # ── Dhana Yogas (wealth) ──────────────────────────────────
-    # 2nd lord and 11th lord connected (conjunct)
+    # Dhana Yoga
     second_sign = RASHIS[(lagna_idx + 1) % 12]
     eleventh_sign = RASHIS[(lagna_idx + 10) % 12]
     lord_2 = SIGN_LORDS[second_sign]
     lord_11 = SIGN_LORDS[eleventh_sign]
     if lord_2 in planets and lord_11 in planets:
         if same_sign(lord_2, lord_11):
-            yogas.append(Yoga(
-                name="Dhana Yoga (2nd-11th)",
-                category="dhana",
+            yogas.append(Yoga(name="Dhana Yoga (2nd-11th)", category="dhana",
                 planets_involved=[lord_2, lord_11],
-                description=f"Lords of wealth (2nd house) and gains (11th house) are connected — strong potential for financial growth, resource accumulation, and material stability through effort.",
-            ))
+                description="Lords of wealth (2nd house) and gains (11th house) are connected -- strong potential for financial growth and material stability."))
 
-    # ── Neecha Bhanga Raja Yoga (cancelled debilitation) ──────
+    # Neecha Bhanga Raja Yoga
     for planet_name, pos in planets.items():
         if pos.is_debilitated and planet_name in DEBILITATION:
             deb_sign = DEBILITATION[planet_name][0]
             sign_lord = SIGN_LORDS[deb_sign]
-            # If the lord of the debilitation sign is in kendra from lagna or Moon
             if sign_lord in planets:
                 lord_house_lagna = planets[sign_lord].house_from_lagna or 0
                 lord_house_moon = _house_from_moon(planets[sign_lord].sign, planets["Moon"].sign)
                 if lord_house_lagna in KENDRA_HOUSES or lord_house_moon in KENDRA_HOUSES:
-                    yogas.append(Yoga(
-                        name=f"Neecha Bhanga ({planet_name})",
-                        category="combination",
+                    yogas.append(Yoga(name=f"Neecha Bhanga ({planet_name})", category="combination",
                         planets_involved=[planet_name, sign_lord],
-                        description=f"{planet_name}'s debilitation is cancelled by {sign_lord}'s strong placement — what appears as a weakness becomes a source of depth. Challenges in this area ultimately lead to mastery.",
-                    ))
+                        description=f"{planet_name}'s debilitation is cancelled by {sign_lord}'s strong placement -- challenges in this area ultimately lead to mastery."))
 
-    # ── Chandra-Mangal Yoga ───────────────────────────────────
+    # Chandra-Mangal Yoga
     if same_sign("Moon", "Mars"):
-        yogas.append(Yoga(
-            name="Chandra-Mangal Yoga",
-            category="lunar",
+        yogas.append(Yoga(name="Chandra-Mangal Yoga", category="lunar",
             planets_involved=["Moon", "Mars"],
-            description="Moon-Mars conjunction — gives financial acumen, emotional courage, and drive. Can bring wealth through effort and a quality of determination in pursuing goals.",
-        ))
+            description="Moon-Mars conjunction -- gives financial acumen, emotional courage, and drive."))
 
-    # ── Saraswati Yoga ────────────────────────────────────────
-    # Jupiter, Venus, Mercury in kendras/trikonas/2nd house
+    # Saraswati Yoga
     learning_planets = ["Jupiter", "Venus", "Mercury"]
     good_houses = KENDRA_HOUSES | TRIKONA_HOUSES | {2}
     if all(planets[p].house_from_lagna in good_houses for p in learning_planets if p in planets):
-        yogas.append(Yoga(
-            name="Saraswati Yoga",
-            category="combination",
+        yogas.append(Yoga(name="Saraswati Yoga", category="combination",
             planets_involved=learning_planets,
-            description="Jupiter, Venus, and Mercury well-placed — blesses with learning, eloquence, artistic talent, and refined intelligence. The person may excel in education, arts, or creative expression.",
-        ))
+            description="Jupiter, Venus, and Mercury well-placed -- blesses with learning, eloquence, artistic talent, and refined intelligence."))
 
     return yogas
 
 
-# ── Vimshottari Dasha calculation ──────────────────────────────────
+# ── Vimshottari Dasha calculation ────────────────────────────────
 
 def _calc_vimshottari(moon_longitude: float, birth_dt: datetime) -> list[DashaPeriod]:
-    """
-    Calculate all Vimshottari Mahadasha periods from birth.
-
-    The dasha sequence starts from the nakshatra lord of the natal Moon.
-    The balance of the first dasha depends on how far the Moon has
-    traveled through its nakshatra at birth.
-    """
-    # Find Moon's nakshatra and its lord
+    """Calculate all Vimshottari Mahadasha periods from birth."""
     nak_idx = int(moon_longitude / NAKSHATRA_SPAN)
     nak_lord = NAKSHATRAS[nak_idx]["lord"]
-
-    # Find position in the Vimshottari sequence
     lord_names = [d[0] for d in VIMSHOTTARI_SEQUENCE]
     start_idx = lord_names.index(nak_lord)
-
-    # Balance of first dasha: fraction of nakshatra remaining
     degree_in_nak = moon_longitude - NAKSHATRAS[nak_idx]["start"]
-    fraction_elapsed = degree_in_nak / NAKSHATRA_SPAN
-    fraction_remaining = 1.0 - fraction_elapsed
+    fraction_remaining = 1.0 - (degree_in_nak / NAKSHATRA_SPAN)
 
     periods = []
     current_dt = birth_dt
-
-    for i in range(9):  # 9 dashas in the cycle
+    for i in range(9):
         idx = (start_idx + i) % 9
         lord, total_years = VIMSHOTTARI_SEQUENCE[idx]
-
-        if i == 0:
-            # First dasha: only the remaining balance
-            years = total_years * fraction_remaining
-        else:
-            years = float(total_years)
-
+        years = total_years * fraction_remaining if i == 0 else float(total_years)
         days = years * 365.25
         end_dt = current_dt + timedelta(days=days)
-
-        periods.append(DashaPeriod(
-            lord=lord,
-            start=current_dt,
-            end=end_dt,
-            years=round(years, 4),
-        ))
-
+        periods.append(DashaPeriod(lord=lord, start=current_dt, end=end_dt, years=round(years, 4)))
         current_dt = end_dt
-
     return periods
 
 
@@ -494,76 +514,50 @@ def _find_current_dasha(periods: list[DashaPeriod], target_dt: datetime) -> Dash
     for period in periods:
         if period.start <= target_dt < period.end:
             return period
-    # If beyond all periods, return the last one
     return periods[-1]
 
 
 def _calc_antardasha(mahadasha: DashaPeriod, target_dt: datetime) -> AntarDasha:
-    """
-    Calculate the antardasha (sub-period) within a mahadasha.
-    Antardashas follow the same Vimshottari sequence starting from the mahadasha lord.
-    """
+    """Calculate the antardasha within a mahadasha."""
     lord_names = [d[0] for d in VIMSHOTTARI_SEQUENCE]
     lord_years = {d[0]: d[1] for d in VIMSHOTTARI_SEQUENCE}
     start_idx = lord_names.index(mahadasha.lord)
-
     maha_total_days = (mahadasha.end - mahadasha.start).total_seconds() / 86400
-
     current_dt = mahadasha.start
-
     for i in range(9):
         idx = (start_idx + i) % 9
         antar_lord = lord_names[idx]
-
-        # Antardasha duration = (mahadasha_years * antardasha_years / 120) scaled to actual maha duration
         proportion = lord_years[antar_lord] / VIMSHOTTARI_TOTAL_YEARS
         antar_days = maha_total_days * proportion
         end_dt = current_dt + timedelta(days=antar_days)
-
         if current_dt <= target_dt < end_dt:
-            return AntarDasha(
-                mahadasha_lord=mahadasha.lord,
-                antardasha_lord=antar_lord,
-                start=current_dt,
-                end=end_dt,
-            )
-
+            return AntarDasha(mahadasha_lord=mahadasha.lord, antardasha_lord=antar_lord,
+                              start=current_dt, end=end_dt)
         current_dt = end_dt
-
-    # Fallback: return last antardasha
-    return AntarDasha(
-        mahadasha_lord=mahadasha.lord,
-        antardasha_lord=lord_names[(start_idx + 8) % 9],
-        start=current_dt,
-        end=mahadasha.end,
-    )
+    return AntarDasha(mahadasha_lord=mahadasha.lord,
+                      antardasha_lord=lord_names[(start_idx + 8) % 9],
+                      start=current_dt, end=mahadasha.end)
 
 
-# ── Public API ─────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════
+# Public API
+# ═══════════════════════════════════════════════════════════════════
 
 def compute_natal_chart(
     birth_date: date,
-    birth_time: str,        # "HH:MM" format, or "unknown"
+    birth_time: str,
     latitude: float,
     longitude: float,
     as_of: datetime | None = None,
 ) -> NatalChart:
-    """
-    Compute full natal chart from birth details.
+    """Compute full natal chart from birth details.
 
-    Args:
-        birth_date: Date of birth
-        birth_time: Time of birth as "HH:MM" or "unknown" (defaults to noon)
-        latitude: Birth location latitude
-        longitude: Birth location longitude
-        as_of: Date to calculate current dasha for (defaults to now)
-
-    Returns:
-        NatalChart with all planet positions, Moon data, and dasha info
+    Uses DE440 as primary engine. All Vedic layers (dasha, yoga, houses,
+    dignities, navamsha, panchanga) are engine-independent.
     """
     # Parse birth time
     if birth_time == "unknown":
-        hour, minute = 12, 0  # Default to noon
+        hour, minute = 12, 0
     else:
         parts = birth_time.split(":")
         hour, minute = int(parts[0]), int(parts[1])
@@ -575,45 +569,55 @@ def compute_natal_chart(
     utc_dt = local_dt.astimezone(pytz.UTC)
 
     # Julian day
-    jd = _to_julian_day(utc_dt)
+    jd = _de440_to_julian_day(utc_dt)
 
-    # Calculate Lagna (Ascendant)
-    lagna_deg, lagna_sign, lagna_nak = _calc_lagna(jd, latitude, longitude)
+    # ── Position computation (DE440) ──
+    all_positions = _de440_calc_positions(jd)
+    lagna_deg, lagna_sign, lagna_nak = _de440_calc_lagna(jd, latitude, longitude)
 
-    # Calculate all planet positions
+    # ── Swiss backup (commented out) ──
+    # jd = _swiss_to_julian_day(utc_dt)
+    # planets = {}
+    # for planet_name, planet_id in PLANET_IDS.items():
+    #     lng, retro = _swiss_calc_planet(jd, planet_id)
+    #     planets[planet_name] = _longitude_to_position(planet_name, lng, retro)
+    # lagna_deg, lagna_sign, lagna_nak = _swiss_calc_lagna(jd, latitude, longitude)
+
+    # Build planet positions from DE440 output
     planets = {}
-    for planet_name, planet_id in PLANET_IDS.items():
-        lng, retro = _calc_planet(jd, planet_id)
-        planets[planet_name] = _longitude_to_position(planet_name, lng, retro)
+    for planet_name, (sid_lon, retro) in all_positions.items():
+        planets[planet_name] = _longitude_to_position(planet_name, sid_lon, retro)
 
-    # Ketu = Rahu + 180°
+    # Ketu = Rahu + 180
     rahu_lng = planets["Rahu"].longitude
     ketu_lng = (rahu_lng + 180) % 360
-    planets["Ketu"] = _longitude_to_position("Ketu", ketu_lng, planets["Rahu"].retrograde)
+    planets["Ketu"] = _longitude_to_position("Ketu", ketu_lng, False)
 
     # Moon data (primary anchor)
     moon = planets["Moon"]
 
-    # Set house positions from both Moon and Lagna
+    # ── Engine-independent Vedic layers ──
+
+    # House positions
     for p in planets.values():
         p.house_from_moon = _house_from_moon(p.sign, moon.sign)
         p.house_from_lagna = _house_from_lagna(p.sign, lagna_sign)
 
-    # Set dignities (exalted, debilitated, own sign)
+    # Dignities
     _set_dignities(planets)
 
-    # Navamsha (D-9) for each planet
+    # Navamsha
     from llm.engine.varga import navamsha_sign
     for p in planets.values():
         p.navamsha_sign = navamsha_sign(p.longitude)
 
-    # House lordships (from Lagna)
+    # House lordships
     house_lords = _calc_house_lords(lagna_sign, planets)
 
-    # Yoga detection
+    # Yogas
     yogas = _detect_yogas(planets, lagna_sign)
 
-    # Vimshottari Dasha
+    # Dasha
     all_dashas = _calc_vimshottari(moon.longitude, utc_dt)
     now = as_of or datetime.now(pytz.UTC)
     current_maha = _find_current_dasha(all_dashas, now)
@@ -624,25 +628,14 @@ def compute_natal_chart(
     panch = compute_panchanga(birth_date, latitude, longitude)
 
     return NatalChart(
-        birth_dt=utc_dt,
-        latitude=latitude,
-        longitude=longitude,
-        timezone=tz_name,
-        julian_day=jd,
-        lagna_sign=lagna_sign,
-        lagna_degree=round(lagna_deg % 30, 2),
-        lagna_nakshatra=lagna_nak,
-        planets=planets,
-        house_lords=house_lords,
-        yogas=yogas,
-        moon_sign=moon.sign,
-        moon_degree=moon.degree_in_sign,
-        moon_nakshatra=moon.nakshatra,
-        moon_nakshatra_pada=moon.nakshatra_pada,
+        birth_dt=utc_dt, latitude=latitude, longitude=longitude,
+        timezone=tz_name, julian_day=jd,
+        lagna_sign=lagna_sign, lagna_degree=round(lagna_deg % 30, 2), lagna_nakshatra=lagna_nak,
+        planets=planets, house_lords=house_lords, yogas=yogas,
+        moon_sign=moon.sign, moon_degree=moon.degree_in_sign,
+        moon_nakshatra=moon.nakshatra, moon_nakshatra_pada=moon.nakshatra_pada,
         moon_nakshatra_lord=moon.nakshatra_lord,
-        all_mahadashas=all_dashas,
-        mahadasha=current_maha,
-        antardasha=current_antar,
+        all_mahadashas=all_dashas, mahadasha=current_maha, antardasha=current_antar,
         panchanga=panch,
     )
 
@@ -651,23 +644,28 @@ def compute_transits(
     target_date: date,
     natal_moon_sign: str | None = None,
 ) -> TransitSnapshot:
-    """
-    Compute current planetary positions for a given date.
+    """Compute current planetary positions for a given date.
 
-    Args:
-        target_date: Date to compute transits for
-        natal_moon_sign: If provided, calculates house_from_moon for each planet
-
-    Returns:
-        TransitSnapshot with all planet positions
+    Uses DE440 as primary engine.
     """
-    # Use noon UTC for transit calculations
-    jd = swe.julday(target_date.year, target_date.month, target_date.day, 12.0)
+    jd = date_to_jd(target_date.year, target_date.month, target_date.day, 12.0)
+
+    # ── DE440 positions ──
+    all_positions = _de440_calc_positions(jd)
+
+    # ── Swiss backup (commented out) ──
+    # jd = swe.julday(target_date.year, target_date.month, target_date.day, 12.0)
+    # planets = {}
+    # for planet_name, planet_id in PLANET_IDS.items():
+    #     lng, retro = _swiss_calc_planet(jd, planet_id)
+    #     pos = _longitude_to_position(planet_name, lng, retro)
+    #     if natal_moon_sign:
+    #         pos.house_from_moon = _house_from_moon(pos.sign, natal_moon_sign)
+    #     planets[planet_name] = pos
 
     planets = {}
-    for planet_name, planet_id in PLANET_IDS.items():
-        lng, retro = _calc_planet(jd, planet_id)
-        pos = _longitude_to_position(planet_name, lng, retro)
+    for planet_name, (sid_lon, retro) in all_positions.items():
+        pos = _longitude_to_position(planet_name, sid_lon, retro)
         if natal_moon_sign:
             pos.house_from_moon = _house_from_moon(pos.sign, natal_moon_sign)
         planets[planet_name] = pos
@@ -675,7 +673,7 @@ def compute_transits(
     # Ketu
     rahu_lng = planets["Rahu"].longitude
     ketu_lng = (rahu_lng + 180) % 360
-    ketu = _longitude_to_position("Ketu", ketu_lng, planets["Rahu"].retrograde)
+    ketu = _longitude_to_position("Ketu", ketu_lng, False)
     if natal_moon_sign:
         ketu.house_from_moon = _house_from_moon(ketu.sign, natal_moon_sign)
     planets["Ketu"] = ketu
@@ -683,9 +681,7 @@ def compute_transits(
     moon = planets["Moon"]
 
     return TransitSnapshot(
-        date=target_date,
-        planets=planets,
-        moon_sign=moon.sign,
-        moon_nakshatra=moon.nakshatra,
+        date=target_date, planets=planets,
+        moon_sign=moon.sign, moon_nakshatra=moon.nakshatra,
         moon_house_from_natal=moon.house_from_moon,
     )

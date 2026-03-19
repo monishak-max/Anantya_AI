@@ -8,29 +8,36 @@ Ported from the DE440 engine's vedic/transit.py, adapted for Swiss Ephemeris.
 """
 from __future__ import annotations
 
+import os
+import sys
 from datetime import date, datetime, timedelta
 from typing import Optional
 
-import swisseph as swe
+from llm.engine.constants import RASHIS, NAKSHATRAS, NAKSHATRA_SPAN
 
-from llm.engine.constants import RASHIS, NAKSHATRAS, NAKSHATRA_SPAN, PLANET_IDS
-
-swe.set_sid_mode(swe.SIDM_LAHIRI)
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "hope_this_is_final"))
+from pl7astro.astro.julian import date_to_jd
 
 SIGN_SPAN = 30.0
 
 
 def _planet_longitude_at(planet_name: str, jd: float) -> float:
-    """Get sidereal longitude of a planet at a given Julian Day."""
-    planet_id = PLANET_IDS.get(planet_name)
-    if planet_id is None:
-        if planet_name == "Ketu":
-            rahu_id = PLANET_IDS["Rahu"]
-            result = swe.calc_ut(jd, rahu_id, swe.FLG_SIDEREAL)
-            return (result[0][0] + 180) % 360
+    """Get sidereal longitude of a planet at a given Julian Day via DE440."""
+    from llm.engine.calculator import _de440_pipe
+
+    body_map = {"Sun": 1, "Moon": 2, "Mars": 3, "Mercury": 4,
+                "Jupiter": 5, "Venus": 6, "Saturn": 7, "Rahu": 8}
+
+    if planet_name == "Ketu":
+        result = _de440_pipe.calc_all(jd, timezone=0.0, latitude=0.0, longitude=0.0, ayanamsha_system=1)
+        return (result.planets[8].sidereal_lon + 180) % 360
+
+    body_id = body_map.get(planet_name)
+    if body_id is None:
         return 0.0
-    result = swe.calc_ut(jd, planet_id, swe.FLG_SIDEREAL)
-    return result[0][0] % 360
+
+    result = _de440_pipe.calc_all(jd, timezone=0.0, latitude=0.0, longitude=0.0, ayanamsha_system=1)
+    return result.planets[body_id].sidereal_lon
 
 
 def _check_crossing(lon1: float, lon2: float, target: float) -> bool:
@@ -149,15 +156,16 @@ def find_sign_ingresses(
     Returns:
         list of {"jd": float, "date": str, "sign": str, "sign_index": int, "direction": int}
     """
-    start_jd = swe.julday(start_date.year, start_date.month, start_date.day, 0.0)
-    end_jd = swe.julday(end_date.year, end_date.month, end_date.day, 24.0)
+    start_jd = date_to_jd(start_date.year, start_date.month, start_date.day, 0.0)
+    end_jd = date_to_jd(end_date.year, end_date.month, end_date.day, 24.0)
 
     results = []
     for sign_idx in range(12):
         boundary = sign_idx * SIGN_SPAN
         crossings = find_all_crossings(planet_name, start_jd, end_jd, boundary)
         for jd, direction in crossings:
-            y, m, d, h = swe.revjul(jd)
+            from pl7astro.astro.julian import jd_to_date
+            y, m, d, h = jd_to_date(jd)
             results.append({
                 "jd": jd,
                 "date": f"{y}-{m:02d}-{d:02d}",
@@ -181,15 +189,16 @@ def find_nakshatra_ingresses(
     Returns:
         list of {"jd": float, "date": str, "nakshatra": str, "index": int, "direction": int}
     """
-    start_jd = swe.julday(start_date.year, start_date.month, start_date.day, 0.0)
-    end_jd = swe.julday(end_date.year, end_date.month, end_date.day, 24.0)
+    start_jd = date_to_jd(start_date.year, start_date.month, start_date.day, 0.0)
+    end_jd = date_to_jd(end_date.year, end_date.month, end_date.day, 24.0)
 
     results = []
     for nak_idx in range(27):
         boundary = nak_idx * NAKSHATRA_SPAN
         crossings = find_all_crossings(planet_name, start_jd, end_jd, boundary)
         for jd, direction in crossings:
-            y, m, d, h = swe.revjul(jd)
+            from pl7astro.astro.julian import jd_to_date
+            y, m, d, h = jd_to_date(jd)
             results.append({
                 "jd": jd,
                 "date": f"{y}-{m:02d}-{d:02d}",
@@ -208,7 +217,7 @@ def next_moon_sign_change(from_date: date) -> dict:
     Returns:
         {"jd": float, "date": str, "from_sign": str, "to_sign": str}
     """
-    start_jd = swe.julday(from_date.year, from_date.month, from_date.day, 0.0)
+    start_jd = date_to_jd(from_date.year, from_date.month, from_date.day, 0.0)
     current_lon = _planet_longitude_at("Moon", start_jd)
     current_sign_idx = int(current_lon / 30) % 12
     next_sign_idx = (current_sign_idx + 1) % 12
@@ -218,7 +227,8 @@ def next_moon_sign_change(from_date: date) -> dict:
     jd, direction = find_exact_crossing("Moon", start_jd, end_jd, boundary, 0.0001)
 
     if jd > 0:
-        y, m, d, h = swe.revjul(jd)
+        from pl7astro.astro.julian import jd_to_date
+        y, m, d, h = jd_to_date(jd)
         return {
             "jd": jd,
             "date": f"{y}-{m:02d}-{d:02d}",

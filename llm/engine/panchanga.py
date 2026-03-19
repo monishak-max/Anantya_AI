@@ -13,13 +13,15 @@ Ported from the DE440 engine's vedic/yoga.py panchanga logic.
 """
 from __future__ import annotations
 
+import os
+import sys
 from datetime import date
-
-import swisseph as swe
 
 from llm.engine.constants import RASHIS, NAKSHATRAS, NAKSHATRA_SPAN
 
-swe.set_sid_mode(swe.SIDM_LAHIRI)
+# Use DE440 pipeline for Sun/Moon positions
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "hope_this_is_final"))
+from pl7astro.astro.julian import date_to_jd
 
 # ── Yoga names (27 luni-solar yogas) ─────────────────────────────
 
@@ -82,13 +84,13 @@ def compute_panchanga(target_date: date, latitude: float = 0.0, longitude: float
     Returns:
         dict with tithi, nakshatra, yoga, karana, vara and their details
     """
-    jd = swe.julday(target_date.year, target_date.month, target_date.day, 12.0)
+    jd = date_to_jd(target_date.year, target_date.month, target_date.day, 12.0)
 
-    # Get sidereal Sun and Moon positions
-    sun_result = swe.calc_ut(jd, swe.SUN, swe.FLG_SIDEREAL)
-    moon_result = swe.calc_ut(jd, swe.MOON, swe.FLG_SIDEREAL)
-    sun_lon = sun_result[0][0] % 360
-    moon_lon = moon_result[0][0] % 360
+    # Get sidereal Sun and Moon positions via DE440 pipeline
+    from llm.engine.calculator import _de440_pipe
+    result = _de440_pipe.calc_all(jd, timezone=0.0, latitude=0.0, longitude=0.0, ayanamsha_system=1)
+    sun_lon = result.planets[1].sidereal_lon
+    moon_lon = result.planets[2].sidereal_lon
 
     # 1. TITHI -- based on Moon-Sun angular distance
     tithi_data = _calc_tithi(moon_lon, sun_lon)
