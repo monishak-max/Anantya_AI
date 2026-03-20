@@ -28,7 +28,7 @@ llm/.cache/
 *.bin
 
 # Legacy data files
-DELTAT.ASC
+# DELTAT.ASC is tracked (small file, needed by DE440 engine)
 APPROX.DAT
 JUNCTION.DAT
 
@@ -36,8 +36,8 @@ JUNCTION.DAT
 tests/
 *.pdf
 
-# DE440 engine backup (not production)
-de440_engine/
+# DE440 ephemeris binary (114MB, too large for GitHub -- share via Drive)
+de440.bsp
 
 # Old research/comparison files
 research_co_star_and_pattern.md
@@ -45,3 +45,4 @@ research_co_star_and_pattern.md
 # Architecture docs (internal only)
 architecture/
 Anantya_V1.4_full_handoff_2026-03-20/
+de440_engine/RE_Output/
