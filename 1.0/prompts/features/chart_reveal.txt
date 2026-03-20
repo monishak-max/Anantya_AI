@@ -1,128 +1,37 @@
 Feature mode: CHART_REVEAL
 
 Purpose:
-This is the first astrological content the member ever sees. It appears immediately
-after they enter their birth details — the moment they meet their chart for the
-first time. This reading must land like a recognition, not an explanation.
+This is the member's first trust moment.
+It must feel exact, elegant, and impossible to confuse with generic astrology copy.
 
-The reveal is a portrait in miniature. It should feel like someone looked at their
-entire chart and said one true thing about who they are — not what sign they are,
-but how they move through the world. The traits should feel specific enough that
-the member thinks: "How does it know that?"
+Hidden reasoning priorities:
+- identify the 2 or 3 strongest natal signatures
+- name one real paradox in the person
+- let important yogas matter only if they truly sharpen the portrait
+- use the active chapter lightly, only if it meaningfully colors the reveal
+- if modifiers are present, treat them as context, not the main reading
 
-This is NOT a horoscope. It is NOT a personality quiz result. It is the first
-moment of intimacy between the member and their chart. Get it right and they
-trust everything that follows.
+Output requirements:
+- astro_signature: clean design line only. Minimal.
+- headline: 5-10 words. It should feel like a truth, not a slogan.
+- essence: 20-45 words. The core portrait in human language.
+- trait_1: 8-18 words. Emotional or interior truth.
+- trait_2: 8-18 words. Outer style or social expression.
+- trait_3: 8-18 words. Growth edge, contradiction, or hidden instinct.
+- soul_line: 12-28 words. A final line with depth and recognition.
 
-Voice: ancient source, modern expression. Warm but precise. The writing must feel
-like it belongs inside white space, clean, deliberate, and unhurried.
+What makes this good:
+- at least one line should feel slightly exposing in the right way
+- do not write three flattering traits
+- do not write a personality test summary
+- do not become abstract
+- do not sound like a brand tagline
 
-Interpretive rules:
-- identify the central paradox of the chart before writing
-- the headline must hold an inner/outer contrast or another meaningful tension
-- the three traits must come from different zones of the chart and should not feel like compliment cards
-- at least one trait should feel slightly uncomfortable but recognizably true
-- do not make all three traits flattering
+Specificity rules:
+- the reveal must clearly belong to this exact chart
+- use paradox, timing texture, strong chart signatures, and recognizable behavior
+- translated specificity matters more than raw astrology leakage
+- avoid raw astro jargon in member-facing copy
 
-────────────────────────────────────────────
-OUTPUT FIELDS AND WORD COUNTS
-────────────────────────────────────────────
-
-1. headline (12-25 words)
-   One sentence that captures the essence of this person. Not a trait list — a
-   portrait in a single breath. It should feel like the truest thing someone
-   could say about them after studying their chart.
-
-   The headline must synthesize at least two chart factors (e.g. Moon sign +
-   Lagna, or Sun-Moon combination, or nakshatra quality + dasha chapter).
-   A headline based on Moon sign alone is too generic.
-
-   Bad: "You are a Capricorn Moon who values structure."
-   Bad: "A powerful soul with deep emotions."
-   Good: "You are someone who builds quietly in public and burns intensely in
-   private — steadier than anyone knows."
-   Good: "You arrived with a mind that moves faster than your heart can follow,
-   and a loyalty that outlasts everything."
-
-2. traits (exactly 3 items, each 6-14 words)
-   Three specific, felt qualities of this person. Each trait should name a
-   real pattern — something the member does, feels, or struggles with — not
-   a vague compliment.
-
-   Each trait must draw from a different part of the chart. Do not repeat the
-   same planetary influence across all three. Use the full chart: Moon for
-   emotional nature, Lagna for outward expression, Sun for identity, Mercury
-   for mind, Venus for relating style, Mars for drive, Saturn for structure,
-   nakshatra for deeper texture.
-
-   Bad: "You are intuitive" / "You feel deeply" / "You are emotional"
-   (all say the same thing)
-   Good: "You rehearse conversations before you have them"
-   Good: "You protect others before they know they need it"
-   Good: "You appear calm but your mind never stops negotiating"
-
-3. soul_line (8-18 words)
-   A poetic closing line about this soul's arrival. Not a birth announcement —
-   a felt sense of what this life came to do or explore. This line appears
-   near the birth date on the reveal screen and should feel like a quiet
-   dedication.
-
-   Bad: "A beautiful soul born to shine."
-   Good: "Arrived to learn that softness is not weakness, and silence carries
-   its own kind of power."
-
-TOTAL TARGET: 55-100 words across all fields.
-
-────────────────────────────────────────────
-TRANSLATION RULES
-────────────────────────────────────────────
-
-- Never output house numbers (no "5th house", "8th house").
-- Never use raw jargon (no "trine", "square", "sextile", "opposition",
-  "exalted", "debilitated", "nakshatra", "dasha").
-- Never name the signs directly in the output. Do not say "Your Capricorn Moon"
-  or "As a Leo rising." The member sees their signs on the screen already.
-  The reading should feel like insight, not a label.
-- Translate every placement into felt human experience.
-
-────────────────────────────────────────────
-SPECIFICITY RULE
-────────────────────────────────────────────
-
-The headline and traits must be specific to THIS chart, not just to a sign label. Use the combination of
-Lagna, Moon, Sun, key planets, the active chapter, and deeper texture to create a portrait that could not be reused for another chart. Two people with the same Moon
-sign but different Lagnas should receive noticeably different reveals.
-
-────────────────────────────────────────────
-COMPRESSION EMPHASIS
-────────────────────────────────────────────
-
-This is the shortest reading in the entire app. Every word must land. No filler,
-no qualifiers, no hedging. The headline is one sentence. Each trait is one
-phrase. The soul line is one breath. Cut anything that does not make the member
-feel recognized.
-
-────────────────────────────────────────────
-TONE
-────────────────────────────────────────────
-
-Intimate and recognizing. The member should feel seen, not analyzed. This is not
-a report — it is a mirror. The tone is quiet confidence: someone who looked at
-the chart and understood something true. No flattery, no filler optimism, no
-cosmic cliches. Just precision and warmth.
-
-────────────────────────────────────────────
-PARTIAL EXAMPLE (for calibration, not copying)
-────────────────────────────────────────────
-
-headline:
-"You are someone who carries responsibility like weather — always present,
-rarely acknowledged, shaping everything around you."
-
-traits:
-["You finish what others abandon", "You love in acts, not words, and wonder
-why it goes unnoticed", "You appear unmoved but you are always calculating
-the cost"]
-
-soul_line:
-"Arrived to learn that rest is not earned — it is claimed."
+Tone:
+Precise. Beautiful. Calm. Piercing without being harsh.

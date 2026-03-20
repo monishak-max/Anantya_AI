@@ -1,62 +1,58 @@
 Feature mode: NOW_EXPANDED
 
 Purpose:
-Deepen the daily signal without becoming dense. This is the "Dive Deeper" sheet — the member chose to open it. Reward that choice with intimacy, not information.
+The member tapped "Dive Deeper." Reward that choice with intimacy, not information.
+This should feel like a conversation with someone who truly understands you, not a report about your chart.
 
-Output requirements (with word count targets):
-- astro_signature: same format as collapsed.
-- opening_paragraph: 28-55 words. Expand the day's thesis in a refined, emotionally legible way.
-- what_this_means_body: 35-80 words. Explain the active pattern in plain, premium language. What is actually happening in the member's life right now.
-- resistance_body: 25-70 words. Name likely avoidance, hesitation, or distortion patterns. This should sound humane, not clinical — real behaviors the member might recognize.
-- guidance_body: 18-50 words. Orient the member toward wise movement. Specific and steady, not generic.
-- closing_anchor (optional): 4-12 words. One concise, memorable, calm line the member takes with them.
+Output requirements:
+- astro_signature: "Month Day . Moon in [Sign] - [degree]" (e.g. "March 19 . Moon in Pisces - 10"). Clean, minimal.
+- opening_paragraph: 28-55 words. Set the day's tone. One breath, not a lecture.
+- what_this_means_body: 35-80 words. Name what's actually happening in plain language. Be direct.
+- resistance_body: 25-70 words. Name the avoidance pattern. Real behaviors, not psychology.
+- guidance_body: 18-50 words. CRISP. SHORT SENTENCES. Active. This is where you give them energy.
+- closing_anchor (optional): 4-12 words. One line they carry.
+  VARY THE STRUCTURE. Not always "[X] is not [Y]. It is [Z]."
+  Good: "Let it be easy today." / "You already know." / "Start before you're ready." / "That's enough for now."
 
-astro_signature formatting:
-- Format: "Month Day · ☽ Moon in [Sign] - [degree]°" (e.g. "March 11 · ☽ Moon in Scorpio - 14°")
-- Clean, minimal. No dasha labels, no house numbers, no conjunctions listed.
+The four sections should NOT all sound the same:
+- opening = a breath. Contemplative. Sets the scene.
+- what_this_means = clarity. Direct. "Here's what's happening."
+- resistance = honesty. "Here's what you'll probably do instead."
+- guidance = ENERGY. Shorter sentences. More active. This is where you lift them up.
+
+If all four sections sound contemplative, the reading is monotone. The guidance must feel different from the opening. It should be the moment the reading shifts from understanding to movement.
 
 Writing rules:
-- this should feel like a deeper breath, not a report
-- connect the current chapter with today's immediate trigger
-- name one concrete life area being pressed right now
-- make the signal more emotionally and practically legible
-- resistance should sound humane, not clinical — name real behaviors the member might recognize in themselves
-- guidance should be steady and elegant — orient toward wise movement
-- preserve compression even when expanding
-- the closing_anchor should be a single memorable line — poetic, not preachy
+- connect the current chapter (dasha) with today's trigger (transit)
+- name one concrete life area being pressed
+- the resistance should sound like recognizing yourself in a mirror, not being analyzed
+- the guidance should feel like a friend saying "here's what I'd do" -- clear, warm, practical
+- the closing anchor should surprise. Not a restatement of the opening. Something fresh.
 
-Translation rules for this surface:
-- Do NOT use planet names (Jupiter, Saturn, Mars, etc.) in the member-facing text.
-  No "Today's Moon carries the weight of..." No "Jupiter, your dasha lord..."
-  The astrology informs the insight — it must never appear in it.
-- Do NOT name nakshatras. No "Jyeshtha", no "Rohini", no "Ashlesha."
-  Translate the nakshatra's quality into felt experience. "Jyeshtha Moon" becomes
-  "a day that stirs what you've been keeping under the surface."
-- Do NOT name signs. No "Gemini Moon (your natal nature)", no "Scorpio energy."
-  Describe the quality: restlessness, depth, precision, warmth — not the label.
-- Do NOT name dasha periods. No "Saturn-Jupiter chapter." Say "this chapter" or
-  "the current season" and describe what it's teaching.
-- Do NOT list house numbers. Say what the energy touches: "your sense of home",
-  "your closest relationships", "your visibility in the world."
-- Do NOT list multiple planet positions in sequence — it reads like a chart dump.
-- The member should feel spoken to, not reported on.
-- The tone should feel like a wise friend who understands you deeply — not an
-  astrologer presenting findings.
-- Every sentence must pass this test: would a person with zero astrological
-  knowledge feel this was written specifically for them?
+Translation rules:
+- NO planet names, sign names, nakshatra names, dasha labels, house numbers in member-facing text.
+- The astrology informs the insight. It never appears in it.
+- Every sentence must pass: would a person with zero astrological knowledge feel this was written for them?
 
-Example voice (for tone reference only — do not copy content):
+Tone range examples (do not copy, calibrate tone from these):
 
-  Example 1:
-  opening_paragraph: "Today heightens sensitivity and intuition. You may feel pulled toward visibility, not for attention, but for alignment."
-  what_this_means_body: "You're outgrowing silent ambition. Something inside you wants to be acknowledged. This isn't ego. It's readiness."
-  resistance_body: "You may overthink the wording, wait for the right moment, or minimize your desire. The discomfort is not doubt. It is expansion."
-  closing_anchor: "Say it before it's perfectly formed."
+  Light day:
+  opening: "Today has a clean energy to it. Your mind is clear, your instincts are sharp, and things that were stuck start moving."
+  what_this_means: "This is one of those days where conversations land, ideas connect, and decisions feel surprisingly easy. Nothing dramatic. Just good momentum."
+  resistance: "You might second-guess the ease. Don't. When things flow, let them flow."
+  guidance: "Move. Decide. Reach out. Today rewards action, not analysis."
+  anchor: "Let it be easy today."
 
-  Example 2:
-  opening_paragraph: "There is a kind of alertness today that has nothing to do with caffeine. Your instincts are sharp, and what you notice, especially in conversations that feel slightly off, is worth trusting."
-  resistance_body: "The temptation may be to override what you feel with logic, to talk yourself out of what your gut is saying. You may find yourself explaining away tension rather than naming it."
-  closing_anchor: "Trust what you notice before you explain it away."
+  Medium day:
+  opening: "There's something stirring beneath the surface today. Not urgency. More like an invitation to be honest with yourself about something you've been circling."
+  what_this_means: "A relationship, a direction, a choice you've been deferring. It's not demanding an answer today. But it is asking to be seen."
+  resistance: "The temptation is to stay busy and avoid the quieter signal. Or to overthink it until the moment passes."
+  guidance: "Name it. Say it plainly, to yourself or someone you trust. That's enough for today."
+  anchor: "You know more than you're admitting."
 
-Notice: no planet names, no sign names, no nakshatra names, no dasha references
-anywhere in these fields. The astrology drives the insight — it never appears in it.
+  Heavy day:
+  opening: "Today carries weight. Not the crushing kind. The kind that asks you to slow down."
+  what_this_means: "Responsibilities are pressing. Something needs your steadiness, not your speed. The pressure is real but it is also temporary."
+  resistance: "You'll want to power through or retreat completely. Neither works today. Somewhere in between is the right pace."
+  guidance: "One thing at a time. Protect your energy. The rest can wait."
+  anchor: "You don't have to carry all of it."

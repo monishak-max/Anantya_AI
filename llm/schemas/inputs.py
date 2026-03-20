@@ -51,6 +51,7 @@ class PlanetPlacement(BaseModel):
     is_exalted: bool = False
     is_debilitated: bool = False
     is_own_sign: bool = False
+    navamsha_sign: Optional[str] = Field(default=None, description="Navamsha sign placement for premium refinement")
 
 
 class HouseLordship(BaseModel):
@@ -65,6 +66,9 @@ class YogaInfo(BaseModel):
     category: str
     planets_involved: list[str]
     description: str
+    strength: Optional[str] = Field(default=None, description="Internal rating such as strong, moderate, mixed, fragile")
+    activation_status: Optional[str] = Field(default=None, description="Internal timing note such as active now, background, delayed, partially active")
+    relevance: Optional[str] = Field(default=None, description="Internal translation of why this yoga matters in lived life")
 
 
 class LagnaInfo(BaseModel):
@@ -73,13 +77,46 @@ class LagnaInfo(BaseModel):
     nakshatra: str
 
 
+class PanchangaContext(BaseModel):
+    tithi: Optional[str] = None
+    vara: Optional[str] = None
+    yoga: Optional[str] = None
+    karana: Optional[str] = None
+    nakshatra: Optional[str] = None
+    translated_summary: Optional[str] = Field(default=None, description="Human-language summary of the panchanga tone")
+
+
+class ContextModifier(BaseModel):
+    kind: str = Field(description="Type of modifier: remedy, gemstone, life_stage, maturity, environment, practice, circumstance")
+    label: str = Field(description="Short label for the modifier")
+    effect: str = Field(description="Internal description of how it may modify expression")
+    confidence: Optional[str] = Field(default=None, description="Internal confidence such as low, medium, high")
+
+
+class PeriodWindow(BaseModel):
+    label: str = Field(description="Short name for the window")
+    start: date
+    end: date
+    note: str = Field(description="Internal note about the window's tone or threshold")
+
+
 class UserProfile(BaseModel):
     name: str
     natal_moon: NatalMoon
     dasha: DashaPeriod
     natal_signature_summary: Optional[str] = Field(default=None, description="Translated internal chart summary for the model only. Human language, not jargon.")
     current_chapter_summary: Optional[str] = Field(default=None, description="Translated summary of the active dasha chapter for the model only.")
+    present_center_summary: Optional[str] = Field(default=None, description="Hidden note anchoring the reading in the member's present lived experience.")
+    past_pattern_summary: Optional[str] = Field(default=None, description="Hidden note describing how the same chart pattern may have shown up earlier in life.")
+    future_arc_summary: Optional[str] = Field(default=None, description="Hidden note describing how the same pattern may mature or unfold later.")
     interpretive_anchors: list[str] = Field(default_factory=list, description="Short translated chart anchors the model should weave into the reading.")
+    dominant_themes: list[str] = Field(default_factory=list, description="Top repeated themes in the chart for internal reasoning only.")
+    reasoning_hierarchy_summary: Optional[str] = Field(default=None, description="Hidden reasoning note that states natal promise first, dasha activation second, transit trigger third.")
+    conflict_resolution_summary: Optional[str] = Field(default=None, description="Hidden note describing mixed signals and how they should be resolved.")
+    confidence_summary: Optional[str] = Field(default=None, description="Hidden note describing which claims deserve strong language and which need softer framing.")
+    navamsha_summary: Optional[str] = Field(default=None, description="Hidden premium refinement note from Navamsha.")
+    panchanga_birth_summary: Optional[str] = Field(default=None, description="Hidden note about birth-day panchanga tone if relevant.")
+    external_modifiers: list[ContextModifier] = Field(default_factory=list, description="Optional real-world or remedial modifiers that affect expression but never override chart truth.")
     lagna: Optional[LagnaInfo] = None
     planets: Optional[list[PlanetPlacement]] = None
     house_lords: Optional[list[HouseLordship]] = None
@@ -93,12 +130,21 @@ class TodayContext(BaseModel):
     today_focus_summary: Optional[str] = Field(default=None, description="Translated summary of today's main experiential focus for the model only.")
     active_life_areas: list[str] = Field(default_factory=list, description="Translated life areas most active now, for the model only.")
     interpretive_anchors: list[str] = Field(default_factory=list, description="Short translated timing anchors the model should weave into the reading.")
+    panchanga: Optional[PanchangaContext] = Field(default=None, description="Today's panchanga texture in internal translated form.")
+    timing_windows: list[PeriodWindow] = Field(default_factory=list, description="Upcoming threshold windows or weighted dates relevant to this surface.")
 
 
 class PartnerProfile(BaseModel):
     name: str
     natal_moon: NatalMoon
     dasha: Optional[DashaPeriod] = None
+    natal_signature_summary: Optional[str] = Field(default=None, description="Hidden translated summary of the partner chart.")
+    current_chapter_summary: Optional[str] = Field(default=None, description="Hidden summary of the partner's current chapter.")
+    interpretive_anchors: list[str] = Field(default_factory=list, description="Hidden anchors for the partner chart.")
+    dominant_themes: list[str] = Field(default_factory=list, description="Top repeated themes in the partner chart.")
+    navamsha_summary: Optional[str] = Field(default=None, description="Hidden premium refinement note from the partner Navamsha.")
+    lagna: Optional[LagnaInfo] = None
+    planets: Optional[list[PlanetPlacement]] = None
 
 
 # ── Composite inputs per surface ──────────────────────────────────
@@ -123,6 +169,8 @@ class UnionInput(BaseModel):
     user: UserProfile
     partner: PartnerProfile
     today: TodayContext
+    relationship_summary: Optional[str] = Field(default=None, description="Hidden synastry translation describing the bond's central dynamic.")
+    shared_growth_edges: list[str] = Field(default_factory=list, description="Hidden relationship tensions or lessons to guide deeper reads.")
 
 
 class ChartRevealInput(BaseModel):
@@ -139,3 +187,5 @@ class PeriodOverviewInput(BaseModel):
     period: str = Field(description="'weekly' or 'monthly'")
     period_start: date
     period_end: date
+    period_focus_summary: Optional[str] = Field(default=None, description="Hidden summary of the broader period arc.")
+    key_windows: list[PeriodWindow] = Field(default_factory=list, description="Important windows inside the period.")

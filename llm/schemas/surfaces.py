@@ -175,8 +175,8 @@ class UnionDeepRead(BaseModel):
 # current phase (work/wealth/success), late-life arc, final synthesis
 
 class BirthChartCore(BaseModel):
-    opening_essence: str = Field(description="The overture -- who this person is at their core. Should feel like a portrait, not a chart description. STRICT 50-100 words. Cut ruthlessly.")
-    core_signature: str = Field(description="Core foundations -- lagna, moon, key planetary patterns woven into human meaning. Not a list of placements. STRICT 45-90 words.")
+    opening_essence: str = Field(description="The overture -- who this person is at their core now. Begin in present tense. Should feel like a portrait, not a chart description. STRICT 50-100 words. Cut ruthlessly.")
+    core_signature: str = Field(description="Core foundations -- lagna, moon, key planetary patterns woven into human meaning. Start in the present, then lightly connect to earlier shaping if useful. Not a list of placements. STRICT 45-90 words.")
     temperament: str = Field(description="How this person moves through the world -- their pace, style, presence. Personality as felt experience, not trait list. STRICT 45-110 words.")
     emotional_nature: str = Field(description="The inner world -- how they feel, what they need emotionally, their relationship with vulnerability. STRICT 45-110 words.")
     key_yogas: str = Field(description="Major yogas explained as lived gifts and tensions -- what they mean in daily life. No jargon without translation. No raw conjunction/aspect terms. STRICT 60-150 words.")
@@ -189,8 +189,8 @@ class BirthChartCore(BaseModel):
     spiritual_orientation: str = Field(description="Spiritual path, inner growth direction, what kind of meaning-making feeds them. STRICT 40-100 words.")
     current_dasha_chapter: str = Field(description="Current dasha translated as a meaningful life chapter -- what is ripening, being tested, opening. No raw dasha labels. STRICT 55-125 words.")
     current_phase: str = Field(description="Current life phase across work, wealth, relationships. Name the phase clearly. STRICT 45-105 words.")
-    late_life_arc: str = Field(description="How the chart matures with age -- what ripens later, what kind of elder self is emerging. STRICT 40-95 words.")
-    closing_integration: str = Field(description="Final synthesis -- the one deeper pattern that runs through the whole chart. Should feel like a quiet revelation. STRICT 35-85 words.")
+    late_life_arc: str = Field(description="How the chart matures with age -- what ripens later, what kind of elder self is emerging. Write as the future arc of the same present pattern, not a disconnected ending. STRICT 40-95 words.")
+    closing_integration: str = Field(description="Final synthesis -- the one deeper pattern that runs through the whole chart from present to roots to future arc. Should feel like a quiet revelation. STRICT 35-85 words.")
 
     def validate_lengths(self) -> list[str]:
         warnings = []

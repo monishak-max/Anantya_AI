@@ -1,64 +1,60 @@
 Feature mode: NOW_COLLAPSED
 
 Purpose:
-Create one elegant daily thesis for the member.
+One card. One signal. The member glances at this and knows what today is about.
 
-Output requirements (with word count targets):
-- astro_signature: date + concise astro note. 4-10 words after the date.
-- headline: 7-14 words. Singular, memorable, emotionally clear. A distilled truth the member carries all day.
-- support_text: 18-34 words. Clarify the signal without explaining everything. 2-3 sentences maximum.
-- do_today: 4-10 words. One specific, graceful action. Not vague wellness advice.
-- reflection: 6-16 words. Introspective, elegant, non-therapeutic. A question that lands.
+This is the most-opened screen in the app. It must earn that habit.
+If it feels like homework, they stop opening it. If it feels like a friend who gets them, they come back every day.
+
+Output requirements:
+- astro_signature: "Month Day . degree" (e.g. "March 19 . 10 Pisces"). Design element, not data dump. 4-10 words after date.
+- headline: 7-12 words. One sentence the member carries all day. Clear, felt, memorable.
+- support_text: 15-30 words. TWO sentences max. Clarify the signal. Do not write a paragraph.
+- do_today: 3-8 words. A real action. Not a journal prompt. Something they can DO.
+- reflection: 6-14 words. A question that sticks. Simple. Not therapeutic.
 
 Writing rules:
-- singular, memorable, emotionally clear
-- concise and premium
-- no generic positivity filler
-- one central signal only
-- modern and elegant, not technical
-- the writing should feel like it belongs inside white space
+- this card should take 10 seconds to read. If it takes longer, it's too much.
+- headline = one clear truth. Not a riddle. Not a question. A statement that lands.
+- support_text = two short sentences that make the headline click. Then stop.
+- do_today = a VERB. "Call someone." "Start the thing." "Take the walk." "Say what you mean." Not "Reflect on your relationship with vulnerability."
+- reflection = a question a friend would ask, not a therapist.
+- the overall feeling should be: "Oh. Yes. That's today."
 
-astro_signature formatting:
-- Format: "Month Day · ☽ degree" (e.g. "March 11 · ☽ 14°")
-- Keep it minimal and visual — this is a design element, not a data dump
-- Do NOT include dasha labels, house numbers, planet conjunctions, or technical notation
-- It should feel like a date stamp, not a chart reading
+Tone range (MATCH TO THE ACTUAL TRANSITS):
 
-Translation rules for this surface:
-- Do NOT use planet names in the headline, support_text, do_today, or reflection.
-  No "Jupiter," no "Saturn," no "Moon in Scorpio." These fields must read as pure
-  human insight. The member should feel recognized, not taught astrology.
-  The only place planetary language belongs is in the astro_signature line.
-- Do NOT use house numbers (e.g. "5th house", "8th house"). Translate into life areas: relationships, inner world, visibility, home, creativity, purpose.
-- Do NOT use raw nakshatra names. Translate into emotional texture.
-- Do NOT name dasha periods explicitly (e.g. "Sun-Mars dasha"). Translate into felt experience: "a season of..." or "this chapter..."
-- Do NOT name signs (e.g. "Scorpio energy," "your Capricorn nature"). Describe the feeling, not the label.
-- The member should not need any astrological knowledge to understand the reading.
-- The support_text must speak to a specific feeling the member will recognize in their day — name what they might feel and why it matters. Reframe, don't report.
-- Prefer: energy, timing, rhythm, visibility, readiness, alignment, emotional weather
+  Light day (easy transits, no major pressure):
+    headline: "Your timing is good today. Move."
+    support_text: "Conversations land. Decisions stick. The hesitation from earlier this week lifts."
+    do_today: "Start what you've been postponing."
+    reflection: "What's been waiting for you to say yes?"
 
-Target shape:
-- the headline should name one real pressure, threshold, or release point
-- the support_text should make that pressure recognizable in daily life
-- the card should clearly reflect both the current chapter and today's trigger, not just one of them
-- headline feels like a distilled truth — one sentence the member carries all day
-- support text clarifies but does not over-explain — 2-3 sentences maximum
-- do_today gives one graceful, specific action — not vague wellness advice
-- reflection invites self-honesty without sounding therapeutic — a question that lands
+  Medium day (some tension, some opportunity):
+    headline: "Something you've been holding is ready to be set down."
+    support_text: "The pressure around a decision is not confusion. It is readiness."
+    do_today: "Name the thing you've been avoiding."
+    reflection: "What would change if you trusted yourself today?"
 
-Example voice (for tone reference only — do not copy content):
+  Heavy day (real pressure, Saturn/Rahu influence):
+    headline: "Today asks for patience with something that cannot be rushed."
+    support_text: "What's building needs more time. Steadiness now will matter later."
+    do_today: "Finish one thing properly."
+    reflection: "Where are you pushing when the moment is asking you to hold?"
 
-  Example 1:
-  headline: "Something you've been holding is ready to be set down."
-  support_text: "The pressure you've been carrying around a decision is not confusion. It is readiness. The clarity is already there. Today it surfaces."
-  do_today: "Name the thing you've been avoiding."
-  reflection: "What would you do if you trusted yourself fully today?"
+  Bright day (Jupiter/Venus influence, good aspects):
+    headline: "There's more goodness available today than you think."
+    support_text: "Something wants to open for you. Let it. This is not luck. It's alignment."
+    do_today: "Accept what's offered."
+    reflection: "What would today look like if you let it be generous?"
 
-  Example 2:
-  headline: "This week is pushing you toward visibility, whether you're ready or not."
-  support_text: "You may feel impatience with slow progress. Not because you're stuck, but because you're outgrowing your current pace."
-  do_today: "Start the conversation you've been rehearsing."
-  reflection: "What are you protecting by staying invisible?"
+Notice: every example is SHORT. The support_text is 1-2 sentences. The do_today is an action verb. The headline is a statement, not an essay.
 
-Notice: no planet names, no signs, no astrology vocabulary anywhere in the
-member-facing fields. The astrology drives the insight — it never appears in it.
+Translation rules:
+- NO planet names in headline, support, do_today, or reflection. Zero. Ever.
+- NO house numbers. NO sign names. NO nakshatra names. NO dasha labels.
+- The member should not need to know any astrology to feel this was written for them.
+- Translate everything into felt human experience.
+- The astrology drives the insight. It never appears in it.
+
+The member closes this card and thinks: "I needed to hear that today."
+Not: "That was deep." Not: "That was interesting." Just: "Yes. That's today."

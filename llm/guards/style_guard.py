@@ -382,7 +382,7 @@ class AstroStyleGuard:
             "birth_chart_core": 3,
             "weekly_overview": 1,
             "monthly_overview": 1,
-            "chart_reveal": 0,  # 55-100 word poetic output -- too short for anchor matching
+            "chart_reveal": 1,
         }
         threshold = min_anchor_thresholds.get(surface, 1)
 
@@ -420,12 +420,35 @@ class AstroStyleGuard:
                 anchors.append(value)
 
         anchors.extend(user.get("interpretive_anchors") or [])
+        anchors.extend(user.get("dominant_themes") or [])
+        for value in [
+            user.get("reasoning_hierarchy_summary"),
+            user.get("conflict_resolution_summary"),
+            user.get("confidence_summary"),
+            user.get("navamsha_summary"),
+            user.get("panchanga_birth_summary"),
+            (today.get("panchanga") or {}).get("translated_summary"),
+            input_data.get("relationship_summary"),
+            input_data.get("period_focus_summary"),
+        ]:
+            if value:
+                anchors.append(value)
         anchors.extend(today.get("active_life_areas") or [])
         anchors.extend(today.get("interpretive_anchors") or [])
+        for window in today.get("timing_windows") or []:
+            if window.get("note"):
+                anchors.append(window["note"])
+        for window in input_data.get("key_windows") or []:
+            if window.get("note"):
+                anchors.append(window["note"])
 
         if partner.get("current_chapter_summary"):
             anchors.append(partner["current_chapter_summary"])
+        if partner.get("natal_signature_summary"):
+            anchors.append(partner["natal_signature_summary"])
+        anchors.extend(partner.get("dominant_themes") or [])
         anchors.extend(partner.get("interpretive_anchors") or [])
+        anchors.extend(input_data.get("shared_growth_edges") or [])
 
         # Deduplicate while preserving order
         out = []

@@ -1,7 +1,7 @@
 Feature mode: MANDALA_CARDS
 
 Purpose:
-Translate the member’s top active influences into short premium cards. Each card is a window into one activation — a transit or pattern that is alive in the member’s life right now.
+Translate the member’s top active influences into short premium cards. Each card is a window into one activation - a transit or pattern that is alive in the member’s life right now.
 
 Output requirements per card:
 - activation_marker
@@ -18,18 +18,18 @@ Writing rules:
 - each card must represent a meaningfully different life area or inner tension
 - rank by present relevance, then by experiential intensity
 - card_title should be translated: not "Mars transits 4th house" but "Your inner foundations are being stirred"
-- card_body should name how this shows up in daily life — concrete, recognizable, not abstract
+- card_body should name how this shows up in daily life - concrete, recognizable, not abstract
 - CRITICAL: card_body must be 18-45 words. This is a card, not an essay. Compress the insight into 2-3 sentences maximum. If you need more, the insight is too diffuse.
 - each card should reflect a distinct life area or energetic pattern
 - prioritize relevance, experiential intensity, and variety
 - no duplicate themes across the card set
 - the tone should feel like a notification from a wise friend, not a chart reading
-- do not use the word "activation" in the card_title or card_body — that is the system concept, not member-facing language
+- do not use the word "activation" in the card_title or card_body - that is the system concept, not member-facing language
 
 Word count targets per card:
 - activation_marker: 4-12 words
 - card_title: 5-12 words
-- card_body: 18-45 words (CRITICAL — enforce this strictly)
+- card_body: 18-45 words (CRITICAL - enforce this strictly)
 - cta (optional): 2-5 words
 
 Card stack rules:
@@ -37,7 +37,7 @@ Card stack rules:
 - No duplicate themes across cards
 - Rank by present relevance and experiential intensity
 
-Example card (for tone reference only — do not copy content):
+Example card (for tone reference only - do not copy content):
   activation_marker: "Saturn in 7th · 2 months"
   card_title: "Your closest bonds are asking for honesty"
   card_body: "Relationships that matter are quietly restructuring. You may feel the weight of unspoken things. This is not crisis. It is clarity arriving on its own schedule. Let it."

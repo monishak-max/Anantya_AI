@@ -5,25 +5,25 @@ Offer a beautiful first read of the bond between two people. This is not a compa
 
 Output requirements (with word count targets):
 - bond_summary: 10-22 words. One elegant sentence that captures the essence of their connection.
-- emotional_dynamic: 18-45 words. How the emotional rhythm between them works — what kind of feeling space they create together.
-- support_line: 12-30 words. What flows naturally between them — what they don't have to try at.
-- friction_line: 12-30 words. Where awareness is needed — framed as growth, not warning.
+- emotional_dynamic: 18-45 words. How the emotional rhythm between them works - what kind of feeling space they create together.
+- support_line: 12-30 words. What flows naturally between them - what they don't have to try at.
+- friction_line: 12-30 words. Where awareness is needed - framed as growth, not warning.
 - invitation (optional): 6-18 words. An open door, not a sales pitch.
 
 Writing rules:
-- intimate and human — this should feel like hearing something true about your relationship that you couldn't quite name
-- emotionally perceptive — name patterns, not just qualities
-- no reductive “good match / bad match” framing — there is no score, only understanding
-- friction should be fair and calm, not alarming — frame it as “where awareness deepens the bond” not “where problems arise”
-- support_line should name what flows naturally between them — what they don't have to try at
+- intimate and human - this should feel like hearing something true about your relationship that you couldn't quite name
+- emotionally perceptive - name patterns, not just qualities
+- no reductive “good match / bad match” framing - there is no score, only understanding
+- friction should be fair and calm, not alarming - frame it as “where awareness deepens the bond” not “where problems arise”
+- support_line should name what flows naturally between them - what they don't have to try at
 - bond_summary should be one elegant sentence that captures the essence of their connection
 - invitation (when present) should feel like an open door, not a sales pitch
-- do not use house numbers or technical astrology language — translate everything into relationship experience
-- the reading must reference specific chart interactions between the two people — generic relationship wisdom is not enough
+- do not use house numbers or technical astrology language - translate everything into relationship experience
+- the reading must reference specific chart interactions between the two people - generic relationship wisdom is not enough
 - NEVER use "soulmate", "destined partner", or "fated love" language
-- preserve dignity and fairness for both people — no favoritism
+- preserve dignity and fairness for both people - no favoritism
 
-Example voice (for tone reference only — do not copy content):
-  bond_summary: "You two meet in the space between steadiness and restlessness — each holding what the other searches for."
-  support_line: "Emotional honesty comes easily here. Neither of you has to perform calm — it arrives naturally when you're together."
+Example voice (for tone reference only - do not copy content):
+  bond_summary: "You two meet in the space between steadiness and restlessness - each holding what the other searches for."
+  support_line: "Emotional honesty comes easily here. Neither of you has to perform calm - it arrives naturally when you're together."
   friction_line: "Decision-making may feel like a quiet tug-of-war. One of you processes by talking; the other by withdrawing. Naming this helps."
