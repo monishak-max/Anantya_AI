@@ -12,7 +12,7 @@ from pathlib import Path
 from llm.core.config import Surface
 from llm.guards.style_guard import Violation, ViolationType
 from llm.core.generator import AstroGenerator, GenerationResult
-from llm.engine.calculator import compute_natal_chart, compute_transits, NatalChart
+from llm.engine.calculator import compute_natal_chart, compute_transits, NatalChart, TransitSnapshot
 from llm.engine.bridge import (
     build_now_input,
     build_mandala_input,
@@ -22,19 +22,47 @@ from llm.engine.bridge import (
     build_birth_chart_input,
     build_period_overview_input,
 )
+from llm.engine.rules import (
+    load_rules_from_file,
+    RuleEvaluator,
+    RuleValidationError,
+)
+from llm.engine.rules.context import build_rule_context
 
 logger = logging.getLogger("astro.pipeline")
 CACHE_DIR = Path(__file__).parent / ".cache"
 
 
 class AstroPipeline:
-    def __init__(self, api_key: str | None = None, cache_enabled: bool = True):
+    DEFAULT_RULES_PATH = Path(__file__).parent / "engine" / "rules" / "sample_rules.json"
+
+    def __init__(self, api_key: str | None = None, cache_enabled: bool = True, rules_path: str | Path | None = None):
         self._api_key = api_key
         self._generator: AstroGenerator | None = None
         self.cache_enabled = cache_enabled
         self._chart_cache: dict[str, NatalChart] = {}
+        self._rules = self._load_rules(rules_path)
         if cache_enabled:
             CACHE_DIR.mkdir(exist_ok=True)
+
+    def _load_rules(self, rules_path: str | Path | None = None) -> list:
+        path = Path(rules_path) if rules_path else self.DEFAULT_RULES_PATH
+        try:
+            return load_rules_from_file(path)
+        except (RuleValidationError, FileNotFoundError, Exception) as exc:
+            logger.warning("Rule engine unavailable (%s): %s", type(exc).__name__, exc)
+            return []
+
+    def _evaluate_rules(self, chart: NatalChart, transits: TransitSnapshot | None = None) -> list:
+        if not self._rules:
+            return []
+        try:
+            ctx = build_rule_context(chart, transits)
+            evaluator = RuleEvaluator(self._rules)
+            return evaluator.evaluate(ctx)
+        except Exception as exc:
+            logger.warning("Rule evaluation failed: %s", exc)
+            return []
 
     @property
     def generator(self) -> AstroGenerator:
@@ -124,7 +152,8 @@ class AstroPipeline:
             return self._hydrate_cached_result(cached)
         chart = self._get_chart(name, birth_date, birth_time, lat, lng)
         transits = compute_transits(target, chart.moon_sign)
-        input_data = build_now_input(chart, transits, name, external_modifiers=external_modifiers)
+        rule_matches = self._evaluate_rules(chart, transits)
+        input_data = build_now_input(chart, transits, name, external_modifiers=external_modifiers, rule_matches=rule_matches)
         result = self.generator.generate(Surface.NOW_COLLAPSED, input_data)
         self._save_to_cache("now_collapsed", token, target, result)
         return result
@@ -137,7 +166,8 @@ class AstroPipeline:
             return self._hydrate_cached_result(cached)
         chart = self._get_chart(name, birth_date, birth_time, lat, lng)
         transits = compute_transits(target, chart.moon_sign)
-        input_data = build_now_input(chart, transits, name, external_modifiers=external_modifiers)
+        rule_matches = self._evaluate_rules(chart, transits)
+        input_data = build_now_input(chart, transits, name, external_modifiers=external_modifiers, rule_matches=rule_matches)
         result = self.generator.generate(Surface.NOW_EXPANDED, input_data)
         self._save_to_cache("now_expanded", token, target, result)
         return result
@@ -150,7 +180,8 @@ class AstroPipeline:
             return self._hydrate_cached_result(cached)
         chart = self._get_chart(name, birth_date, birth_time, lat, lng)
         transits = compute_transits(target, chart.moon_sign)
-        input_data = build_mandala_input(chart, transits, name, external_modifiers=external_modifiers)
+        rule_matches = self._evaluate_rules(chart, transits)
+        input_data = build_mandala_input(chart, transits, name, external_modifiers=external_modifiers, rule_matches=rule_matches)
         result = self.generator.generate(Surface.MANDALA_CARDS, input_data)
         self._save_to_cache("mandala_cards", token, target, result)
         return result
@@ -164,7 +195,8 @@ class AstroPipeline:
         chart = self._get_chart(name, birth_date, birth_time, lat, lng)
         partner_chart = self._get_chart(partner_name, partner_birth_date, partner_birth_time, partner_lat, partner_lng)
         transits = compute_transits(target, chart.moon_sign)
-        input_data = build_union_input(chart, partner_chart, transits, name, partner_name, deep=False, external_modifiers=external_modifiers)
+        rule_matches = self._evaluate_rules(chart, transits)
+        input_data = build_union_input(chart, partner_chart, transits, name, partner_name, deep=False, external_modifiers=external_modifiers, rule_matches=rule_matches)
         result = self.generator.generate(Surface.UNION_SNAPSHOT, input_data)
         self._save_to_cache("union_snapshot", token, target, result)
         return result
@@ -175,7 +207,8 @@ class AstroPipeline:
         if cached:
             return self._hydrate_cached_result(cached)
         chart = self._get_chart(name, birth_date, birth_time, lat, lng)
-        input_data = build_chart_reveal_input(chart, name, external_modifiers=external_modifiers)
+        rule_matches = self._evaluate_rules(chart)
+        input_data = build_chart_reveal_input(chart, name, external_modifiers=external_modifiers, rule_matches=rule_matches)
         result = self.generator.generate(Surface.CHART_REVEAL, input_data)
         self._save_to_cache("chart_reveal", token, birth_date, result)
         return result
@@ -186,7 +219,8 @@ class AstroPipeline:
         if cached:
             return self._hydrate_cached_result(cached)
         chart = self._get_chart(name, birth_date, birth_time, lat, lng)
-        input_data = build_birth_chart_input(chart, name, external_modifiers=external_modifiers)
+        rule_matches = self._evaluate_rules(chart)
+        input_data = build_birth_chart_input(chart, name, external_modifiers=external_modifiers, rule_matches=rule_matches)
         result = self.generator.generate(Surface.BIRTH_CHART_CORE, input_data)
         self._save_to_cache("birth_chart_core", token, birth_date, result)
         return result
@@ -199,7 +233,8 @@ class AstroPipeline:
             return self._hydrate_cached_result(cached)
         chart = self._get_chart(name, birth_date, birth_time, lat, lng)
         transits = compute_transits(target, chart.moon_sign)
-        input_data = build_mandala_deep_read_input(chart, transits, name, activation_planet, external_modifiers=external_modifiers)
+        rule_matches = self._evaluate_rules(chart, transits)
+        input_data = build_mandala_deep_read_input(chart, transits, name, activation_planet, external_modifiers=external_modifiers, rule_matches=rule_matches)
         result = self.generator.generate(Surface.MANDALA_DEEP_READ, input_data)
         self._save_to_cache("mandala_deep_read", token, target, result)
         return result
@@ -213,7 +248,8 @@ class AstroPipeline:
         chart = self._get_chart(name, birth_date, birth_time, lat, lng)
         partner_chart = self._get_chart(partner_name, partner_birth_date, partner_birth_time, partner_lat, partner_lng)
         transits = compute_transits(target, chart.moon_sign)
-        input_data = build_union_input(chart, partner_chart, transits, name, partner_name, deep=True, external_modifiers=external_modifiers)
+        rule_matches = self._evaluate_rules(chart, transits)
+        input_data = build_union_input(chart, partner_chart, transits, name, partner_name, deep=True, external_modifiers=external_modifiers, rule_matches=rule_matches)
         result = self.generator.generate(Surface.UNION_DEEP_READ, input_data)
         self._save_to_cache("union_deep_read", token, target, result)
         return result
@@ -226,7 +262,8 @@ class AstroPipeline:
             return self._hydrate_cached_result(cached)
         chart = self._get_chart(name, birth_date, birth_time, lat, lng)
         transits = compute_transits(target, chart.moon_sign)
-        input_data = build_period_overview_input(chart, transits, name, "weekly", target_date=target, external_modifiers=external_modifiers)
+        rule_matches = self._evaluate_rules(chart, transits)
+        input_data = build_period_overview_input(chart, transits, name, "weekly", target_date=target, external_modifiers=external_modifiers, rule_matches=rule_matches)
         result = self.generator.generate(Surface.WEEKLY_OVERVIEW, input_data)
         self._save_to_cache("weekly_overview", token, target, result)
         return result
@@ -239,7 +276,8 @@ class AstroPipeline:
             return self._hydrate_cached_result(cached)
         chart = self._get_chart(name, birth_date, birth_time, lat, lng)
         transits = compute_transits(target, chart.moon_sign)
-        input_data = build_period_overview_input(chart, transits, name, "monthly", target_date=target, external_modifiers=external_modifiers)
+        rule_matches = self._evaluate_rules(chart, transits)
+        input_data = build_period_overview_input(chart, transits, name, "monthly", target_date=target, external_modifiers=external_modifiers, rule_matches=rule_matches)
         result = self.generator.generate(Surface.MONTHLY_OVERVIEW, input_data)
         self._save_to_cache("monthly_overview", token, target, result)
         return result
@@ -270,10 +308,10 @@ class AstroPipeline:
             "planets": {
                 pname: {
                     "sign": pos.sign,
-                    "degree": pos.degree_in_sign,
+                    "degree": float(pos.degree_in_sign),
                     "nakshatra": pos.nakshatra,
-                    "house": pos.house_from_moon,
-                    "retrograde": pos.retrograde,
+                    "house": int(pos.house_from_moon) if pos.house_from_moon is not None else None,
+                    "retrograde": bool(pos.retrograde),
                     "navamsha_sign": pos.navamsha_sign,
                 }
                 for pname, pos in chart.planets.items()

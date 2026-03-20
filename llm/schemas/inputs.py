@@ -86,6 +86,18 @@ class PanchangaContext(BaseModel):
     translated_summary: Optional[str] = Field(default=None, description="Human-language summary of the panchanga tone")
 
 
+class RuleInterpretation(BaseModel):
+    rule_id: str = Field(description="Unique identifier of the matched rule")
+    theme: str = Field(description="Thematic label from the rule output")
+    life_area: str = Field(description="Life area affected")
+    trait: str = Field(description="Core trait description")
+    intensity: str = Field(description="low, medium, or high")
+    shadow: str = Field(default="", description="Shadow expression of the trait")
+    priority: int = Field(description="Rule priority 0-100")
+    evidence: str = Field(default="", description="Matched field=value pairs")
+    tags: list[str] = Field(default_factory=list, description="Rule tags")
+
+
 class ContextModifier(BaseModel):
     kind: str = Field(description="Type of modifier: remedy, gemstone, life_stage, maturity, environment, practice, circumstance")
     label: str = Field(description="Short label for the modifier")
@@ -116,6 +128,7 @@ class UserProfile(BaseModel):
     confidence_summary: Optional[str] = Field(default=None, description="Hidden note describing which claims deserve strong language and which need softer framing.")
     navamsha_summary: Optional[str] = Field(default=None, description="Hidden premium refinement note from Navamsha.")
     panchanga_birth_summary: Optional[str] = Field(default=None, description="Hidden note about birth-day panchanga tone if relevant.")
+    rule_interpretations: list[RuleInterpretation] = Field(default_factory=list, description="Structured rule engine interpretations matched from the natal chart and transits.")
     external_modifiers: list[ContextModifier] = Field(default_factory=list, description="Optional real-world or remedial modifiers that affect expression but never override chart truth.")
     lagna: Optional[LagnaInfo] = None
     planets: Optional[list[PlanetPlacement]] = None

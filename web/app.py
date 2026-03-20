@@ -240,4 +240,4 @@ def geocode():
 
 if __name__ == "__main__":
     print("\n  ✦  Astro Web - http://localhost:5001\n")
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5001, host="0.0.0.0")

@@ -13,6 +13,7 @@ from datetime import date, timedelta
 from llm.engine.calculator import NatalChart, TransitSnapshot, PlanetPosition
 from llm.engine.panchanga import compute_panchanga
 from llm.engine.transits import next_moon_sign_change
+from llm.engine.rules.evaluator import RuleMatch
 from llm.schemas.inputs import (
     UserProfile,
     NatalMoon,
@@ -35,6 +36,7 @@ from llm.schemas.inputs import (
     PanchangaContext,
     ContextModifier,
     PeriodWindow,
+    RuleInterpretation,
 )
 
 
@@ -395,6 +397,23 @@ def _yoga_relevance(chart: NatalChart, description: str, planets: list[str]) -> 
     return f"{prefix}: {description}"
 
 
+def _rule_matches_to_interpretations(matches: list[RuleMatch]) -> list[RuleInterpretation]:
+    return [
+        RuleInterpretation(
+            rule_id=m.rule.id,
+            theme=m.rule.output.theme,
+            life_area=m.rule.output.life_area,
+            trait=m.rule.output.trait,
+            intensity=m.rule.output.intensity,
+            shadow=m.rule.output.shadow,
+            priority=m.priority,
+            evidence=m.evidence_summary,
+            tags=list(m.rule.tags),
+        )
+        for m in matches
+    ]
+
+
 def _chart_to_base_profile(chart: NatalChart, name: str, external_modifiers: list[dict] | list[ContextModifier] | None = None) -> dict:
     return {
         "name": name,
@@ -431,8 +450,12 @@ def chart_to_user_profile(
     name: str,
     full: bool = False,
     external_modifiers: list[dict] | list[ContextModifier] | None = None,
+    rule_matches: list[RuleMatch] | None = None,
 ) -> UserProfile:
     base = _chart_to_base_profile(chart, name, external_modifiers)
+
+    if rule_matches:
+        base["rule_interpretations"] = _rule_matches_to_interpretations(rule_matches)
 
     if full:
         base["lagna"] = LagnaInfo(
@@ -628,12 +651,12 @@ def _period_focus_summary(chart: NatalChart, transits: TransitSnapshot, period: 
     )
 
 
-def build_now_input(chart: NatalChart, transits: TransitSnapshot, name: str, external_modifiers: list[dict] | None = None) -> NowInput:
-    return NowInput(user=chart_to_user_profile(chart, name, full=False, external_modifiers=external_modifiers), today=transits_to_today_context(transits, chart.moon_sign))
+def build_now_input(chart: NatalChart, transits: TransitSnapshot, name: str, external_modifiers: list[dict] | None = None, rule_matches: list[RuleMatch] | None = None) -> NowInput:
+    return NowInput(user=chart_to_user_profile(chart, name, full=False, external_modifiers=external_modifiers, rule_matches=rule_matches), today=transits_to_today_context(transits, chart.moon_sign))
 
 
-def build_mandala_input(chart: NatalChart, transits: TransitSnapshot, name: str, external_modifiers: list[dict] | None = None) -> MandalaInput:
-    return MandalaInput(user=chart_to_user_profile(chart, name, full=False, external_modifiers=external_modifiers), today=transits_to_today_context(transits, chart.moon_sign))
+def build_mandala_input(chart: NatalChart, transits: TransitSnapshot, name: str, external_modifiers: list[dict] | None = None, rule_matches: list[RuleMatch] | None = None) -> MandalaInput:
+    return MandalaInput(user=chart_to_user_profile(chart, name, full=False, external_modifiers=external_modifiers, rule_matches=rule_matches), today=transits_to_today_context(transits, chart.moon_sign))
 
 
 def build_union_input(
@@ -644,9 +667,10 @@ def build_union_input(
     partner_name: str,
     deep: bool = False,
     external_modifiers: list[dict] | None = None,
+    rule_matches: list[RuleMatch] | None = None,
 ) -> UnionInput:
     return UnionInput(
-        user=chart_to_user_profile(chart, name, full=deep, external_modifiers=external_modifiers),
+        user=chart_to_user_profile(chart, name, full=deep, external_modifiers=external_modifiers, rule_matches=rule_matches),
         partner=chart_to_partner_profile(partner_chart, partner_name, full=deep),
         today=transits_to_today_context(transits, chart.moon_sign),
         relationship_summary=_relationship_summary(chart, partner_chart),
@@ -654,12 +678,12 @@ def build_union_input(
     )
 
 
-def build_chart_reveal_input(chart: NatalChart, name: str, external_modifiers: list[dict] | None = None) -> ChartRevealInput:
-    return ChartRevealInput(user=chart_to_user_profile(chart, name, full=True, external_modifiers=external_modifiers))
+def build_chart_reveal_input(chart: NatalChart, name: str, external_modifiers: list[dict] | None = None, rule_matches: list[RuleMatch] | None = None) -> ChartRevealInput:
+    return ChartRevealInput(user=chart_to_user_profile(chart, name, full=True, external_modifiers=external_modifiers, rule_matches=rule_matches))
 
 
-def build_birth_chart_input(chart: NatalChart, name: str, external_modifiers: list[dict] | None = None) -> BirthChartInput:
-    return BirthChartInput(user=chart_to_user_profile(chart, name, full=True, external_modifiers=external_modifiers))
+def build_birth_chart_input(chart: NatalChart, name: str, external_modifiers: list[dict] | None = None, rule_matches: list[RuleMatch] | None = None) -> BirthChartInput:
+    return BirthChartInput(user=chart_to_user_profile(chart, name, full=True, external_modifiers=external_modifiers, rule_matches=rule_matches))
 
 
 def build_mandala_deep_read_input(
@@ -668,6 +692,7 @@ def build_mandala_deep_read_input(
     name: str,
     activation_planet: str = "Saturn",
     external_modifiers: list[dict] | None = None,
+    rule_matches: list[RuleMatch] | None = None,
 ) -> MandalaDeepReadInput:
     today_ctx = transits_to_today_context(transits, chart.moon_sign)
     activation = None
@@ -680,7 +705,7 @@ def build_mandala_deep_read_input(
     if activation is None:
         activation = TransitPlanet(planet="Moon", sign=transits.moon_sign, house_from_moon=transits.moon_house_from_natal or 1, retrograde=False)
     return MandalaDeepReadInput(
-        user=chart_to_user_profile(chart, name, full=False, external_modifiers=external_modifiers),
+        user=chart_to_user_profile(chart, name, full=False, external_modifiers=external_modifiers, rule_matches=rule_matches),
         today=today_ctx,
         activation=activation,
     )
@@ -693,11 +718,12 @@ def build_period_overview_input(
     period: str = "weekly",
     target_date: date | None = None,
     external_modifiers: list[dict] | None = None,
+    rule_matches: list[RuleMatch] | None = None,
 ) -> PeriodOverviewInput:
     target = target_date or transits.date
     start, end = _period_bounds(target, period)
     return PeriodOverviewInput(
-        user=chart_to_user_profile(chart, name, full=False, external_modifiers=external_modifiers),
+        user=chart_to_user_profile(chart, name, full=False, external_modifiers=external_modifiers, rule_matches=rule_matches),
         today=transits_to_today_context(transits, chart.moon_sign),
         period=period,
         period_start=start,

@@ -1,0 +1,777 @@
+[
+  {
+    "id": "natal_moon_aries",
+    "name": "Moon in Aries",
+    "category": "natal_moon",
+    "priority": 70,
+    "conditions": [{"field": "moon_sign", "op": "eq", "value": "Aries"}],
+    "output": {
+      "theme": "emotional_initiative",
+      "life_area": "emotions",
+      "trait": "Instinctive drive to act on feelings immediately",
+      "intensity": "high",
+      "shadow": "Impatience with emotional complexity or others' slower processing"
+    },
+    "tags": ["moon", "fire", "cardinal"]
+  },
+  {
+    "id": "natal_moon_taurus",
+    "name": "Moon in Taurus",
+    "category": "natal_moon",
+    "priority": 70,
+    "conditions": [{"field": "moon_sign", "op": "eq", "value": "Taurus"}],
+    "output": {
+      "theme": "emotional_steadiness",
+      "life_area": "emotions",
+      "trait": "Deep need for stability, comfort, and sensory grounding",
+      "intensity": "medium",
+      "shadow": "Stubbornness or resistance to change even when growth calls"
+    },
+    "tags": ["moon", "earth", "fixed"]
+  },
+  {
+    "id": "natal_moon_gemini",
+    "name": "Moon in Gemini",
+    "category": "natal_moon",
+    "priority": 70,
+    "conditions": [{"field": "moon_sign", "op": "eq", "value": "Gemini"}],
+    "output": {
+      "theme": "mental_agility",
+      "life_area": "communication",
+      "trait": "Processes emotions through language, analysis, and restless curiosity",
+      "intensity": "medium",
+      "shadow": "Difficulty sitting with feelings without intellectualizing them"
+    },
+    "tags": ["moon", "air", "mutable"]
+  },
+  {
+    "id": "natal_moon_cancer",
+    "name": "Moon in Cancer",
+    "category": "natal_moon",
+    "priority": 70,
+    "conditions": [{"field": "moon_sign", "op": "eq", "value": "Cancer"}],
+    "output": {
+      "theme": "emotional_depth",
+      "life_area": "emotions",
+      "trait": "Profound emotional sensitivity and strong instinct to nurture",
+      "intensity": "high",
+      "shadow": "Tendency to absorb others' moods or retreat into protective shells"
+    },
+    "tags": ["moon", "water", "cardinal"]
+  },
+  {
+    "id": "natal_moon_leo",
+    "name": "Moon in Leo",
+    "category": "natal_moon",
+    "priority": 70,
+    "conditions": [{"field": "moon_sign", "op": "eq", "value": "Leo"}],
+    "output": {
+      "theme": "emotional_dignity",
+      "life_area": "creativity",
+      "trait": "Emotional warmth expressed through generosity and creative self-expression",
+      "intensity": "high",
+      "shadow": "Wounded pride or need for recognition may override authentic feeling"
+    },
+    "tags": ["moon", "fire", "fixed"]
+  },
+  {
+    "id": "natal_moon_virgo",
+    "name": "Moon in Virgo",
+    "category": "natal_moon",
+    "priority": 70,
+    "conditions": [{"field": "moon_sign", "op": "eq", "value": "Virgo"}],
+    "output": {
+      "theme": "emotional_precision",
+      "life_area": "health",
+      "trait": "Processes feelings through refinement, service, and attention to detail",
+      "intensity": "medium",
+      "shadow": "Self-criticism or anxiety from an inner voice that is never quite satisfied"
+    },
+    "tags": ["moon", "earth", "mutable"]
+  },
+  {
+    "id": "natal_moon_libra",
+    "name": "Moon in Libra",
+    "category": "natal_moon",
+    "priority": 70,
+    "conditions": [{"field": "moon_sign", "op": "eq", "value": "Libra"}],
+    "output": {
+      "theme": "relational_calibration",
+      "life_area": "relationships",
+      "trait": "Emotional equilibrium found through connection, beauty, and harmony",
+      "intensity": "medium",
+      "shadow": "Over-accommodation or loss of personal needs in the pursuit of peace"
+    },
+    "tags": ["moon", "air", "cardinal"]
+  },
+  {
+    "id": "natal_moon_scorpio",
+    "name": "Moon in Scorpio",
+    "category": "natal_moon",
+    "priority": 70,
+    "conditions": [{"field": "moon_sign", "op": "eq", "value": "Scorpio"}],
+    "output": {
+      "theme": "emotional_intensity",
+      "life_area": "emotions",
+      "trait": "Powerful emotional undercurrents and instinct for truth beneath surfaces",
+      "intensity": "high",
+      "shadow": "Difficulty releasing control or trusting when vulnerability is required"
+    },
+    "tags": ["moon", "water", "fixed"]
+  },
+  {
+    "id": "natal_moon_sagittarius",
+    "name": "Moon in Sagittarius",
+    "category": "natal_moon",
+    "priority": 70,
+    "conditions": [{"field": "moon_sign", "op": "eq", "value": "Sagittarius"}],
+    "output": {
+      "theme": "emotional_expansion",
+      "life_area": "spirituality",
+      "trait": "Optimistic emotional nature that seeks meaning and broader horizons",
+      "intensity": "medium",
+      "shadow": "Restlessness or avoidance of emotional depth through constant forward motion"
+    },
+    "tags": ["moon", "fire", "mutable"]
+  },
+  {
+    "id": "natal_moon_capricorn",
+    "name": "Moon in Capricorn",
+    "category": "natal_moon",
+    "priority": 70,
+    "conditions": [{"field": "moon_sign", "op": "eq", "value": "Capricorn"}],
+    "output": {
+      "theme": "emotional_discipline",
+      "life_area": "career",
+      "trait": "Emotional composure maintained through structure and long-range purpose",
+      "intensity": "medium",
+      "shadow": "Emotional suppression or difficulty asking for support"
+    },
+    "tags": ["moon", "earth", "cardinal"]
+  },
+  {
+    "id": "natal_moon_aquarius",
+    "name": "Moon in Aquarius",
+    "category": "natal_moon",
+    "priority": 70,
+    "conditions": [{"field": "moon_sign", "op": "eq", "value": "Aquarius"}],
+    "output": {
+      "theme": "emotional_detachment",
+      "life_area": "self",
+      "trait": "Emotional independence and instinct to observe feelings from a distance",
+      "intensity": "medium",
+      "shadow": "Intellectualizing emotions or feeling alienated from intimate connection"
+    },
+    "tags": ["moon", "air", "fixed"]
+  },
+  {
+    "id": "natal_moon_pisces",
+    "name": "Moon in Pisces",
+    "category": "natal_moon",
+    "priority": 70,
+    "conditions": [{"field": "moon_sign", "op": "eq", "value": "Pisces"}],
+    "output": {
+      "theme": "emotional_porosity",
+      "life_area": "spirituality",
+      "trait": "Deeply porous emotional nature that absorbs atmosphere and subtle feeling",
+      "intensity": "high",
+      "shadow": "Difficulty distinguishing own feelings from others' or escapist tendencies"
+    },
+    "tags": ["moon", "water", "mutable"]
+  },
+  {
+    "id": "nakshatra_ashwini",
+    "name": "Moon in Ashwini",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Ashwini"}],
+    "output": {
+      "theme": "swift_healing",
+      "life_area": "health",
+      "trait": "Speed, initiative, and natural healing instinct",
+      "intensity": "high",
+      "shadow": "Impatience or rushing past what needs time"
+    },
+    "tags": ["nakshatra", "Ketu"]
+  },
+  {
+    "id": "nakshatra_bharani",
+    "name": "Moon in Bharani",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Bharani"}],
+    "output": {
+      "theme": "creative_intensity",
+      "life_area": "creativity",
+      "trait": "Deep capacity for creation, transformation, and bearing weight",
+      "intensity": "high",
+      "shadow": "Possessiveness or difficulty letting go of what has been created"
+    },
+    "tags": ["nakshatra", "Venus"]
+  },
+  {
+    "id": "nakshatra_krittika",
+    "name": "Moon in Krittika",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Krittika"}],
+    "output": {
+      "theme": "purifying_fire",
+      "life_area": "self",
+      "trait": "Sharp discernment and capacity to cut through illusion",
+      "intensity": "high",
+      "shadow": "Harshness or critical edge that burns before it heals"
+    },
+    "tags": ["nakshatra", "Sun"]
+  },
+  {
+    "id": "nakshatra_rohini",
+    "name": "Moon in Rohini",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Rohini"}],
+    "output": {
+      "theme": "fertile_beauty",
+      "life_area": "creativity",
+      "trait": "Magnetism, artistic sensibility, and capacity to attract abundance",
+      "intensity": "medium",
+      "shadow": "Attachment to comfort or indulgence in sensory pleasure"
+    },
+    "tags": ["nakshatra", "Moon"]
+  },
+  {
+    "id": "nakshatra_mrigashira",
+    "name": "Moon in Mrigashira",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Mrigashira"}],
+    "output": {
+      "theme": "restless_seeking",
+      "life_area": "communication",
+      "trait": "Curiosity-driven search and gentle exploratory nature",
+      "intensity": "medium",
+      "shadow": "Perpetual seeking without settling or committing"
+    },
+    "tags": ["nakshatra", "Mars"]
+  },
+  {
+    "id": "nakshatra_ardra",
+    "name": "Moon in Ardra",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Ardra"}],
+    "output": {
+      "theme": "storm_and_renewal",
+      "life_area": "emotions",
+      "trait": "Emotional intensity that clears the way for deep transformation",
+      "intensity": "high",
+      "shadow": "Destructive outbursts or inability to process grief constructively"
+    },
+    "tags": ["nakshatra", "Rahu"]
+  },
+  {
+    "id": "nakshatra_punarvasu",
+    "name": "Moon in Punarvasu",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Punarvasu"}],
+    "output": {
+      "theme": "return_to_wholeness",
+      "life_area": "home",
+      "trait": "Resilience, renewal, and the instinct to restore what was lost",
+      "intensity": "medium",
+      "shadow": "Repetitive patterns or returning to situations that no longer serve"
+    },
+    "tags": ["nakshatra", "Jupiter"]
+  },
+  {
+    "id": "nakshatra_pushya",
+    "name": "Moon in Pushya",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Pushya"}],
+    "output": {
+      "theme": "nourishing_wisdom",
+      "life_area": "home",
+      "trait": "Deep nurturing capacity and natural counselor energy",
+      "intensity": "medium",
+      "shadow": "Over-giving or martyrdom through excessive caretaking"
+    },
+    "tags": ["nakshatra", "Saturn"]
+  },
+  {
+    "id": "nakshatra_ashlesha",
+    "name": "Moon in Ashlesha",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Ashlesha"}],
+    "output": {
+      "theme": "mystic_grip",
+      "life_area": "emotions",
+      "trait": "Psychological depth, hypnotic presence, and penetrating insight",
+      "intensity": "high",
+      "shadow": "Manipulation or emotional entanglement as a control mechanism"
+    },
+    "tags": ["nakshatra", "Mercury"]
+  },
+  {
+    "id": "nakshatra_magha",
+    "name": "Moon in Magha",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Magha"}],
+    "output": {
+      "theme": "ancestral_authority",
+      "life_area": "self",
+      "trait": "Natural leadership, dignity, and connection to lineage",
+      "intensity": "high",
+      "shadow": "Arrogance or clinging to status and inherited power"
+    },
+    "tags": ["nakshatra", "Ketu"]
+  },
+  {
+    "id": "nakshatra_purva_phalguni",
+    "name": "Moon in Purva Phalguni",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Purva Phalguni"}],
+    "output": {
+      "theme": "creative_enjoyment",
+      "life_area": "creativity",
+      "trait": "Love of pleasure, artistry, and celebration of life",
+      "intensity": "medium",
+      "shadow": "Laziness or avoidance of responsibility through excessive enjoyment"
+    },
+    "tags": ["nakshatra", "Venus"]
+  },
+  {
+    "id": "nakshatra_uttara_phalguni",
+    "name": "Moon in Uttara Phalguni",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Uttara Phalguni"}],
+    "output": {
+      "theme": "generous_service",
+      "life_area": "relationships",
+      "trait": "Warmth in partnership and instinct to serve through loyalty",
+      "intensity": "medium",
+      "shadow": "Over-identification with the helper role or resentment when unreciprocated"
+    },
+    "tags": ["nakshatra", "Sun"]
+  },
+  {
+    "id": "nakshatra_hasta",
+    "name": "Moon in Hasta",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Hasta"}],
+    "output": {
+      "theme": "skilled_craft",
+      "life_area": "career",
+      "trait": "Dexterity, resourcefulness, and hands-on creative intelligence",
+      "intensity": "medium",
+      "shadow": "Cunning or using skill for manipulation rather than service"
+    },
+    "tags": ["nakshatra", "Moon"]
+  },
+  {
+    "id": "nakshatra_chitra",
+    "name": "Moon in Chitra",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Chitra"}],
+    "output": {
+      "theme": "brilliant_design",
+      "life_area": "creativity",
+      "trait": "Aesthetic vision, architectural thinking, and desire to build lasting beauty",
+      "intensity": "medium",
+      "shadow": "Vanity or obsession with surface appearance over substance"
+    },
+    "tags": ["nakshatra", "Mars"]
+  },
+  {
+    "id": "nakshatra_swati",
+    "name": "Moon in Swati",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Swati"}],
+    "output": {
+      "theme": "independent_wind",
+      "life_area": "self",
+      "trait": "Independence, flexibility, and ability to adapt without losing center",
+      "intensity": "medium",
+      "shadow": "Indecision or scattering energy across too many directions"
+    },
+    "tags": ["nakshatra", "Rahu"]
+  },
+  {
+    "id": "nakshatra_vishakha",
+    "name": "Moon in Vishakha",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Vishakha"}],
+    "output": {
+      "theme": "focused_ambition",
+      "life_area": "career",
+      "trait": "Single-pointed determination and hunger for achievement",
+      "intensity": "high",
+      "shadow": "Obsessiveness or inability to enjoy what has been accomplished"
+    },
+    "tags": ["nakshatra", "Jupiter"]
+  },
+  {
+    "id": "nakshatra_anuradha",
+    "name": "Moon in Anuradha",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Anuradha"}],
+    "output": {
+      "theme": "devoted_friendship",
+      "life_area": "relationships",
+      "trait": "Deep loyalty, devotion, and capacity for enduring bonds",
+      "intensity": "medium",
+      "shadow": "Emotional dependency or suffering through unrequited devotion"
+    },
+    "tags": ["nakshatra", "Saturn"]
+  },
+  {
+    "id": "nakshatra_jyeshtha",
+    "name": "Moon in Jyeshtha",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Jyeshtha"}],
+    "output": {
+      "theme": "protective_power",
+      "life_area": "self",
+      "trait": "Elder energy, protective authority, and courage under pressure",
+      "intensity": "high",
+      "shadow": "Domineering tendencies or jealousy of others' success"
+    },
+    "tags": ["nakshatra", "Mercury"]
+  },
+  {
+    "id": "nakshatra_mula",
+    "name": "Moon in Mula",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Mula"}],
+    "output": {
+      "theme": "root_destruction",
+      "life_area": "spirituality",
+      "trait": "Capacity to uproot patterns and reach the essence of things",
+      "intensity": "high",
+      "shadow": "Nihilism or destructive tendencies that tear down without rebuilding"
+    },
+    "tags": ["nakshatra", "Ketu"]
+  },
+  {
+    "id": "nakshatra_purva_ashadha",
+    "name": "Moon in Purva Ashadha",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Purva Ashadha"}],
+    "output": {
+      "theme": "invincible_conviction",
+      "life_area": "spirituality",
+      "trait": "Unwavering faith, philosophical courage, and purifying vision",
+      "intensity": "medium",
+      "shadow": "Fanaticism or inability to accept opposing viewpoints"
+    },
+    "tags": ["nakshatra", "Venus"]
+  },
+  {
+    "id": "nakshatra_uttara_ashadha",
+    "name": "Moon in Uttara Ashadha",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Uttara Ashadha"}],
+    "output": {
+      "theme": "final_victory",
+      "life_area": "career",
+      "trait": "Patience, endurance, and steady rise to earned authority",
+      "intensity": "medium",
+      "shadow": "Rigidity or loneliness from holding standards too high"
+    },
+    "tags": ["nakshatra", "Sun"]
+  },
+  {
+    "id": "nakshatra_shravana",
+    "name": "Moon in Shravana",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Shravana"}],
+    "output": {
+      "theme": "deep_listening",
+      "life_area": "communication",
+      "trait": "Receptivity, learning through listening, and connective intelligence",
+      "intensity": "medium",
+      "shadow": "Gossip or using information as a tool for influence"
+    },
+    "tags": ["nakshatra", "Moon"]
+  },
+  {
+    "id": "nakshatra_dhanishta",
+    "name": "Moon in Dhanishta",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Dhanishta"}],
+    "output": {
+      "theme": "rhythmic_abundance",
+      "life_area": "finances",
+      "trait": "Musical rhythm, prosperity-awareness, and group leadership",
+      "intensity": "medium",
+      "shadow": "Emotional emptiness despite material success"
+    },
+    "tags": ["nakshatra", "Mars"]
+  },
+  {
+    "id": "nakshatra_shatabhisha",
+    "name": "Moon in Shatabhisha",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Shatabhisha"}],
+    "output": {
+      "theme": "solitary_healing",
+      "life_area": "health",
+      "trait": "Healing through isolation, research, and unconventional methods",
+      "intensity": "medium",
+      "shadow": "Emotional withdrawal or difficulty accepting help from others"
+    },
+    "tags": ["nakshatra", "Rahu"]
+  },
+  {
+    "id": "nakshatra_purva_bhadrapada",
+    "name": "Moon in Purva Bhadrapada",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Purva Bhadrapada"}],
+    "output": {
+      "theme": "fierce_transformation",
+      "life_area": "spirituality",
+      "trait": "Intense spiritual fire and capacity for radical inner change",
+      "intensity": "high",
+      "shadow": "Extremism or burning bridges in pursuit of ideals"
+    },
+    "tags": ["nakshatra", "Jupiter"]
+  },
+  {
+    "id": "nakshatra_uttara_bhadrapada",
+    "name": "Moon in Uttara Bhadrapada",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Uttara Bhadrapada"}],
+    "output": {
+      "theme": "cosmic_depth",
+      "life_area": "spirituality",
+      "trait": "Oceanic emotional depth and capacity for sustained spiritual practice",
+      "intensity": "medium",
+      "shadow": "Lethargy or emotional heaviness that resists movement"
+    },
+    "tags": ["nakshatra", "Saturn"]
+  },
+  {
+    "id": "nakshatra_revati",
+    "name": "Moon in Revati",
+    "category": "nakshatra",
+    "priority": 75,
+    "conditions": [{"field": "moon_nakshatra", "op": "eq", "value": "Revati"}],
+    "output": {
+      "theme": "compassionate_completion",
+      "life_area": "spirituality",
+      "trait": "Gentle compassion, protective kindness, and sense of completion",
+      "intensity": "medium",
+      "shadow": "Naivete or being taken advantage of through excessive trust"
+    },
+    "tags": ["nakshatra", "Mercury"]
+  },
+  {
+    "id": "aspect_mars_saturn_opposition",
+    "name": "Mars-Saturn Opposition",
+    "category": "combination",
+    "priority": 72,
+    "conditions": [
+      {"field": "mars_sign", "op": "eq", "value": "Aries"},
+      {"field": "saturn_sign", "op": "eq", "value": "Libra"}
+    ],
+    "output": {
+      "theme": "disciplined_drive",
+      "life_area": "career",
+      "trait": "Tension between impulsive action and measured restraint creates powerful endurance",
+      "intensity": "high",
+      "shadow": "Frustration from feeling simultaneously pushed and held back"
+    },
+    "tags": ["aspect", "Mars", "Saturn"]
+  },
+  {
+    "id": "aspect_mars_moon_conjunction",
+    "name": "Chandra-Mangal Yoga",
+    "category": "combination",
+    "priority": 70,
+    "conditions": [
+      {"field": "mars_sign", "op": "eq", "value": "Cancer"},
+      {"field": "moon_sign", "op": "eq", "value": "Cancer"}
+    ],
+    "output": {
+      "theme": "emotional_courage",
+      "life_area": "emotions",
+      "trait": "Emotional intensity fused with courage and material drive",
+      "intensity": "high",
+      "shadow": "Emotional volatility or aggression when feelings are threatened"
+    },
+    "tags": ["yoga", "Mars", "Moon"]
+  },
+  {
+    "id": "aspect_jupiter_blessing",
+    "name": "Jupiter Exalted Blessing",
+    "category": "combination",
+    "priority": 68,
+    "conditions": [
+      {"field": "jupiter_is_exalted", "op": "eq", "value": true}
+    ],
+    "output": {
+      "theme": "expansive_grace",
+      "life_area": "spirituality",
+      "trait": "Natural wisdom, optimism, and capacity to attract good fortune",
+      "intensity": "high",
+      "shadow": "Over-confidence or assuming protection where discernment is needed"
+    },
+    "tags": ["dignity", "Jupiter"]
+  },
+  {
+    "id": "aspect_saturn_discipline",
+    "name": "Saturn in Own Sign",
+    "category": "combination",
+    "priority": 68,
+    "conditions": [
+      {"field": "saturn_is_own_sign", "op": "eq", "value": true}
+    ],
+    "output": {
+      "theme": "structural_mastery",
+      "life_area": "career",
+      "trait": "Strong capacity for discipline, endurance, and building lasting structures",
+      "intensity": "medium",
+      "shadow": "Excessive rigidity or emotional coldness in the name of duty"
+    },
+    "tags": ["dignity", "Saturn"]
+  },
+  {
+    "id": "natal_mars_house_1",
+    "name": "Mars in 1st House",
+    "category": "natal_planet",
+    "priority": 65,
+    "conditions": [
+      {"field": "mars_house_from_lagna", "op": "eq", "value": 1}
+    ],
+    "output": {
+      "theme": "warrior_presence",
+      "life_area": "self",
+      "trait": "Bold physical presence, assertive personality, and competitive drive",
+      "intensity": "high",
+      "shadow": "Aggression or rash action that dominates before reflection can arise"
+    },
+    "tags": ["house", "Mars", "lagna"]
+  },
+  {
+    "id": "natal_mars_house_7",
+    "name": "Mars in 7th House",
+    "category": "natal_planet",
+    "priority": 65,
+    "conditions": [
+      {"field": "mars_house_from_lagna", "op": "eq", "value": 7}
+    ],
+    "output": {
+      "theme": "passionate_partnership",
+      "life_area": "relationships",
+      "trait": "Intense passion and drive projected into partnerships and close bonds",
+      "intensity": "high",
+      "shadow": "Conflict in relationships or attracting combative partners"
+    },
+    "tags": ["house", "Mars", "partnership"]
+  },
+  {
+    "id": "dasha_saturn_mahadasha",
+    "name": "Saturn Mahadasha",
+    "category": "dasha",
+    "priority": 85,
+    "conditions": [
+      {"field": "mahadasha_lord", "op": "eq", "value": "Saturn"}
+    ],
+    "output": {
+      "theme": "season_of_consolidation",
+      "life_area": "career",
+      "trait": "A long chapter of discipline, patience, and earning through sustained effort",
+      "intensity": "high",
+      "shadow": "Heaviness, delay, or feeling burdened by responsibilities beyond one's choosing"
+    },
+    "tags": ["dasha", "Saturn", "timing"]
+  },
+  {
+    "id": "transit_saturn_7th",
+    "name": "Saturn Transiting 7th from Moon",
+    "category": "transit",
+    "priority": 80,
+    "conditions": [
+      {"field": "transit_saturn_house", "op": "eq", "value": 7}
+    ],
+    "output": {
+      "theme": "relational_reckoning",
+      "life_area": "relationships",
+      "trait": "Partnerships face maturity tests and require honest renegotiation",
+      "intensity": "high",
+      "shadow": "Isolation or emotional distance in close bonds during this transit"
+    },
+    "tags": ["transit", "Saturn", "sade_sati_adjacent"]
+  },
+  {
+    "id": "dignity_jupiter_exalted",
+    "name": "Jupiter Exalted",
+    "category": "dignity",
+    "priority": 75,
+    "conditions": [
+      {"field": "jupiter_is_exalted", "op": "eq", "value": true}
+    ],
+    "output": {
+      "theme": "wisdom_amplified",
+      "life_area": "spirituality",
+      "trait": "Jupiter at peak strength brings expansive wisdom and spiritual growth",
+      "intensity": "high",
+      "shadow": "Spiritual bypassing or assuming grace replaces effort"
+    },
+    "tags": ["dignity", "Jupiter", "exalted"]
+  },
+  {
+    "id": "yoga_gaja_kesari",
+    "name": "Gaja Kesari Yoga",
+    "category": "yoga",
+    "priority": 80,
+    "conditions": [
+      {"field": "yoga_present", "op": "eq", "value": "Gaja Kesari"}
+    ],
+    "output": {
+      "theme": "wisdom_and_presence",
+      "life_area": "career",
+      "trait": "Natural authority, wisdom, and capacity to inspire trust in others",
+      "intensity": "high",
+      "shadow": "Complacency from relying on natural gifts rather than continued growth"
+    },
+    "tags": ["yoga", "Jupiter", "Moon"]
+  },
+  {
+    "id": "combo_moon_aries_mars_1st",
+    "name": "Double Fire: Moon Aries + Mars in 1st",
+    "category": "combination",
+    "priority": 90,
+    "conditions": [
+      {"field": "moon_sign", "op": "eq", "value": "Aries"},
+      {"field": "mars_house_from_lagna", "op": "eq", "value": 1}
+    ],
+    "output": {
+      "theme": "double_fire",
+      "life_area": "self",
+      "trait": "Exceptional drive, courage, and pioneering spirit amplified by emotional fire",
+      "intensity": "high",
+      "shadow": "Burnout, impulsiveness, or aggression when the fire is not channeled consciously"
+    },
+    "tags": ["combination", "Moon", "Mars", "fire"]
+  }
+]
