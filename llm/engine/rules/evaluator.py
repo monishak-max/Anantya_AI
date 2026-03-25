@@ -1,14 +1,14 @@
 """
 Core rule evaluation engine.
 
-AND logic: all conditions must match. Short-circuits on first failure.
+Supports AND (all_of), OR (any_of), and nested condition groups.
 Results sorted by priority descending.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from llm.engine.rules.schema import Condition, Operator, Rule
+from llm.engine.rules.schema import Condition, ConditionGroup, Operator, Rule
 
 
 @dataclass
@@ -41,27 +41,45 @@ class RuleEvaluator:
     def evaluate(self, context: dict) -> list[RuleMatch]:
         matches: list[RuleMatch] = []
         for rule in self._rules:
-            condition_matches: list[ConditionMatch] = []
-            all_matched = True
-            for cond in rule.conditions:
-                actual = context.get(cond.field)
-                matched = self._check(cond, actual)
-                condition_matches.append(
-                    ConditionMatch(condition=cond, actual_value=actual, matched=matched)
-                )
-                if not matched:
-                    all_matched = False
-                    break  # short-circuit
-            if all_matched:
+            leaf_matches: list[ConditionMatch] = []
+            if self._eval_node(rule.conditions, context, leaf_matches):
                 matches.append(
                     RuleMatch(
                         rule=rule,
-                        matched_conditions=condition_matches,
+                        matched_conditions=leaf_matches,
                         priority=rule.priority,
                     )
                 )
         matches.sort(key=lambda m: m.priority, reverse=True)
         return matches
+
+    def _eval_node(
+        self,
+        node: ConditionGroup | Condition,
+        context: dict,
+        collector: list[ConditionMatch],
+    ) -> bool:
+        if isinstance(node, Condition):
+            actual = context.get(node.field)
+            matched = self._check(node, actual)
+            collector.append(ConditionMatch(condition=node, actual_value=actual, matched=matched))
+            return matched
+
+        if node.all_of is not None:
+            for child in node.all_of:
+                if not self._eval_node(child, context, collector):
+                    return False  # short-circuit AND
+            return True
+
+        if node.any_of is not None:
+            for child in node.any_of:
+                branch: list[ConditionMatch] = []
+                if self._eval_node(child, context, branch):
+                    collector.extend(branch)
+                    return True  # short-circuit OR
+            return False
+
+        return False
 
     @staticmethod
     def _check(cond: Condition, actual: object) -> bool:
@@ -74,4 +92,20 @@ class RuleEvaluator:
                     return cond.value in actual
                 return False
             return actual == cond.value
+        if cond.op == Operator.IN:
+            if isinstance(cond.value, list):
+                return actual in cond.value
+            return False
+        if cond.op == Operator.RANGE:
+            if isinstance(actual, (int, float)) and isinstance(cond.value, list) and len(cond.value) == 2:
+                return cond.value[0] <= actual <= cond.value[1]
+            return False
+        if cond.op == Operator.GT:
+            if isinstance(actual, (int, float)) and isinstance(cond.value, (int, float)):
+                return actual > cond.value
+            return False
+        if cond.op == Operator.LT:
+            if isinstance(actual, (int, float)) and isinstance(cond.value, (int, float)):
+                return actual < cond.value
+            return False
         return False

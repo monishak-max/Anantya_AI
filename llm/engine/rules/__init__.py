@@ -3,6 +3,7 @@ Rule engine — public API.
 """
 from llm.engine.rules.schema import (
     Condition,
+    ConditionGroup,
     Intensity,
     LifeArea,
     Operator,
@@ -24,6 +25,7 @@ from llm.engine.rules.loader import (
 
 __all__ = [
     "Condition",
+    "ConditionGroup",
     "ConditionMatch",
     "Intensity",
     "LifeArea",

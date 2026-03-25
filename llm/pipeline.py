@@ -59,7 +59,10 @@ class AstroPipeline:
         try:
             ctx = build_rule_context(chart, transits)
             evaluator = RuleEvaluator(self._rules)
-            return evaluator.evaluate(ctx)
+            matches = evaluator.evaluate(ctx)
+            for m in matches:
+                logger.debug("Rule matched: %s (priority=%d, evidence=%s)", m.rule.id, m.priority, m.evidence_summary)
+            return matches
         except Exception as exc:
             logger.warning("Rule evaluation failed: %s", exc)
             return []

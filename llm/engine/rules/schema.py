@@ -11,6 +11,10 @@ from enum import Enum
 
 class Operator(Enum):
     EQ = "eq"
+    IN = "in"
+    RANGE = "range"
+    GT = "gt"
+    LT = "lt"
 
 
 class LifeArea(Enum):
@@ -49,7 +53,18 @@ class RuleCategory(Enum):
 class Condition:
     field: str
     op: Operator
-    value: str | int | bool
+    value: str | int | float | bool | list
+
+
+@dataclass(frozen=True)
+class ConditionGroup:
+    """Recursive AND/OR grouping of conditions.
+
+    Exactly one of all_of or any_of must be set.
+    Children can be Condition leaves or nested ConditionGroup nodes.
+    """
+    all_of: tuple[Condition | ConditionGroup, ...] | None = None
+    any_of: tuple[Condition | ConditionGroup, ...] | None = None
 
 
 @dataclass(frozen=True)
@@ -67,6 +82,6 @@ class Rule:
     name: str
     category: RuleCategory
     priority: int
-    conditions: list[Condition]
+    conditions: ConditionGroup
     output: RuleOutput
     tags: list[str] = field(default_factory=list)

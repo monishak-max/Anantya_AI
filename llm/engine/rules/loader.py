@@ -2,6 +2,12 @@
 JSON rule loader with strict validation.
 
 Fails fast: every malformed rule raises RuleValidationError with the rule id.
+
+Supports two condition formats:
+  - Legacy flat list:  "conditions": [{"field": ..., "op": ..., "value": ...}]
+    → auto-wrapped into ConditionGroup(all_of=(...))
+  - New grouped:       "conditions": {"all": [...]} or {"any": [...]}
+    → parsed recursively, supports nesting
 """
 from __future__ import annotations
 
@@ -10,6 +16,7 @@ from pathlib import Path
 
 from llm.engine.rules.schema import (
     Condition,
+    ConditionGroup,
     Intensity,
     LifeArea,
     Operator,
@@ -23,6 +30,100 @@ class RuleValidationError(Exception):
     def __init__(self, message: str, rule_id: str = "unknown") -> None:
         self.rule_id = rule_id
         super().__init__(f"[rule {rule_id}] {message}")
+
+
+def _parse_condition(raw: dict, label: str, rule_id: str) -> Condition:
+    """Parse a single leaf condition dict into a Condition dataclass."""
+    c_field = raw.get("field")
+    if not c_field or not isinstance(c_field, str):
+        raise RuleValidationError(f"{label}.field is required and must be a string", rule_id)
+    c_op = raw.get("op")
+    if not c_op:
+        raise RuleValidationError(f"{label}.op is required", rule_id)
+    try:
+        op = Operator(c_op)
+    except ValueError:
+        valid = [o.value for o in Operator]
+        raise RuleValidationError(f"{label}.op '{c_op}' is invalid, must be one of {valid}", rule_id)
+    c_value = raw.get("value")
+    if c_value is None:
+        raise RuleValidationError(f"{label}.value is required", rule_id)
+    # Validate value type based on operator
+    if op == Operator.IN:
+        if not isinstance(c_value, list):
+            raise RuleValidationError(f"{label}.value must be a list for 'in' operator", rule_id)
+    elif op == Operator.RANGE:
+        if not isinstance(c_value, list) or len(c_value) != 2:
+            raise RuleValidationError(f"{label}.value must be a [min, max] list for 'range' operator", rule_id)
+        if not all(isinstance(v, (int, float)) for v in c_value):
+            raise RuleValidationError(f"{label}.value must contain numeric values for 'range' operator", rule_id)
+        if c_value[0] > c_value[1]:
+            raise RuleValidationError(f"{label}.value[0] must be <= value[1] for 'range' operator", rule_id)
+    elif op in (Operator.GT, Operator.LT):
+        if not isinstance(c_value, (int, float)):
+            raise RuleValidationError(f"{label}.value must be numeric for '{op.value}' operator", rule_id)
+    else:
+        if not isinstance(c_value, (str, int, float, bool)):
+            raise RuleValidationError(f"{label}.value must be str, int, float, or bool", rule_id)
+    return Condition(field=c_field, op=op, value=c_value)
+
+
+def _parse_condition_node(raw, label: str, rule_id: str) -> Condition | ConditionGroup:
+    """Parse a condition node — either a leaf condition or a group with all/any."""
+    if not isinstance(raw, dict):
+        raise RuleValidationError(f"{label} must be an object", rule_id)
+
+    has_all = "all" in raw
+    has_any = "any" in raw
+    has_field = "field" in raw
+
+    if has_all and has_any:
+        raise RuleValidationError(f"{label} cannot have both 'all' and 'any'", rule_id)
+
+    if has_all or has_any:
+        key = "all" if has_all else "any"
+        children_raw = raw[key]
+        if not isinstance(children_raw, list) or len(children_raw) == 0:
+            raise RuleValidationError(f"{label}.{key} must be a non-empty list", rule_id)
+        children = tuple(
+            _parse_condition_node(child, f"{label}.{key}[{i}]", rule_id)
+            for i, child in enumerate(children_raw)
+        )
+        if has_all:
+            return ConditionGroup(all_of=children)
+        return ConditionGroup(any_of=children)
+
+    if has_field:
+        return _parse_condition(raw, label, rule_id)
+
+    raise RuleValidationError(f"{label} must be a condition (field/op/value) or a group (all/any)", rule_id)
+
+
+def _parse_conditions(raw, rule_id: str) -> ConditionGroup:
+    """Parse the top-level 'conditions' field.
+
+    Accepts:
+      - list of conditions (legacy) → wrapped in ConditionGroup(all_of=...)
+      - dict with 'all' or 'any' (new format) → parsed recursively
+    """
+    if isinstance(raw, list):
+        # Legacy flat list → implicit AND
+        if len(raw) == 0:
+            raise RuleValidationError("'conditions' must be a non-empty list", rule_id)
+        children = []
+        for i, c in enumerate(raw):
+            if not isinstance(c, dict):
+                raise RuleValidationError(f"condition[{i}] must be an object", rule_id)
+            children.append(_parse_condition(c, f"condition[{i}]", rule_id))
+        return ConditionGroup(all_of=tuple(children))
+
+    if isinstance(raw, dict):
+        node = _parse_condition_node(raw, "conditions", rule_id)
+        if isinstance(node, Condition):
+            return ConditionGroup(all_of=(node,))
+        return node
+
+    raise RuleValidationError("'conditions' must be a list or an object with 'all'/'any'", rule_id)
 
 
 def _validate_and_parse(raw: dict, seen_ids: set[str]) -> Rule:
@@ -59,29 +160,9 @@ def _validate_and_parse(raw: dict, seen_ids: set[str]) -> Rule:
 
     # conditions
     conds_raw = raw.get("conditions")
-    if not conds_raw or not isinstance(conds_raw, list) or len(conds_raw) == 0:
-        raise RuleValidationError("'conditions' must be a non-empty list", rule_id)
-
-    conditions: list[Condition] = []
-    for i, c in enumerate(conds_raw):
-        if not isinstance(c, dict):
-            raise RuleValidationError(f"condition[{i}] must be an object", rule_id)
-        c_field = c.get("field")
-        if not c_field or not isinstance(c_field, str):
-            raise RuleValidationError(f"condition[{i}].field is required and must be a string", rule_id)
-        c_op = c.get("op")
-        if not c_op:
-            raise RuleValidationError(f"condition[{i}].op is required", rule_id)
-        try:
-            op = Operator(c_op)
-        except ValueError:
-            raise RuleValidationError(f"condition[{i}].op '{c_op}' is invalid", rule_id)
-        c_value = c.get("value")
-        if c_value is None:
-            raise RuleValidationError(f"condition[{i}].value is required", rule_id)
-        if not isinstance(c_value, (str, int, bool)):
-            raise RuleValidationError(f"condition[{i}].value must be str, int, or bool", rule_id)
-        conditions.append(Condition(field=c_field, op=op, value=c_value))
+    if not conds_raw:
+        raise RuleValidationError("'conditions' is required", rule_id)
+    conditions = _parse_conditions(conds_raw, rule_id)
 
     # output
     out_raw = raw.get("output")

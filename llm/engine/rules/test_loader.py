@@ -1,11 +1,10 @@
 """
-Tests for the rule loader — 30 tests covering happy path and all validation error cases.
+Tests for the rule loader — covers legacy flat list, new all/any format, in operator,
+and all validation error cases.
 """
 from __future__ import annotations
 
 import json
-import os
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -15,7 +14,7 @@ from llm.engine.rules.loader import (
     load_rules_from_dir,
     load_rules_from_file,
 )
-from llm.engine.rules.schema import Operator, RuleCategory
+from llm.engine.rules.schema import Condition, ConditionGroup, Operator, RuleCategory
 
 
 SAMPLE_RULES_PATH = Path(__file__).parent / "sample_rules.json"
@@ -75,15 +74,18 @@ class TestLoadRulesHappyPath:
         for r in rules:
             assert 0 <= r.priority <= 100, f"Rule {r.id} priority out of range"
 
-    def test_conditions_are_non_empty(self):
+    def test_conditions_are_condition_groups(self):
         rules = load_rules_from_file(SAMPLE_RULES_PATH)
         for r in rules:
-            assert len(r.conditions) >= 1
+            assert isinstance(r.conditions, ConditionGroup)
+            assert r.conditions.all_of is not None
+            assert len(r.conditions.all_of) >= 1
 
-    def test_operator_is_eq(self):
+    def test_legacy_conditions_operator_is_eq(self):
         rules = load_rules_from_file(SAMPLE_RULES_PATH)
         for r in rules:
-            for c in r.conditions:
+            for c in r.conditions.all_of:
+                assert isinstance(c, Condition)
                 assert c.op == Operator.EQ
 
     def test_output_fields_present(self):
@@ -137,6 +139,122 @@ class TestLoadRulesHappyPath:
         path = _write_json(tmp_path, "rules.json", [rule])
         rules = load_rules_from_file(path)
         assert rules[0].tags == []
+
+
+# ── New format: all/any and in operator ─────────────────────────────
+
+
+class TestNewConditionFormats:
+    def test_in_operator(self, tmp_path):
+        rule = _minimal_rule(
+            id="kendra_test",
+            conditions=[{"field": "jupiter_house_from_moon", "op": "in", "value": [1, 4, 7, 10]}],
+        )
+        path = _write_json(tmp_path, "rules.json", [rule])
+        rules = load_rules_from_file(path)
+        cond = rules[0].conditions.all_of[0]
+        assert cond.op == Operator.IN
+        assert cond.value == [1, 4, 7, 10]
+
+    def test_any_group(self, tmp_path):
+        rule = _minimal_rule(
+            id="mars_moon_test",
+            conditions={
+                "any": [
+                    {"field": "moon_sign", "op": "eq", "value": "Aries"},
+                    {"field": "moon_sign", "op": "eq", "value": "Scorpio"},
+                ]
+            },
+        )
+        path = _write_json(tmp_path, "rules.json", [rule])
+        rules = load_rules_from_file(path)
+        group = rules[0].conditions
+        assert group.any_of is not None
+        assert group.all_of is None
+        assert len(group.any_of) == 2
+
+    def test_all_group_explicit(self, tmp_path):
+        rule = _minimal_rule(
+            id="explicit_all",
+            conditions={
+                "all": [
+                    {"field": "moon_sign", "op": "eq", "value": "Aries"},
+                    {"field": "mars_house_from_lagna", "op": "in", "value": [1, 4, 7, 10]},
+                ]
+            },
+        )
+        path = _write_json(tmp_path, "rules.json", [rule])
+        rules = load_rules_from_file(path)
+        group = rules[0].conditions
+        assert group.all_of is not None
+        assert len(group.all_of) == 2
+
+    def test_nested_all_inside_any(self, tmp_path):
+        rule = _minimal_rule(
+            id="nested_test",
+            conditions={
+                "all": [
+                    {"field": "mars_house_from_lagna", "op": "in", "value": [1, 4, 7, 10]},
+                    {
+                        "any": [
+                            {"field": "mars_is_exalted", "op": "eq", "value": True},
+                            {"field": "mars_is_own_sign", "op": "eq", "value": True},
+                        ]
+                    },
+                ]
+            },
+        )
+        path = _write_json(tmp_path, "rules.json", [rule])
+        rules = load_rules_from_file(path)
+        group = rules[0].conditions
+        assert group.all_of is not None
+        assert len(group.all_of) == 2
+        inner = group.all_of[1]
+        assert isinstance(inner, ConditionGroup)
+        assert inner.any_of is not None
+        assert len(inner.any_of) == 2
+
+    def test_single_condition_as_dict(self, tmp_path):
+        """A bare condition dict (no all/any) → wrapped in all_of."""
+        rule = _minimal_rule(
+            id="bare_cond",
+            conditions={"field": "moon_sign", "op": "eq", "value": "Aries"},
+        )
+        path = _write_json(tmp_path, "rules.json", [rule])
+        rules = load_rules_from_file(path)
+        group = rules[0].conditions
+        assert group.all_of is not None
+        assert len(group.all_of) == 1
+
+    def test_in_operator_rejects_non_list_value(self, tmp_path):
+        rule = _minimal_rule(
+            id="bad_in",
+            conditions=[{"field": "x", "op": "in", "value": "not_a_list"}],
+        )
+        path = _write_json(tmp_path, "rules.json", [rule])
+        with pytest.raises(RuleValidationError, match="list"):
+            load_rules_from_file(path)
+
+    def test_both_all_and_any_rejected(self, tmp_path):
+        rule = _minimal_rule(
+            id="both_test",
+            conditions={
+                "all": [{"field": "x", "op": "eq", "value": 1}],
+                "any": [{"field": "y", "op": "eq", "value": 2}],
+            },
+        )
+        path = _write_json(tmp_path, "rules.json", [rule])
+        with pytest.raises(RuleValidationError, match="both"):
+            load_rules_from_file(path)
+
+    def test_empty_any_rejected(self, tmp_path):
+        rule = _minimal_rule(
+            id="empty_any",
+            conditions={"any": []},
+        )
+        path = _write_json(tmp_path, "rules.json", [rule])
+        with pytest.raises(RuleValidationError, match="non-empty"):
+            load_rules_from_file(path)
 
 
 # ── Validation error cases ──────────────────────────────────────────

@@ -95,7 +95,24 @@ class RuleInterpretation(BaseModel):
     shadow: str = Field(default="", description="Shadow expression of the trait")
     priority: int = Field(description="Rule priority 0-100")
     evidence: str = Field(default="", description="Matched field=value pairs")
+    match_summary: str = Field(default="", description="Human-readable one-line explanation of why this rule matched")
+    conditions_met: list[str] = Field(default_factory=list, description="List of human-readable conditions that were satisfied")
     tags: list[str] = Field(default_factory=list, description="Rule tags")
+
+
+class RuleSignal(BaseModel):
+    rule_id: str
+    match_summary: str
+    conditions_met: list[str] = Field(default_factory=list)
+    intensity: str
+    shadow: str = ""
+
+
+class GroupedInsight(BaseModel):
+    theme: str = Field(description="Shared thematic label for this group")
+    life_areas: list[str] = Field(default_factory=list, description="Unique life areas touched by this group")
+    signals: list[RuleSignal] = Field(default_factory=list, description="Individual rule signals in this group")
+    combined_trait: str = Field(default="", description="Merged trait summary for LLM consumption")
 
 
 class ContextModifier(BaseModel):
@@ -129,6 +146,7 @@ class UserProfile(BaseModel):
     navamsha_summary: Optional[str] = Field(default=None, description="Hidden premium refinement note from Navamsha.")
     panchanga_birth_summary: Optional[str] = Field(default=None, description="Hidden note about birth-day panchanga tone if relevant.")
     rule_interpretations: list[RuleInterpretation] = Field(default_factory=list, description="Structured rule engine interpretations matched from the natal chart and transits.")
+    grouped_insights: list[GroupedInsight] = Field(default_factory=list, description="Rule signals grouped by theme, sorted by strength. Use these as primary interpretive anchors.")
     external_modifiers: list[ContextModifier] = Field(default_factory=list, description="Optional real-world or remedial modifiers that affect expression but never override chart truth.")
     lagna: Optional[LagnaInfo] = None
     planets: Optional[list[PlanetPlacement]] = None

@@ -13,7 +13,8 @@ from datetime import date, timedelta
 from llm.engine.calculator import NatalChart, TransitSnapshot, PlanetPosition
 from llm.engine.panchanga import compute_panchanga
 from llm.engine.transits import next_moon_sign_change
-from llm.engine.rules.evaluator import RuleMatch
+from llm.engine.rules.evaluator import ConditionMatch, RuleMatch
+from llm.engine.rules.schema import Operator, Rule
 from llm.schemas.inputs import (
     UserProfile,
     NatalMoon,
@@ -37,6 +38,8 @@ from llm.schemas.inputs import (
     ContextModifier,
     PeriodWindow,
     RuleInterpretation,
+    RuleSignal,
+    GroupedInsight,
 )
 
 
@@ -397,9 +400,118 @@ def _yoga_relevance(chart: NatalChart, description: str, planets: list[str]) -> 
     return f"{prefix}: {description}"
 
 
+_KENDRA_HOUSES = {1, 4, 7, 10}
+_TRIKONA_HOUSES = {1, 5, 9}
+_DUSTHANA_HOUSES = {6, 8, 12}
+_UPACHAYA_HOUSES = {3, 6, 10, 11}
+
+_HOUSE_CLASS = {
+    "kendra": (_KENDRA_HOUSES, "Kendra houses amplify planetary visibility and action"),
+    "trikona": (_TRIKONA_HOUSES, "Trikona houses support fortune, purpose, and growth"),
+    "dusthana": (_DUSTHANA_HOUSES, "Dusthana houses carry challenge, effort, or hidden work"),
+    "upachaya": (_UPACHAYA_HOUSES, "Upachaya houses grow stronger with time and effort"),
+}
+
+_DIGNITY_HINTS = {
+    "exalted": "At peak strength — the planet expresses its highest qualities",
+    "own_sign": "In its own domain — comfortable, self-directed, and reliable",
+    "debilitated": "At its most challenged — expression requires extra effort or support",
+}
+
+
+def _house_info(house: int) -> tuple[str, str]:
+    """Return (class_name, meaning_hint) for a house number."""
+    for cls, (houses, hint) in _HOUSE_CLASS.items():
+        if house in houses:
+            return cls, hint
+    return "", ""
+
+
+def _planet_from_field(field: str) -> str:
+    return field.split("_")[0].capitalize()
+
+
+def _expand_condition(cm: ConditionMatch) -> list[str]:
+    """Turn one ConditionMatch into 1-3 grounding statements: fact, classification, meaning."""
+    field = cm.condition.field
+    op = cm.condition.op
+    actual = cm.actual_value
+    planet = _planet_from_field(field)
+    lines: list[str] = []
+
+    if op == Operator.EQ:
+        if "sign" in field:
+            lines.append(f"{planet} is in {actual}")
+        elif "is_exalted" in field and actual:
+            lines.append(f"{planet} is exalted")
+            lines.append(_DIGNITY_HINTS["exalted"])
+        elif "is_own_sign" in field and actual:
+            lines.append(f"{planet} is in its own sign")
+            lines.append(_DIGNITY_HINTS["own_sign"])
+        elif "is_debilitated" in field and actual:
+            lines.append(f"{planet} is debilitated")
+            lines.append(_DIGNITY_HINTS["debilitated"])
+        elif "nakshatra" in field:
+            lines.append(f"{planet}'s nakshatra is {actual}")
+        elif "mahadasha" in field or "antardasha" in field:
+            lines.append(f"{field.replace('_', ' ').capitalize()} is {actual}")
+        else:
+            lines.append(f"{field} is {actual}")
+
+    elif op == Operator.IN:
+        if "house" in field and isinstance(actual, int):
+            lines.append(f"{planet} is in house {actual}")
+            cls, hint = _house_info(actual)
+            if cls:
+                lines.append(f"House {actual} is a {cls} house")
+                lines.append(hint)
+        else:
+            lines.append(f"{planet} is one of {cm.condition.value}")
+
+    elif op == Operator.RANGE:
+        lo, hi = cm.condition.value
+        if "degree" in field:
+            lines.append(f"{planet} is at {actual:.0f}° in its sign")
+            lines.append(f"This falls within the {lo}°–{hi}° range")
+        else:
+            lines.append(f"{field} is {actual} (within {lo}–{hi})")
+
+    elif op == Operator.GT:
+        if "degree" in field:
+            lines.append(f"{planet} is at {actual:.0f}° in its sign")
+            lines.append(f"Past {cm.condition.value}° — late-degree placement, suggesting matured or concentrated energy")
+        else:
+            lines.append(f"{field} is {actual} (above {cm.condition.value})")
+
+    elif op == Operator.LT:
+        if "degree" in field:
+            lines.append(f"{planet} is at {actual:.0f}° in its sign")
+            lines.append(f"Before {cm.condition.value}° — early-degree placement, suggesting fresh or unrefined energy")
+        else:
+            lines.append(f"{field} is {actual} (below {cm.condition.value})")
+
+    else:
+        lines.append(f"{field} is {actual}")
+
+    return lines
+
+
+def _build_match_summary(trait: str, conditions: list[str]) -> str:
+    """One-line grounding summary from the trait + first condition fact."""
+    if not conditions:
+        return trait
+    # First condition is always the raw fact — use it as grounding
+    return f"{conditions[0]}, {trait[0].lower()}{trait[1:]}" if trait else conditions[0]
+
+
 def _rule_matches_to_interpretations(matches: list[RuleMatch]) -> list[RuleInterpretation]:
-    return [
-        RuleInterpretation(
+    result = []
+    for m in matches:
+        conditions_met: list[str] = []
+        for cm in m.matched_conditions:
+            if cm.matched:
+                conditions_met.extend(_expand_condition(cm))
+        result.append(RuleInterpretation(
             rule_id=m.rule.id,
             theme=m.rule.output.theme,
             life_area=m.rule.output.life_area,
@@ -408,10 +520,160 @@ def _rule_matches_to_interpretations(matches: list[RuleMatch]) -> list[RuleInter
             shadow=m.rule.output.shadow,
             priority=m.priority,
             evidence=m.evidence_summary,
+            match_summary=_build_match_summary(m.rule.output.trait, conditions_met),
+            conditions_met=conditions_met,
             tags=list(m.rule.tags),
-        )
-        for m in matches
-    ]
+        ))
+    return result
+
+
+_INTENSITY_RANK = {"high": 3, "medium": 2, "low": 1}
+_MAX_INSIGHTS = 7
+
+# Words that are too generic to count as unique content when merging traits
+_STOP_WORDS = frozenset({
+    "a", "an", "the", "and", "or", "of", "in", "to", "for", "is", "are",
+    "that", "this", "with", "from", "by", "as", "on", "at", "be", "may",
+})
+
+
+def _extract_phrases(text: str) -> list[str]:
+    """Split a trait into clause-level phrases on '—', ','."""
+    parts: list[str] = []
+    for chunk in text.replace("—", "|").replace("–", "|").split("|"):
+        for sub in chunk.split(", "):
+            cleaned = sub.strip().strip(",").strip()
+            # Strip leading conjunctions
+            for prefix in ("and ", "or ", "but "):
+                if cleaned.lower().startswith(prefix):
+                    cleaned = cleaned[len(prefix):]
+            if cleaned:
+                parts.append(cleaned)
+    return parts
+
+
+def _content_words(phrase: str) -> set[str]:
+    """Extract meaningful words from a phrase for overlap detection."""
+    return {w.lower() for w in phrase.split() if w.lower() not in _STOP_WORDS and len(w) > 2}
+
+
+def _synthesize_traits(traits: list[str]) -> str:
+    """Merge multiple trait strings into one coherent sentence.
+
+    Strategy:
+    - 1 trait: return as-is
+    - 2+ traits: use first trait as anchor, extract novel phrases from the rest,
+      append as 'deepened by ...' or 'reinforced by ...'
+    """
+    # Deduplicate while preserving order
+    unique: list[str] = []
+    seen: set[str] = set()
+    for t in traits:
+        if t and t not in seen:
+            seen.add(t)
+            unique.append(t)
+
+    if not unique:
+        return ""
+    if len(unique) == 1:
+        return unique[0]
+
+    # First trait is the anchor (highest priority rule)
+    anchor = unique[0]
+    anchor_words = _content_words(anchor)
+
+    # Extract novel phrases from remaining traits
+    novel: list[str] = []
+    for trait in unique[1:]:
+        for phrase in _extract_phrases(trait):
+            phrase_words = _content_words(phrase)
+            # Keep phrase only if it brings >50% new content words
+            if phrase_words and len(phrase_words - anchor_words) > len(phrase_words) * 0.5:
+                novel.append(phrase)
+                anchor_words |= phrase_words  # absorb to prevent further dupes
+
+    if not novel:
+        return anchor
+
+    # Lowercase first char of novel phrases for mid-sentence flow,
+    # but preserve proper nouns (planet names, sign names)
+    _PROPER = frozenset({
+        "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu",
+        "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
+        "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces",
+    })
+
+    def _lc(s: str) -> str:
+        if not s:
+            return s
+        first_word = s.split()[0] if s.split() else ""
+        if first_word in _PROPER:
+            return s
+        return s[0].lower() + s[1:]
+
+    lowered = [_lc(p) for p in novel[:3]]  # cap at 3 novel additions
+    if len(lowered) == 1:
+        suffix = lowered[0]
+    elif len(lowered) == 2:
+        suffix = f"{lowered[0]} and {lowered[1]}"
+    else:
+        suffix = f"{lowered[0]}, {lowered[1]}, and {lowered[2]}"
+
+    if anchor.rstrip().endswith((".", "!", "?")):
+        return f"{anchor} Also shaped by {suffix}"
+    return f"{anchor} — deepened by {suffix}"
+
+
+def _group_rule_interpretations(interps: list[RuleInterpretation]) -> tuple[list[str], list[GroupedInsight]]:
+    """Sort, cap, group, and merge rule interpretations for LLM consumption.
+
+    Returns (dominant_themes, grouped_insights).
+    """
+    if not interps:
+        return [], []
+
+    # 1. Sort by priority desc, then intensity desc
+    scored = sorted(
+        interps,
+        key=lambda r: (r.priority, _INTENSITY_RANK.get(r.intensity, 0)),
+        reverse=True,
+    )
+
+    # 2. Cap at top N
+    top = scored[:_MAX_INSIGHTS]
+
+    # 3. Group by theme, preserving sort order for first appearance
+    groups: dict[str, list[RuleInterpretation]] = {}
+    for r in top:
+        groups.setdefault(r.theme, []).append(r)
+
+    # 4. Build GroupedInsight objects
+    insights: list[GroupedInsight] = []
+    for theme, members in groups.items():
+        life_areas = _unique_keep_order([m.life_area for m in members])
+        signals = [
+            RuleSignal(
+                rule_id=m.rule_id,
+                match_summary=m.match_summary,
+                conditions_met=m.conditions_met,
+                intensity=m.intensity,
+                shadow=m.shadow,
+            )
+            for m in members
+        ]
+        combined = _synthesize_traits([m.trait for m in members])
+
+        insights.append(GroupedInsight(
+            theme=theme,
+            life_areas=life_areas,
+            signals=signals,
+            combined_trait=combined,
+        ))
+
+    # 5. Dominant themes = ordered theme list from grouped insights
+    dominant = [g.theme for g in insights]
+
+    return dominant, insights
 
 
 def _chart_to_base_profile(chart: NatalChart, name: str, external_modifiers: list[dict] | list[ContextModifier] | None = None) -> dict:
@@ -455,7 +717,13 @@ def chart_to_user_profile(
     base = _chart_to_base_profile(chart, name, external_modifiers)
 
     if rule_matches:
-        base["rule_interpretations"] = _rule_matches_to_interpretations(rule_matches)
+        interps = _rule_matches_to_interpretations(rule_matches)
+        base["rule_interpretations"] = interps
+        rule_themes, grouped = _group_rule_interpretations(interps)
+        base["grouped_insights"] = grouped
+        # Merge rule-derived themes into dominant_themes (existing bridge themes take precedence)
+        existing = base.get("dominant_themes", [])
+        base["dominant_themes"] = _unique_keep_order(existing + rule_themes)
 
     if full:
         base["lagna"] = LagnaInfo(

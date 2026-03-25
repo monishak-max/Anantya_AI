@@ -773,5 +773,62 @@
       "shadow": "Burnout, impulsiveness, or aggression when the fire is not channeled consciously"
     },
     "tags": ["combination", "Moon", "Mars", "fire"]
+  },
+  {
+    "id": "mars_in_kendra",
+    "name": "Mars in Kendra House",
+    "category": "natal_planet",
+    "priority": 72,
+    "conditions": [
+      {"field": "mars_house_from_lagna", "op": "in", "value": [1, 4, 7, 10]}
+    ],
+    "output": {
+      "theme": "angular_drive",
+      "life_area": "career",
+      "trait": "Mars in an angular house gives visible drive, courage, and capacity for decisive action in the world",
+      "intensity": "high",
+      "shadow": "Aggression or restless impatience when energy has no clear outlet"
+    },
+    "tags": ["Mars", "kendra", "house"]
+  },
+  {
+    "id": "moon_mars_ruled",
+    "name": "Moon in Mars-ruled Sign",
+    "category": "natal_moon",
+    "priority": 72,
+    "conditions": {
+      "any": [
+        {"field": "moon_sign", "op": "eq", "value": "Aries"},
+        {"field": "moon_sign", "op": "eq", "value": "Scorpio"}
+      ]
+    },
+    "output": {
+      "theme": "emotional_intensity",
+      "life_area": "emotions",
+      "trait": "Emotional nature is colored by Mars — direct, intense, and instinctively protective",
+      "intensity": "high",
+      "shadow": "Reactivity or difficulty softening when vulnerability is required"
+    },
+    "tags": ["moon", "Mars", "dignity"]
+  },
+  {
+    "id": "sun_deep_exaltation",
+    "name": "Sun Deeply Exalted",
+    "category": "dignity",
+    "priority": 78,
+    "conditions": {
+      "all": [
+        {"field": "sun_sign", "op": "eq", "value": "Aries"},
+        {"field": "sun_degree", "op": "range", "value": [0, 20]}
+      ]
+    },
+    "output": {
+      "theme": "radiant_authority",
+      "life_area": "self",
+      "trait": "Sun in its peak exaltation zone — identity, confidence, and natural authority are exceptionally strong",
+      "intensity": "high",
+      "shadow": "Over-identification with visibility or difficulty accepting periods of obscurity"
+    },
+    "tags": ["Sun", "exalted", "degree"]
   }
 ]

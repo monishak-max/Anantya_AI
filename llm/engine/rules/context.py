@@ -47,6 +47,8 @@ def build_rule_context(
         ctx[f"{key}_is_exalted"] = p.is_exalted
         ctx[f"{key}_is_debilitated"] = p.is_debilitated
         ctx[f"{key}_is_own_sign"] = p.is_own_sign
+        ctx[f"{key}_degree"] = p.degree_in_sign
+        ctx[f"{key}_longitude"] = p.longitude
 
     # Dasha
     ctx["mahadasha_lord"] = chart.mahadasha.lord
