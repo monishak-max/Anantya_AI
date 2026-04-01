@@ -11,7 +11,7 @@ Computes:
   - House positions from both Lagna and Moon (whole sign houses)
   - House lordships
   - Vimshottari Dasha periods (mahadasha + antardasha)
-  - Yoga detection (major classical yogas)
+  - Yoga detection (classical yogas and finer life-shaping yogas)
   - Current transits
   - Divisional charts (14 vargas: D-1 through D-60)
   - Panchanga (Tithi, Nakshatra, Yoga, Karana, Vara)
@@ -372,7 +372,7 @@ def _set_dignities(planets: dict[str, PlanetPosition]):
 
 
 def _detect_yogas(planets: dict[str, PlanetPosition], lagna_sign: str) -> list[Yoga]:
-    """Detect major classical yogas from the natal chart."""
+    """Detect classical yogas and finer life-shaping yogas from the natal chart."""
     yogas = []
 
     def h(planet: str) -> int:
@@ -400,11 +400,11 @@ def _detect_yogas(planets: dict[str, PlanetPosition], lagna_sign: str) -> list[Y
 
     # Pancha Mahapurusha Yogas
     mahapurusha = {
-        "Mars":    ("Ruchaka",  "Ruchaka Yoga -- Mars in power. Courage, physical vitality, leadership quality, and a capacity to act decisively."),
-        "Mercury": ("Bhadra",   "Bhadra Yoga -- Mercury in power. Exceptional communication, learning ability, business acumen."),
-        "Jupiter": ("Hamsa",    "Hamsa Yoga -- Jupiter in power. Wisdom, spiritual depth, good fortune, and natural teaching ability."),
-        "Venus":   ("Malavya",  "Malavya Yoga -- Venus in power. Refined taste, artistic sensibility, relational grace, and material comfort."),
-        "Saturn":  ("Sasha",    "Sasha Yoga -- Saturn in power. Discipline, endurance, organizational mastery, and authority earned through effort."),
+        "Mars":    ("Ruchaka Mahapurusha Yoga",  "Ruchaka Mahapurusha Yoga -- Mars in power. Courage, physical vitality, leadership quality, and a capacity to act decisively."),
+        "Mercury": ("Bhadra Mahapurusha Yoga",   "Bhadra Mahapurusha Yoga -- Mercury in power. Exceptional communication, learning ability, business acumen."),
+        "Jupiter": ("Hamsa Mahapurusha Yoga",    "Hamsa Mahapurusha Yoga -- Jupiter in power. Wisdom, spiritual depth, good fortune, and natural teaching ability."),
+        "Venus":   ("Malavya Mahapurusha Yoga",  "Malavya Mahapurusha Yoga -- Venus in power. Refined taste, artistic sensibility, relational grace, and material comfort."),
+        "Saturn":  ("Sasa Mahapurusha Yoga",    "Sasa Mahapurusha Yoga -- Saturn in power. Discipline, endurance, organizational mastery, and authority earned through effort."),
     }
     for planet, (yoga_name, yoga_desc) in mahapurusha.items():
         pos = planets[planet]
@@ -481,6 +481,50 @@ def _detect_yogas(planets: dict[str, PlanetPosition], lagna_sign: str) -> list[Y
         yogas.append(Yoga(name="Saraswati Yoga", category="combination",
             planets_involved=learning_planets,
             description="Jupiter, Venus, and Mercury well-placed -- blesses with learning, eloquence, artistic talent, and refined intelligence."))
+
+    # Lakshmi Yoga
+    ninth_sign = RASHIS[(lagna_idx + 8) % 12]
+    lord_9 = SIGN_LORDS[ninth_sign]
+    lagna_lord = SIGN_LORDS[lagna_sign]
+    if lord_9 in planets and lagna_lord in planets:
+        p9 = planets[lord_9]
+        pl = planets[lagna_lord]
+        if (p9.is_exalted or p9.is_own_sign or (p9.house_from_lagna in KENDRA_HOUSES or p9.house_from_lagna in TRIKONA_HOUSES)) and (pl.is_exalted or pl.is_own_sign or (pl.house_from_lagna in KENDRA_HOUSES or pl.house_from_lagna in TRIKONA_HOUSES)):
+            yogas.append(Yoga(name="Lakshmi Yoga", category="prosperity", planets_involved=[lord_9, lagna_lord],
+                description="Grace, worth, prosperity potential, and a more dignified flowering of the life when it is lived in right alignment."))
+
+    # Sunapha Yoga
+    second_from_moon = RASHIS[(RASHIS.index(planets["Moon"].sign) + 1) % 12]
+    second_from_moon_planets = [name for name, pos in planets.items() if pos.sign == second_from_moon and name != "Sun"]
+    if second_from_moon_planets:
+        yogas.append(Yoga(name="Sunapha Yoga", category="lunar", planets_involved=second_from_moon_planets + ["Moon"],
+            description="Self-generated movement, initiative, and the power to create momentum through one's own effort."))
+
+    # Vesi Yoga
+    second_from_sun = RASHIS[(RASHIS.index(planets["Sun"].sign) + 1) % 12]
+    second_from_sun_planets = [name for name, pos in planets.items() if pos.sign == second_from_sun and name != "Moon"]
+    if second_from_sun_planets:
+        yogas.append(Yoga(name="Vesi Yoga", category="solar", planets_involved=second_from_sun_planets + ["Sun"],
+            description="Measured outward presence, restraint, and a more composed way of meeting the visible world."))
+
+    # Amala Yoga
+    tenth_from_lagna_benefics = [name for name, pos in planets.items() if pos.house_from_lagna == 10 and (name in NATURAL_BENEFICS or name == "Moon")]
+    if tenth_from_lagna_benefics:
+        yogas.append(Yoga(name="Amala Yoga", category="public", planets_involved=tenth_from_lagna_benefics,
+            description="Visible dignity, a cleaner worldly imprint, and public action that carries more truth than empty prestige."))
+
+    # Vasumati Yoga
+    benefic_upachayas = [name for name, pos in planets.items() if pos.house_from_lagna in {3, 6, 10, 11} and (name in NATURAL_BENEFICS or name == "Moon")]
+    if len(benefic_upachayas) >= 2:
+        yogas.append(Yoga(name="Vasumati Yoga", category="prosperity", planets_involved=benefic_upachayas,
+            description="Gradual prosperity, value creation, and material development through skill, refinement, effort, and time."))
+
+    # Vimala Viparita Raja Yoga
+    twelfth_sign = RASHIS[(lagna_idx + 11) % 12]
+    lord_12 = SIGN_LORDS[twelfth_sign]
+    if lord_12 in planets and planets[lord_12].house_from_lagna in DUSTHANA_HOUSES:
+        yogas.append(Yoga(name="Vimala Viparita Raja Yoga", category="viparita", planets_involved=[lord_12],
+            description="Hidden strength formed in demanding terrain, with competence and dignity forged through pressure, imperfection, or adversity."))
 
     return yogas
 

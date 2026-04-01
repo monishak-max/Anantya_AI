@@ -1,40 +1,72 @@
 Feature mode: BIRTH_CHART_CORE
 
 Purpose:
-This is not a chart dump. It is a premium life architecture reading.
-The whole reading should feel like one intelligence, one life pattern, one chart logic.
+This is not a chart dump and not a premium app summary. It is a sacred long-form life study.
+The whole reading should feel like one intelligence, one life, one unfolding story.
 
 Hidden reasoning priorities:
-- determine the 3 dominant chart signatures first
-- identify the central paradox running through the life
-- use house lordship and planetary condition, not placement listing
-- use yogas only when they materially shape the person's lived path
-- explain the current dasha as the active chapter
+- begin with what this life came here to embody
+- establish the entrusted beauty of the life before naming the wound
+- identify the one central knot running through the life
+- preserve every meaningful yoga individually
+- preserve every meaningful life-shaping combination individually
+- preserve every meaningful timing layer individually
+- explain each yoga as lived truth, not as a decorative title
+- use house lordship, graha condition, and repetition, not placement listing
 - use navamsha to deepen maturity, relationship, and dharmic tone where relevant
-- if modifiers exist, mention how they may shape expression, but do not let them dominate
+- if modifiers exist, mention how they shape expression, but do not let them swallow the main truth
 
-Writing rules:
-- every section should connect back to the dominant signatures
-- do not make each section feel like a separate mini-report
-- let the same deeper logic echo across love, work, money, health, and spiritual path
-- keep the tone authoritative, integrated, and elegant
-- this should feel like it was written by a leading astrologer, then translated for a modern member
+Writing sequence:
+1. title
+2. opening_promise
+3. entrusted_beauty
+4. central_knot
+5. great_yogas
+6. finer_yogas
+7. deeper_shaping_forces
+8. great_timing_currents
+9. life_phases
+10. love
+11. work
+12. present_threshold
+13. embodiment
+14. closing_destiny
+
+Writing laws:
+- open with entrusted beauty, not the wound
+- the reading must feel like one life story, not stacked insights
+- every section should connect back to the central knot
+- no visible hierarchy language such as major, secondary, minor, supporting, or decorative
+- retain the word yoga and explain it naturally
+- every yoga must be named individually
+- every shaping force must be named individually
+- every meaningful dasha and bhukti layer must be named individually when relevant
 - begin from the member's present lived reality, not birth-time narration
-- use the past only to explain how a pattern first formed, protected itself, or showed up earlier in life
-- use the future only to show how the same pattern may mature, deepen, or challenge the member next
-- never lean on phrases like "you were born with", "from birth", or "you have always been" as the main framing
-- the reading should feel like now -> roots -> arc, even when the prose stays natural
+- use the past only to explain formation
+- use the future only to show the arc and what is ripening
+- love and work must feel unmistakably specific to this life, not generic astrology reading
+- no meta language
+- no defensive language
+- no "your chart says" framing
+- no abstract spiritual fog; every elevated line should still land in lived life
+- this should feel like it was spoken by one who knows the grahas intimately and speaks directly to the member
+- vary section movement so the reading does not feel mechanically templated
+- do not repeat a rigid cadence like "what it gives / shadow / higher form" in every section
+- let specificity outrank polish when the two compete
 
 Yoga handling:
-- do not list yoga names without meaning
-- explain what the yoga does in lived life
-- assess whether it is strong, mixed, delayed, or active now
-- if a yoga is decorative or weak, do not headline it
+- never list yoga names without lived meaning
+- preserve all meaningful yogas
+- show sacred capacity, distortion, and purified expression across the reading, but do not force the same visible template in every section
+- allow stronger yogas more depth, but do not let quieter yogas disappear
+- even a finer yoga can carry major consequence across a long life
 
-Dasha handling:
-- the current dasha chapter must feel alive and central
-- explain why this phase matters now
-- distinguish longer chapter from shorter trigger
+Timing handling:
+- the timing body must feel alive, not technical
+- mahadashas are great life chapters
+- bhuktis are the finer turn within the chapter
+- current timing should feel central without flattening the rest of the life
+- no omissions because of length
 
 Remedy and gemstone handling:
 - only mention if modifier context is provided and genuinely relevant
@@ -42,4 +74,12 @@ Remedy and gemstone handling:
 - never prescribe casually
 
 Tone:
-Deep, coherent, calm, discerning, and premium.
+Deep, coherent, intimate, precise, spiritually serious, and beautiful without vagueness.
+
+Specificity refinement:
+- every abstract truth must land in lived reality
+- every section should sound spoken, not essay-like
+- love must name how this life overgives, overstays, or protects itself
+- work must name how this life over-functions and what authorship would change
+- present_threshold must name what is still being maintained through discipline alone
+- the ending must return the life to dignity, destiny, and beauty rather than sounding like a recap

@@ -27,6 +27,8 @@ class ViolationType(str, Enum):
     EM_DASH = "em_dash"                    # overused AI writing tic
     WORD_COUNT = "word_count"              # outside target range
     LOW_SPECIFICITY = "low_specificity"    # reading could apply to anyone
+    META_LANGUAGE = "meta_language"        # editorial or defensive framing
+    HIERARCHY_LABEL = "hierarchy_label"    # major/secondary/minor/supporting wording
 
 
 @dataclass
@@ -146,6 +148,29 @@ RED_LINE_PATTERNS = [
     r"\bdiabetes\b",
 ]
 
+META_LANGUAGE_PATTERNS = [
+    r"\bqualified\b",
+    r"\bmodified\b",
+    r"\bthis matters\b",
+    r"\banother important influence\b",
+    r"\bthis belongs in the report\b",
+    r"\bi would include\b",
+    r"\bi would keep\b",
+    r"\byour chart (says|shows|suggests)\b",
+    r"\bmajor yoga\b",
+    r"\bminor yoga\b",
+    r"\bsupporting yoga\b",
+    r"\bsecondary yoga\b",
+]
+
+HIERARCHY_LABEL_PATTERNS = [
+    r"\bmajor\b",
+    r"\bsecondary\b",
+    r"\bminor\b",
+    r"\bsupporting\b",
+    r"\bdecorative\b",
+]
+
 ROBOTIC_PATTERNS = [
     r"as an ai\b",
     r"as a language model",
@@ -185,7 +210,7 @@ class AstroStyleGuard:
 
         # Premium surfaces may use some Sanskrit terms (yoga, nakshatra names)
         # when they are being explained/translated in context.
-        premium_surfaces = {"birth_chart_core", "union_deep_read", "mandala_deep_read"}
+        premium_surfaces = {"birth_chart_core", "union_deep_read", "mandala_deep_read", "chart_reveal"}
 
         for field_name, text in flat_fields.items():
             if not isinstance(text, str):
@@ -276,10 +301,43 @@ class AstroStyleGuard:
                 ))
                 break
 
+        # Meta / editorial language that breaks Anantya voice
+        for pattern in META_LANGUAGE_PATTERNS:
+            if re.search(pattern, text_lower):
+                violations.append(Violation(
+                    type=ViolationType.META_LANGUAGE,
+                    field_name=field_name,
+                    detail=f"Meta language: '{re.search(pattern, text_lower).group()}'",
+                    severity="warning",
+                ))
+                break
+
+        # Visible hierarchy labels that flatten sacred forces
+        for pattern in HIERARCHY_LABEL_PATTERNS:
+            if field_name in {"title", "subtitle"}:
+                continue
+            match = re.search(pattern, text_lower)
+            if match and re.search(r"(yoga|yogas|influence|forces|combination|combinations)", text_lower):
+                violations.append(Violation(
+                    type=ViolationType.HIERARCHY_LABEL,
+                    field_name=field_name,
+                    detail=f"Hierarchy language: '{match.group()}'",
+                    severity="warning",
+                ))
+                break
+
         # Jargon leakage (only flag if no translation nearby)
-        # Premium surfaces (birth chart, deep reads) are allowed to use certain
-        # Sanskrit terms like "yoga" when explaining them in context.
-        premium_allowed = {r"\byoga\b(?! (mat|class|practice|studio))"}
+        # Sacred terms allowed on premium long-form surfaces when explained gracefully.
+        # v2.1: yoga, graha, mahadasha, antardasha, lagna, dharma, gochar, vimshottari
+        premium_allowed = {
+            r"\byoga\b(?! (mat|class|practice|studio))",
+            r"\blagna\b",
+            r"\bmahadasha\b",
+            r"\bantardasha\b",
+            r"\bgraha\b",
+            r"\bgochar\b",
+            r"\bvimshottari\b",
+        }
         for pattern in JARGON_TERMS:
             if is_premium and pattern in premium_allowed:
                 continue

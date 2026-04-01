@@ -60,24 +60,55 @@ def load_feature_prompt(surface: Surface) -> str:
 
 # ── Schema instruction builder ─────────────────────────────────────
 
-def build_schema_instruction(schema_class: type[BaseModel]) -> str:
-    """Convert a Pydantic model into a clear output instruction for the LLM."""
-    fields_desc = []
-    for name, field_info in schema_class.model_fields.items():
+def _describe_model_fields(model_class: type[BaseModel], indent: int = 1) -> list[str]:
+    """Recursively describe a Pydantic model's fields, including nested models."""
+    lines = []
+    prefix = "  " * indent
+    for name, field_info in model_class.model_fields.items():
         desc = field_info.description or ""
         required = "required" if field_info.is_required() else "optional"
-        fields_desc.append(f'  - "{name}" ({required}): {desc}')
+        lines.append(f'{prefix}- "{name}" ({required}): {desc}')
 
-    return (
+        # Check if this field's type is a list of a BaseModel subclass
+        annotation = field_info.annotation
+        if annotation is not None:
+            origin = getattr(annotation, '__origin__', None)
+            if origin is list:
+                args = getattr(annotation, '__args__', ())
+                if args and isinstance(args[0], type) and issubclass(args[0], BaseModel):
+                    nested = args[0]
+                    lines.append(f'{prefix}  Each item in "{name}" MUST be an object with these fields:')
+                    lines.extend(_describe_model_fields(nested, indent + 2))
+    return lines
+
+
+def build_schema_instruction(schema_class: type[BaseModel]) -> str:
+    """Convert a Pydantic model into a clear output instruction for the LLM.
+    Includes nested model structures so the LLM knows how to fill sub-fields."""
+    fields_desc = _describe_model_fields(schema_class, indent=1)
+
+    base = (
         "You MUST respond with valid JSON matching this exact schema.\n"
         "Do not include any text outside the JSON object.\n\n"
-        "CRITICAL: Respect the word count ranges in each field description. "
-        "These are not suggestions. They are hard constraints that ensure the reading fits the UI. "
-        "Count your words. If a field says 18-45 words, do not write 60. Any overflow or underflow is a failure.\n\n"
-        "Before producing the final JSON, silently plan the reading using: dominant signals, active life areas, why now, likely felt experience, likely resistance, and wise posture. Do not output that scaffold.\n\n"
-        f"Schema: {schema_class.__name__}\n"
-        f"Fields:\n" + "\n".join(fields_desc)
     )
+
+    if schema_class.__name__ == "BirthChartCore":
+        constraints = (
+            "CRITICAL: This is a sacred long-form study, not a compact UI card. "
+            "Respect the structure and field intentions exactly, but do not compress truth merely to stay neat. "
+            "Word ranges are guidance for proportion and readability, not excuses to omit meaningful yogas, shaping forces, or timing layers. "
+            "Preserve every meaningful factor individually and scale by depth, not omission.\n\n"
+            "Before producing the final JSON, silently plan the reading using: entrusted beauty, central knot, great yogas, finer yogas, deeper shaping forces, timing body, love, work, present threshold, embodiment, and closing destiny. Do not output that scaffold.\n\n"
+        )
+    else:
+        constraints = (
+            "CRITICAL: Respect the word count ranges in each field description. "
+            "These are not suggestions. They are hard constraints that ensure the reading fits the UI. "
+            "Count your words. If a field says 18-45 words, do not write 60. Any overflow or underflow is a failure.\n\n"
+            "Before producing the final JSON, silently plan the reading using: dominant signals, active life areas, why now, likely felt experience, likely resistance, and wise posture. Do not output that scaffold.\n\n"
+        )
+
+    return base + constraints + f"Schema: {schema_class.__name__}\n" + f"Fields:\n" + "\n".join(fields_desc)
 
 
 # ── Full assembly ──────────────────────────────────────────────────

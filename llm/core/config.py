@@ -83,7 +83,7 @@ SURFACE_MAX_TOKENS: dict[Surface, int] = {
     Surface.MANDALA_DEEP_READ: 500,
     Surface.UNION_SNAPSHOT: 400,
     Surface.UNION_DEEP_READ: 1500,
-    Surface.BIRTH_CHART_CORE: 4500,
+    Surface.BIRTH_CHART_CORE: 12000,  # Sacred life study: nested yogas, forces, timing, phases
     Surface.WEEKLY_OVERVIEW: 800,
     Surface.MONTHLY_OVERVIEW: 1000,
     Surface.CHART_REVEAL: 300,

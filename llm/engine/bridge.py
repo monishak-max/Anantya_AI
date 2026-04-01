@@ -40,6 +40,8 @@ from llm.schemas.inputs import (
     RuleInterpretation,
     RuleSignal,
     GroupedInsight,
+    LedgerEntry,
+    TimingLedgerEntry,
 )
 
 
@@ -118,14 +120,14 @@ def _planet_strength_label(p: PlanetPosition) -> str:
 
 def _planet_condition_phrase(p: PlanetPosition) -> str:
     if p.is_exalted:
-        return f"{p.planet} is a major strength in this chart"
+        return f"{p.planet} is strong and central in this life"
     if p.is_own_sign:
-        return f"{p.planet} is stable and self-possessed in this chart"
+        return f"{p.planet} is steady and self-possessed in this life"
     if p.is_debilitated:
-        return f"{p.planet} carries extra strain or overcompensation in this chart"
+        return f"{p.planet} carries extra strain or overcompensation here"
     if p.retrograde:
         return f"{p.planet} tends to work through revision, reflection, and delayed clarity"
-    return f"{p.planet} plays a meaningful but not dominant role"
+    return f"{p.planet} works in a quieter but still real way"
 
 
 def _build_natal_signature_summary(chart: NatalChart) -> str:
@@ -241,10 +243,252 @@ def _build_confidence_summary(chart: NatalChart) -> str:
     if chart.yogas:
         repeated += 1
     if repeated >= 3:
-        return "Several chart signals repeat the same lesson. Strong claims can be stated clearly, but keep dignity and agency intact."
+        return "Several signals repeat the same lesson. Strong claims can be stated clearly, but dignity and agency must remain intact."
     if repeated == 2:
-        return "There is good corroboration. Speak with confidence, but leave room for the member's lived context."
-    return "Signals are more mixed. Lead with pattern and possibility rather than certainty."
+        return "There is good corroboration. Speak with confidence, but stay faithful to the member's lived context."
+    return "Signals are more mixed. Lead with pattern and lived possibility rather than certainty."
+
+
+def _build_entrusted_beauty_summary(chart: NatalChart) -> str:
+    dominant = ", ".join(p.planet for p in _dominant_planets(chart)[:2]) or chart.mahadasha.lord
+    return (
+        f"This life carries sacred force through {dominant}, and was never meant for a small road. "
+        f"Its beauty lies in turning strength, intelligence, and consequence into something rightful and deeply lived."
+    )
+
+
+def _build_central_knot_summary(chart: NatalChart) -> str:
+    saturn = chart.planets.get("Saturn")
+    moon = chart.planets.get("Moon")
+    if saturn and saturn.house_from_lagna in {7, 10} and moon and moon.house_from_lagna == 10:
+        return "Strength keeps getting spent on roles, work, bonds, and responsibilities that can be carried long after they have stopped feeling fully yours."
+    return "Sacred force becomes costly when it is used in the wrong service and the life keeps carrying what the soul has already outgrown."
+
+
+def _ledger_entry(name: str, subtitle: str, sacred_capacity: str, distortion: str, purified_expression: str) -> LedgerEntry:
+    return LedgerEntry(
+        name=name,
+        subtitle=subtitle,
+        sacred_capacity=sacred_capacity,
+        distortion=distortion,
+        purified_expression=purified_expression,
+    )
+
+
+def _build_yoga_ledger(chart: NatalChart) -> list[LedgerEntry]:
+    entries: list[LedgerEntry] = []
+    for yoga in chart.yogas:
+        lname = yoga.name.lower()
+        if "hamsa" in lname:
+            entries.append(_ledger_entry(
+                yoga.name,
+                "wisdom, grace, and higher guidance",
+                "Places blessing, dignity, and higher law at the center of the life, widening the path beyond mere ambition or pressure.",
+                "Can become inwardly exacting, making simple worldly satisfactions feel too thin and borrowed certainty too weak.",
+                "Ripens into lived wisdom, grace with backbone, and a life that answers to what is deeply true.",
+            ))
+        elif "sasa" in lname:
+            entries.append(_ledger_entry(
+                yoga.name,
+                "authority, consequence, and earned command",
+                "Gives weight, endurance, composure under pressure, and a natural relation to structure, timing, and real authority.",
+                "Can turn burden into identity and make the life stay noble inside what should already have been released.",
+                "Ripens into sovereignty, where strength belongs only to what is truly yours to hold.",
+            ))
+        elif "budha" in lname:
+            entries.append(_ledger_entry(
+                yoga.name,
+                "intelligence joined with inner light",
+                "Gives clear thought, discernment, speech, and the instinct to turn truth into something usable and real.",
+                "Can over-govern the inner life through mind, making intelligence protect what truth has already exposed.",
+                "Ripens into luminous clarity that names what is real without replacing the soul's own knowing.",
+            ))
+        elif "gaja" in lname:
+            entries.append(_ledger_entry(
+                yoga.name,
+                "the heart made noble through wisdom",
+                "Protects tenderness through wisdom and gives emotional dignity, steadier judgment, and a larger heart.",
+                "Can leave the heart underfed while the outer life remains strong and composed.",
+                "Ripens into warmth with stature, where the heart stays alive inside strength.",
+            ))
+        elif "lakshmi" in lname:
+            entries.append(_ledger_entry(
+                yoga.name,
+                "blessing, worth, beauty, and flourishing",
+                "Supports grace, refinement, prosperity, and the flowering that follows right alignment.",
+                "Blessing may arrive without fully settling when the life remains inwardly divided.",
+                "Ripens into beauty and abundance that can finally root because the life has grown truer.",
+            ))
+        elif "sunapha" in lname:
+            entries.append(_ledger_entry(
+                yoga.name,
+                "self-moving force and builder's initiative",
+                "Gives initiative, self-generated movement, and the instinct to shape life rather than wait passively for it.",
+                "Can harden into carrying too much alone and trusting self-reliance more than support.",
+                "Ripens into clean initiative that still allows blessing and support to enter.",
+            ))
+        elif "vesi" in lname:
+            entries.append(_ledger_entry(
+                yoga.name,
+                "restraint and measured outward presence",
+                "Gives composure, steadiness, and a visible life that holds its field without wasteful motion.",
+                "Can let composure hide cost and keep the truth concealed behind outward discipline.",
+                "Ripens into transparent steadiness that protects the field without hiding the soul from itself.",
+            ))
+        elif "amala" in lname:
+            entries.append(_ledger_entry(
+                yoga.name,
+                "visible dignity and cleaner worldly imprint",
+                "Asks the life to leave a real and dignified mark through work, action, and public consequence.",
+                "Can make reputation and outer standing carry too much of the emotional life.",
+                "Ripens into public truth that the heart can actually live inside.",
+            ))
+        elif "vasumati" in lname:
+            entries.append(_ledger_entry(
+                yoga.name,
+                "gradual prosperity through skill and development",
+                "Builds value, resources, and material steadiness through refinement, intelligence, effort, and time.",
+                "Can make the life overinvest in value-building while inner rightness is being delayed.",
+                "Ripens into prosperity with substance, where worth has truth beneath it.",
+            ))
+        elif "vimala" in lname:
+            entries.append(_ledger_entry(
+                yoga.name,
+                "hidden strength formed in demanding terrain",
+                "Gives competence under pressure, inward independence, and the ability to remain intact in flawed or difficult conditions.",
+                "Can make difficulty feel more believable than peace and self-containment more believable than closeness.",
+                "Ripens into quiet dignity and resilient clarity that no longer mistakes harshness for depth.",
+            ))
+        else:
+            entries.append(_ledger_entry(
+                yoga.name,
+                yoga.description,
+                f"{yoga.description}.",
+                "This force becomes costly when its gift is overused, overidentified with, or turned away from truth.",
+                "It ripens when the life lets the gift serve what is deeply true instead of what is merely sustainable.",
+            ))
+    return entries
+
+
+def _build_shaping_force_ledger(chart: NatalChart) -> list[LedgerEntry]:
+    entries: list[LedgerEntry] = []
+    if chart.planets.get("Jupiter") and chart.planets.get("Ketu") and chart.planets["Jupiter"].house_from_lagna == chart.planets["Ketu"].house_from_lagna:
+        entries.append(_ledger_entry(
+            "Jupiter and Ketu in the self",
+            "the soul refusing borrowed truth",
+            "Spiritualizes identity, deepens intuition, and makes the life answerable to truth that must be known directly.",
+            "Can make ordinary success feel too thin and simple certainty feel insufficient or untrustworthy.",
+            "Ripens into sacred inward authority and a life guided by lived truth rather than borrowed belief.",
+        ))
+    if chart.planets.get("Saturn") and chart.planets.get("Rahu") and chart.planets["Saturn"].house_from_lagna == 7 and chart.planets["Rahu"].house_from_lagna == 7:
+        entries.append(_ledger_entry(
+            "Saturn and Rahu in the seventh",
+            "karmic pressure through relationship and visible duty",
+            "Loads the relationship axis with seriousness, consequence, duty, and visible karmic tests.",
+            "Can make commitment, contracts, and other people feel heavier, more urgent, and more exacting than they first appear.",
+            "Ripens into discerned responsibility, where only the right bonds and duties continue receiving your strength.",
+        ))
+    moon = chart.planets.get("Moon")
+    if moon and moon.house_from_lagna == 10:
+        entries.append(_ledger_entry(
+            "Moon in the house of work and visibility",
+            "identity tied to contribution",
+            "Makes work, vocation, and public consequence emotionally significant and deeply tied to belonging.",
+            "When work is false, the emotional being pays the cost directly.",
+            "Ripens into work the heart can truly inhabit.",
+        ))
+    jupiter = chart.planets.get("Jupiter")
+    if jupiter and jupiter.house_from_lagna == 1 and jupiter.is_exalted:
+        entries.append(_ledger_entry(
+            "Jupiter exalted in the self",
+            "meaning placed at the center of the life",
+            "Places grace, dharma, and higher intelligence close to identity itself.",
+            "Makes compromise spiritually expensive and keeps calling the life back toward meaning.",
+            "Ripens into lived blessing and moral authority.",
+        ))
+    mars = chart.planets.get("Mars")
+    if mars and mars.house_from_lagna == 11:
+        entries.append(_ledger_entry(
+            "Yogakaraka Mars in the house of gains",
+            "force that wants real outcomes",
+            "Ties intelligence, leadership, creation, and visible effort to result, gains, and future-building.",
+            "Can spend too much force proving, pushing, or carrying outcomes that no longer belong to the soul.",
+            "Ripens into clean action devoted to what is truly yours to build.",
+        ))
+    entries.append(_ledger_entry(
+        "The fifth lord in the house of gains",
+        "intelligence and creation becoming consequential",
+        "Makes insight, creativity, and the finer fire of the mind want visible consequence and real fruit in the world.",
+        "Can become restless when what is created does not yet matter enough to the larger life.",
+        "Ripens into creation that carries legacy, result, and real consequence.",
+    ))
+    entries.append(_ledger_entry(
+        "The tenth lord in the house of gains",
+        "work ripening into outcome",
+        "Links vocation and visible karma to outcomes, gains, expansion, and future-building.",
+        "Can make the life over-identified with results when the soul is asking for truer authorship.",
+        "Ripens into substantial work that returns real consequence because it carries real truth.",
+    ))
+    entries.append(_ledger_entry(
+        "The lord of value joined with the lord of gains",
+        "worth, speech, and earning tied together",
+        "Creates real power to generate value through intelligence, taste, usefulness, visible quality, and work.",
+        "Can let outer gain stand in for inner rightness if the life becomes too divided.",
+        "Ripens into prosperity that follows truth rather than replacing it.",
+    ))
+    entries.append(_ledger_entry(
+        "Sun, Mercury, and Venus in the sixth",
+        "intelligence, beauty, and service learning through imperfection",
+        "Gives the power to bring clarity, refinement, and beauty into what is flawed, difficult, or unfinished.",
+        "Can make struggle too familiar and keep the life inside what still needs endless fixing.",
+        "Ripens into sacred craftsmanship that improves what is yours to improve and leaves the rest behind.",
+    ))
+    return entries
+
+
+def _build_timing_ledger(chart: NatalChart) -> list[TimingLedgerEntry]:
+    entries: list[TimingLedgerEntry] = []
+    for maha in chart.all_mahadashas:
+        lord = maha.lord
+        body = {
+            "Venus": "The life learns beauty, attraction, worth, refinement, and what it is truly drawn toward.",
+            "Sun": "The life learns will, direction, and the pressure of standing in light.",
+            "Moon": "The heart becomes harder to silence, and the life asks what can truly be lived in from within.",
+            "Mars": "Force begins moving what the heart has already known and no longer wants to postpone.",
+            "Rahu": "The life stretches into appetite, scale, urgency, and larger karmic tests around desire.",
+            "Jupiter": "Blessing widens the road and the life breathes more fully inside a larger law.",
+            "Saturn": "Authority ripens into its heaviest and truest form, asking what the strength of the life has really earned.",
+            "Mercury": "Understanding becomes more lucid, teachable, and refined.",
+            "Ketu": "The unnecessary falls away and the life is distilled toward essence.",
+        }.get(lord, f"The life moves through a chapter led by {lord}.")
+        entries.append(TimingLedgerEntry(name=f"{lord} Mahadasha", subtitle=f"a life chapter led by {lord.lower()}", chapter_body=body, start=maha.start.date(), end=maha.end.date()))
+    # add current antardasha as finer turn
+    entries.append(TimingLedgerEntry(
+        name=f"{chart.mahadasha.lord} / {chart.antardasha.antardasha_lord}",
+        subtitle="the finer turn within the current chapter",
+        chapter_body=f"Within the larger {chart.mahadasha.lord} chapter, {chart.antardasha.antardasha_lord} is shaping the present threshold more sharply right now.",
+        start=chart.antardasha.start.date(),
+        end=chart.antardasha.end.date(),
+    ))
+    return entries
+
+
+def _build_absent_ledger(chart: NatalChart) -> list[str]:
+    names = {y.name.lower() for y in chart.yogas}
+    absent = []
+    for candidate in [
+        "Ruchaka Mahapurusha Yoga",
+        "Bhadra Mahapurusha Yoga",
+        "Malavya Mahapurusha Yoga",
+        "Harsha Yoga",
+        "Sarala Yoga",
+        "Neecha Bhanga",
+        "Parivartana Yoga",
+        "Kala Sarpa",
+    ]:
+        if candidate.lower() not in names:
+            absent.append(candidate)
+    return absent
 
 
 def _build_user_anchors(chart: NatalChart) -> list[str]:
@@ -703,6 +947,12 @@ def _chart_to_base_profile(chart: NatalChart, name: str, external_modifiers: lis
         "confidence_summary": _build_confidence_summary(chart),
         "navamsha_summary": _build_navamsha_summary(chart),
         "panchanga_birth_summary": _build_birth_panchanga_summary(chart),
+        "verified_yoga_ledger": _build_yoga_ledger(chart),
+        "verified_shaping_forces_ledger": _build_shaping_force_ledger(chart),
+        "verified_timing_ledger": _build_timing_ledger(chart),
+        "absent_or_do_not_claim_ledger": _build_absent_ledger(chart),
+        "central_knot_summary": _build_central_knot_summary(chart),
+        "entrusted_beauty_summary": _build_entrusted_beauty_summary(chart),
         "external_modifiers": _build_modifier_objects(external_modifiers),
     }
 

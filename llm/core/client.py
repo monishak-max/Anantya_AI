@@ -45,7 +45,7 @@ class AstroLLMClient:
         system_prompt: str,
         user_message: str,
         output_schema: Type[T],
-        max_retries: int = 2,
+        max_retries: int | None = None,
         temperature: float = 0.7,
     ) -> T:
         """
@@ -58,6 +58,12 @@ class AstroLLMClient:
         """
         model = get_model(surface)
         max_tokens = SURFACE_MAX_TOKENS[surface]
+
+        # Premium surfaces (Opus) get more retries -- API overload is common
+        if max_retries is None:
+            from llm.core.config import SURFACE_TO_TIER, ModelTier
+            tier = SURFACE_TO_TIER[surface]
+            max_retries = 5 if tier == ModelTier.PREMIUM else 2
 
         # Split system prompt for caching:
         # Core prompts (before first feature section) get cache_control
@@ -125,7 +131,9 @@ class AstroLLMClient:
             except (json.JSONDecodeError, Exception) as e:
                 last_error = e
                 if attempt < max_retries:
-                    wait = 2 ** attempt
+                    # Longer backoff for overloaded errors (529)
+                    is_overloaded = "Overloaded" in str(e) or "529" in str(e)
+                    wait = (10 * (attempt + 1)) if is_overloaded else (2 ** attempt)
                     logger.warning(f"[{surface.value}] Attempt {attempt + 1} failed: {e}. Retrying in {wait}s...")
                     time.sleep(wait)
 

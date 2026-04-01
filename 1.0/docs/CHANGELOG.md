@@ -1,46 +1,44 @@
-# v1.4 code update changelog
+# Changelog
 
-## Core prompt system
-- Rewrote the 5 core prompts to encode the gold-standard reasoning hierarchy.
-- Added explicit handling rules for yogas, remedies, gemstones, modifiers, and conflict resolution.
-- Sharpened Anantya's persona so it reads like a serious astrologer translated into refined modern language.
-- Removed em dashes from the prompt pack.
+## 2026-03-31 · Anantya v2.1.0 framework refinement
 
-## Input schemas
-- Added hidden reasoning fields to `UserProfile` for dominant themes, hierarchy summary, conflict summary, confidence summary, navamsha summary, and birth panchanga summary.
-- Added `ContextModifier` to support optional remedies, gemstones, life-stage context, maturity, and environmental modifiers.
-- Added `PanchangaContext` and `PeriodWindow` for translated timing texture.
-- Extended `PlanetPlacement` with `navamsha_sign`.
-- Extended `YogaInfo` with strength, activation status, and relevance.
-- Enriched `UnionInput` and `PeriodOverviewInput` with deeper internal context.
+### Prompt refinement
+- Tightened the `birth_chart_core` feature prompt around the final sacred-study framework.
+- Added stronger anti-template guidance so sections do not repeat the same visible rhythm.
+- Strengthened specificity rules for Love, Work, Present Threshold, and the closing movement.
+- Reinforced the law that finer yogas may receive less space but must never disappear.
 
-## Bridge layer
-- Rebuilt bridge summaries so the model receives chart hierarchy rather than raw factor sprawl.
-- Added translated dominant themes, hierarchy summary, conflict-resolution summary, confidence summary, navamsha summary, and panchanga summaries.
-- Added yoga evaluation heuristics for strength and activation status.
-- Added optional external modifier coercion and pass-through.
-- Added richer relationship summary and growth-edge inputs for union surfaces.
-- Fixed weekly/monthly overview construction by providing `period_start`, `period_end`, `period_focus_summary`, and `key_windows`.
+### Framework and docs
+- Updated the report framework doc to `v2.1.0`.
+- Locked the latest sacred-integrity laws: no omission, no casual assumption, no truth reduction for elegance.
+- Added the refined sequence and final checklist now used to audit outputs.
 
-## Pipeline
-- Added optional `external_modifiers` to all generation methods.
-- Updated cache keys to account for modifiers and deeper surface payloads.
-- Updated weekly/monthly generation to pass the correct target date into the bridge.
-- Updated union deep read to use the deeper input mode.
-- Extended chart summary output with `navamsha_sign`.
+## 2026-03-31 · Anantya sacred-study alignment
 
-## Style guard
-- Restored a light but real specificity requirement for chart reveal.
-- Expanded anchor collection to use dominant themes, hierarchy summaries, panchanga summaries, period focus notes, key windows, relationship summaries, and shared growth edges.
+### Prompt stack
+- Rewrote all five core prompt files to encode the Anantya sacred-study standard.
+- Replaced compression/ranking language with sacred integrity, full-ledger, and no-omission rules.
+- Added direct laws for opening with entrusted beauty, life-story sequencing, and no meta/defensive language.
+- Updated the birth_chart_core feature prompt to use the new Anantya full-study architecture.
 
-## Web layer
-- Added endpoints for mandala deep read, union deep read, weekly overview, and monthly overview.
-- Added pass-through support for `external_modifiers` in API payloads.
+### Schema
+- Replaced the flattened birth_chart_core schema with a long-form sacred-study structure.
+- Added structured section types for yogas, shaping forces, timing currents, and life phases.
+- Updated the output schema reference to match the new field map.
 
-## Package hygiene
-- Removed `.env`, `.cache`, and `__pycache__` from the prepared package.
-- Removed the stale `Anantya_v1.3_Test_Report.pdf` from the prepared package.
+### Input / bridge
+- Added source-of-truth ledgers to the input layer: verified yoga ledger, verified shaping-force ledger, verified timing ledger, and absent/do-not-claim ledger.
+- Added hidden central-knot and entrusted-beauty summaries to the user profile bundle.
+- Extended the bridge to build ledger artifacts from natal chart data before generation.
 
-- added present -> past -> future chart-language framework so birth chart readings begin from the member's life now, then trace roots and future arc
-- added hidden input summaries for present-centered framing, past patterning, and future arc
-- tightened birth-chart prompt and schema guidance to avoid static birth-time narration
+### Guardrails
+- Updated the style guard to allow sacred terminology like yoga, graha, mahadasha, antardasha, and dharma on premium long-form surfaces when used gracefully.
+- Added detection for meta/editorial language and visible hierarchy language that flattens sacred forces.
+
+### Generation path
+- Made schema discipline surface-aware in the assembler so long-form Anantya studies preserve completeness instead of compressing truth to fit UI-sized rules.
+- Increased max output tokens for birth_chart_core to support the new long-form study.
+
+### Docs
+- Added Anantya report framework v2 documentation.
+- Added sacred integrity rules documentation.

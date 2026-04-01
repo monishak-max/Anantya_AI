@@ -1080,3 +1080,17 @@ html, body {
   .ob-question { font-size: 23px; }
   .union-blocks { grid-template-columns: 1fr; }
 }
+
+/* ── Mandala Deep Read Overlay ──────────────────────────────── */
+.deep-section { margin-bottom: 20px; }
+.deep-title { font-size: 20px; font-weight: 600; color: #222; margin-bottom: 8px; line-height: 1.3; }
+.deep-activation { font-size: 14px; color: #666; line-height: 1.6; }
+.deep-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #999; margin-bottom: 6px; }
+.deep-section p { font-size: 14px; color: #444; line-height: 1.65; }
+.deep-timing { font-style: italic; color: #888; font-size: 13px; }
+
+/* ── Birth Chart v2.1 Sacred Study ──────────────────────────── */
+.bc-force, .bc-timing, .bc-phase { margin-bottom: 16px; padding-left: 12px; border-left: 2px solid #e8e0d4; }
+.bc-force h4, .bc-timing h4, .bc-phase h4 { font-size: 14px; font-weight: 600; color: #333; margin: 0 0 4px 0; }
+.bc-force-sub { font-size: 12px; color: #888; font-style: italic; margin-bottom: 8px; }
+.bc-force p, .bc-timing p, .bc-phase p { font-size: 13px; color: #555; line-height: 1.6; margin: 4px 0; }

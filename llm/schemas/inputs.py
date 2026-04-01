@@ -115,6 +115,22 @@ class GroupedInsight(BaseModel):
     combined_trait: str = Field(default="", description="Merged trait summary for LLM consumption")
 
 
+class LedgerEntry(BaseModel):
+    name: str = Field(description="Name of the yoga or life-shaping combination")
+    subtitle: str = Field(description="Short living explanation")
+    sacred_capacity: str = Field(description="What beautiful power it places in the life")
+    distortion: str = Field(description="How it becomes costly or strained")
+    purified_expression: str = Field(description="What it becomes when lived truthfully")
+
+
+class TimingLedgerEntry(BaseModel):
+    name: str = Field(description="Timing current or dasha/bhukti name")
+    subtitle: str = Field(description="Short living explanation of the chapter")
+    chapter_body: str = Field(description="How it shapes the life")
+    start: Optional[date] = None
+    end: Optional[date] = None
+
+
 class ContextModifier(BaseModel):
     kind: str = Field(description="Type of modifier: remedy, gemstone, life_stage, maturity, environment, practice, circumstance")
     label: str = Field(description="Short label for the modifier")
@@ -147,6 +163,12 @@ class UserProfile(BaseModel):
     panchanga_birth_summary: Optional[str] = Field(default=None, description="Hidden note about birth-day panchanga tone if relevant.")
     rule_interpretations: list[RuleInterpretation] = Field(default_factory=list, description="Structured rule engine interpretations matched from the natal chart and transits.")
     grouped_insights: list[GroupedInsight] = Field(default_factory=list, description="Rule signals grouped by theme, sorted by strength. Use these as primary interpretive anchors.")
+    verified_yoga_ledger: list[LedgerEntry] = Field(default_factory=list, description="Source-of-truth ledger of yogas to preserve individually in deep readings.")
+    verified_shaping_forces_ledger: list[LedgerEntry] = Field(default_factory=list, description="Source-of-truth ledger of conjunctions, lordship truths, axis burdens, and other shaping forces.")
+    verified_timing_ledger: list[TimingLedgerEntry] = Field(default_factory=list, description="Source-of-truth timing ledger of mahadashas and currently relevant sub-periods.")
+    absent_or_do_not_claim_ledger: list[str] = Field(default_factory=list, description="Items that should not be claimed in the reading.")
+    central_knot_summary: Optional[str] = Field(default=None, description="Hidden note stating the one great knot of the life.")
+    entrusted_beauty_summary: Optional[str] = Field(default=None, description="Hidden note naming the sacred beauty and promise of the life.")
     external_modifiers: list[ContextModifier] = Field(default_factory=list, description="Optional real-world or remedial modifiers that affect expression but never override chart truth.")
     lagna: Optional[LagnaInfo] = None
     planets: Optional[list[PlanetPlacement]] = None

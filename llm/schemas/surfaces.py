@@ -168,48 +168,126 @@ class UnionDeepRead(BaseModel):
         return warnings
 
 
-# ── 7. Birth Chart Core (expanded per PRD §7.3, §14-18) ───────────
-# PRD requires: overview, core foundations, personality, emotional nature,
-# major gifts, key yogas, karmic lessons, relationships, career/calling,
-# wealth, health/energy, spiritual path, current dasha chapter,
-# current phase (work/wealth/success), late-life arc, final synthesis
+# ── 7. Birth Chart Core (Anantya full sacred study) ─────────────────
 
-class BirthChartCore(BaseModel):
-    opening_essence: str = Field(description="The overture -- who this person is at their core now. Begin in present tense. Should feel like a portrait, not a chart description. STRICT 50-100 words. Cut ruthlessly.")
-    core_signature: str = Field(description="Core foundations -- lagna, moon, key planetary patterns woven into human meaning. Start in the present, then lightly connect to earlier shaping if useful. Not a list of placements. STRICT 45-90 words.")
-    temperament: str = Field(description="How this person moves through the world -- their pace, style, presence. Personality as felt experience, not trait list. STRICT 45-110 words.")
-    emotional_nature: str = Field(description="The inner world -- how they feel, what they need emotionally, their relationship with vulnerability. STRICT 45-110 words.")
-    key_yogas: str = Field(description="Major yogas explained as lived gifts and tensions -- what they mean in daily life. No jargon without translation. No raw conjunction/aspect terms. STRICT 60-150 words.")
-    strengths_and_blessings: str = Field(description="Natural advantages, innate gifts, what comes easily. Specific to this chart, not generic compliments. STRICT 45-100 words.")
-    growth_edges: str = Field(description="Where life asks this person to stretch -- framed with dignity and care, not as flaws. STRICT 45-100 words.")
-    relationship_patterning: str = Field(description="How they love, attach, and partner. What they need and what they offer. Patterns, not predictions. STRICT 45-110 words.")
-    work_and_calling: str = Field(description="Vocation, contribution, and what kind of work feeds their soul. Career direction from the chart, not job titles. STRICT 45-110 words.")
-    wealth_and_resources: str = Field(description="Relationship with money, material stability, and accumulation patterns. No specific financial predictions. STRICT 40-90 words.")
-    health_and_energy: str = Field(description="Energy tendencies, stress patterns, vitality rhythm. NEVER name diseases or use the word 'diagnosis'. Frame as self-care wisdom. STRICT 40-90 words.")
-    spiritual_orientation: str = Field(description="Spiritual path, inner growth direction, what kind of meaning-making feeds them. STRICT 40-100 words.")
-    current_dasha_chapter: str = Field(description="Current dasha translated as a meaningful life chapter -- what is ripening, being tested, opening. No raw dasha labels. STRICT 55-125 words.")
-    current_phase: str = Field(description="Current life phase across work, wealth, relationships. Name the phase clearly. STRICT 45-105 words.")
-    late_life_arc: str = Field(description="How the chart matures with age -- what ripens later, what kind of elder self is emerging. Write as the future arc of the same present pattern, not a disconnected ending. STRICT 40-95 words.")
-    closing_integration: str = Field(description="Final synthesis -- the one deeper pattern that runs through the whole chart from present to roots to future arc. Should feel like a quiet revelation. STRICT 35-85 words.")
+class StudyForce(BaseModel):
+    name: str = Field(description="The sacred force, yoga, or shaping combination name. Keep Sanskrit terms where relevant.")
+    subtitle: str = Field(description="A short living explanation in plain language. 6-18 words.", default="")
+    sacred_capacity: str = Field(description="What beautiful power this force places in the life. 35-95 words.", default="")
+    distortion: str = Field(description="How this same force becomes costly when misused or strained. 25-85 words.", default="")
+    purified_expression: str = Field(description="What this force becomes when lived truthfully. 20-70 words.", default="")
+
+    model_config = {"populate_by_name": True}
+
+    def __init__(self, **data):
+        # Accept 'body'/'description'/'capacity' as aliases
+        if "body" in data and "sacred_capacity" not in data:
+            data["sacred_capacity"] = data.pop("body")
+        if "capacity" in data and "sacred_capacity" not in data:
+            data["sacred_capacity"] = data.pop("capacity")
+        if "shadow" in data and "distortion" not in data:
+            data["distortion"] = data.pop("shadow")
+        super().__init__(**data)
 
     def validate_lengths(self) -> list[str]:
         warnings = []
-        warnings += validate_word_range(self.opening_essence, 50, 100, "opening_essence")
-        warnings += validate_word_range(self.core_signature, 45, 90, "core_signature")
-        warnings += validate_word_range(self.temperament, 45, 110, "temperament")
-        warnings += validate_word_range(self.emotional_nature, 45, 110, "emotional_nature")
-        warnings += validate_word_range(self.key_yogas, 60, 150, "key_yogas")
-        warnings += validate_word_range(self.strengths_and_blessings, 45, 100, "strengths_and_blessings")
-        warnings += validate_word_range(self.growth_edges, 45, 100, "growth_edges")
-        warnings += validate_word_range(self.relationship_patterning, 45, 110, "relationship_patterning")
-        warnings += validate_word_range(self.work_and_calling, 45, 110, "work_and_calling")
-        warnings += validate_word_range(self.wealth_and_resources, 40, 90, "wealth_and_resources")
-        warnings += validate_word_range(self.health_and_energy, 40, 90, "health_and_energy")
-        warnings += validate_word_range(self.spiritual_orientation, 40, 100, "spiritual_orientation")
-        warnings += validate_word_range(self.current_dasha_chapter, 55, 125, "current_dasha_chapter")
-        warnings += validate_word_range(self.current_phase, 45, 105, "current_phase")
-        warnings += validate_word_range(self.late_life_arc, 40, 95, "late_life_arc")
-        warnings += validate_word_range(self.closing_integration, 35, 85, "closing_integration")
+        if self.subtitle:
+            warnings += validate_word_range(self.subtitle, 6, 18, "subtitle")
+        if self.sacred_capacity:
+            warnings += validate_word_range(self.sacred_capacity, 35, 95, "sacred_capacity")
+        if self.distortion:
+            warnings += validate_word_range(self.distortion, 25, 85, "distortion")
+        if self.purified_expression:
+            warnings += validate_word_range(self.purified_expression, 20, 70, "purified_expression")
+        return warnings
+
+
+class TimingCurrent(BaseModel):
+    name: str = Field(description="Mahadasha or bhukti name, or other timing current heading.")
+    subtitle: str = Field(description="A short living explanation of what this chapter is about. 6-18 words.", default="")
+    chapter_body: str = Field(description="How this timing current shapes the life in lived terms. 45-140 words.", default="")
+
+    model_config = {"populate_by_name": True}
+
+    def __init__(self, **data):
+        # Accept 'body' as alias for 'chapter_body'
+        if "body" in data and "chapter_body" not in data:
+            data["chapter_body"] = data.pop("body")
+        super().__init__(**data)
+
+    def validate_lengths(self) -> list[str]:
+        warnings = []
+        if self.subtitle:
+            warnings += validate_word_range(self.subtitle, 6, 18, "subtitle")
+        if self.chapter_body:
+            warnings += validate_word_range(self.chapter_body, 45, 140, "chapter_body")
+        return warnings
+
+
+class LifePhase(BaseModel):
+    title: str = Field(description="Phase title for this life chapter. 2-8 words.", alias="title")
+    age_range: str = Field(description="Age span label such as '0-18'.", default="")
+    body: str = Field(description="How this life chapter feels and what it is doing. 30-90 words.", default="")
+
+    model_config = {"populate_by_name": True}
+
+    def __init__(self, **data):
+        # Accept various LLM output field names as aliases
+        if "name" in data and "title" not in data:
+            data["title"] = data.pop("name")
+        if "phase" in data and "title" not in data:
+            data["title"] = data.pop("phase")
+        if "chapter_body" in data and "body" not in data:
+            data["body"] = data.pop("chapter_body")
+        if "subtitle" in data and "body" not in data:
+            data["body"] = data.pop("subtitle")
+        super().__init__(**data)
+
+    def validate_lengths(self) -> list[str]:
+        warnings = []
+        warnings += validate_word_range(self.title, 2, 8, "title")
+        if self.body:
+            warnings += validate_word_range(self.body, 30, 90, "body")
+        return warnings
+
+
+class BirthChartCore(BaseModel):
+    title: str = Field(description="The title of the life story. Beautiful, elevated, and destiny-led. 3-10 words.")
+    opening_promise: str = Field(description="What this life came here to embody. Uplifting, direct, and sacred. 60-140 words.")
+    entrusted_beauty: str = Field(description="The beauty, dignity, and entrusted force of the life before naming the knot. 60-140 words.")
+    central_knot: str = Field(description="The one great knot of the life. Specific, direct, and lived. 55-130 words.")
+    great_yogas: list[StudyForce] = Field(description="The great yogas moving through this life. Each must be named individually.")
+    finer_yogas: list[StudyForce] = Field(description="The finer yogas that still shape the life and must each be honored individually.")
+    deeper_shaping_forces: list[StudyForce] = Field(description="Conjunctions, lordship truths, axis burdens, and other life-shaping combinations. Each must be named individually.")
+    great_timing_currents: list[TimingCurrent] = Field(description="Mahadashas, active bhuktis, and major timing bodies written as living chapters.")
+    life_phases: list[LifePhase] = Field(description="The major life chapters from early life through late life.")
+    present_threshold: str = Field(description="What is being asked of the life now. 55-140 words.")
+    love: str = Field(description="Love in this specific life. Direct, specific, and unmistakably personal. 60-140 words.")
+    work: str = Field(description="Work in this specific life. Direct, specific, and unmistakably personal. 60-140 words.")
+    embodiment: str = Field(description="What the soul came here to embody when the life ripens. 60-140 words.")
+    closing_destiny: str = Field(description="A final destiny-led closing that returns the life to beauty and purpose. 35-90 words.")
+
+    def validate_lengths(self) -> list[str]:
+        warnings = []
+        warnings += validate_word_range(self.title, 3, 10, "title")
+        warnings += validate_word_range(self.opening_promise, 60, 140, "opening_promise")
+        warnings += validate_word_range(self.entrusted_beauty, 60, 140, "entrusted_beauty")
+        warnings += validate_word_range(self.central_knot, 55, 130, "central_knot")
+        for i, item in enumerate(self.great_yogas):
+            for w in item.validate_lengths(): warnings.append(f"great_yogas[{i}].{w}")
+        for i, item in enumerate(self.finer_yogas):
+            for w in item.validate_lengths(): warnings.append(f"finer_yogas[{i}].{w}")
+        for i, item in enumerate(self.deeper_shaping_forces):
+            for w in item.validate_lengths(): warnings.append(f"deeper_shaping_forces[{i}].{w}")
+        for i, item in enumerate(self.great_timing_currents):
+            for w in item.validate_lengths(): warnings.append(f"great_timing_currents[{i}].{w}")
+        for i, item in enumerate(self.life_phases):
+            for w in item.validate_lengths(): warnings.append(f"life_phases[{i}].{w}")
+        warnings += validate_word_range(self.present_threshold, 55, 140, "present_threshold")
+        warnings += validate_word_range(self.love, 60, 140, "love")
+        warnings += validate_word_range(self.work, 60, 140, "work")
+        warnings += validate_word_range(self.embodiment, 60, 140, "embodiment")
+        warnings += validate_word_range(self.closing_destiny, 35, 90, "closing_destiny")
         return warnings
 
 

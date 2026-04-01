@@ -505,10 +505,88 @@ function renderMandala(data) {
       <div class="mc-marker">${card.activation_marker}</div>
       <div class="mc-title">${card.card_title}</div>
       <div class="mc-body">${card.card_body}</div>
-      ${card.cta ? `<span class="mc-cta">${card.cta}</span>` : ''}
+      <span class="mc-cta" data-planet="${planet}">Explore this further</span>
     `;
+
+    // Wire the "Explore this further" button to mandala deep read
+    el.querySelector('.mc-cta').addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const activationPlanet = e.target.dataset.planet || 'Saturn';
+      await loadMandalaDeepRead(activationPlanet, card);
+    });
+
     container.appendChild(el);
   });
+}
+
+// ── Mandala Deep Read ──────────────────────────────────────────
+async function loadMandalaDeepRead(planet, card) {
+  // Show overlay with loading state
+  let overlay = document.getElementById('mandala-deep-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'mandala-deep-overlay';
+    overlay.className = 'expanded-overlay';
+    overlay.innerHTML = `
+      <div class="expanded-sheet">
+        <button class="btn-close-sheet" id="btn-close-mandala-deep">&times;</button>
+        <div class="mandala-deep-loading" style="text-align:center;padding:40px 20px;">
+          <div class="loader"></div>
+          <p style="margin-top:16px;color:#888;">Exploring this activation...</p>
+        </div>
+        <div class="mandala-deep-content" style="display:none;"></div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.style.display = 'none';
+    });
+    document.getElementById('btn-close-mandala-deep').addEventListener('click', () => {
+      overlay.style.display = 'none';
+    });
+  }
+
+  // Reset and show
+  overlay.querySelector('.mandala-deep-loading').style.display = 'block';
+  overlay.querySelector('.mandala-deep-content').style.display = 'none';
+  overlay.style.display = 'block';
+
+  try {
+    const payload = {
+      ...userData,
+      activation_planet: planet,
+    };
+    const res = await api('/api/mandala-deep', payload);
+    const d = res.deep_read;
+
+    const content = overlay.querySelector('.mandala-deep-content');
+    content.innerHTML = `
+      <div class="deep-section">
+        <h2 class="deep-title">${d.title || ''}</h2>
+        <p class="deep-activation">${d.activation_summary || ''}</p>
+      </div>
+      <div class="deep-section">
+        <div class="deep-label">Where this lands in your life</div>
+        <p>${d.life_area_section || ''}</p>
+      </div>
+      <div class="deep-section">
+        <div class="deep-label">How it may feel</div>
+        <p>${d.inner_expression_section || ''}</p>
+      </div>
+      <div class="deep-section">
+        <div class="deep-label">How to move with this</div>
+        <p>${d.guidance_section || ''}</p>
+      </div>
+      ${d.time_note ? `<div class="deep-section"><div class="deep-label">Timing</div><p class="deep-timing">${d.time_note}</p></div>` : ''}
+    `;
+
+    overlay.querySelector('.mandala-deep-loading').style.display = 'none';
+    content.style.display = 'block';
+  } catch (err) {
+    overlay.querySelector('.mandala-deep-loading').innerHTML =
+      `<p style="color:#c44;">Could not load: ${err.message}</p>`;
+  }
 }
 
 function extractPlanet(marker) {
@@ -591,43 +669,128 @@ document.getElementById('btn-gen-bc').addEventListener('click', async () => {
     document.querySelector('.bc-loading').style.display = 'none';
     document.getElementById('bc-content').style.display = 'block';
   } catch (e) {
-    document.querySelector('.bc-loading').querySelector('p').textContent = 'Error: ' + e.message;
+    const msg = e.message || '';
+    let userMsg;
+    if (msg.includes('Overloaded') || msg.includes('529')) {
+      userMsg = 'Our servers are busy right now. Your sacred study takes deep computation. Please try again in a minute.';
+    } else if (msg.includes('credit') || msg.includes('balance')) {
+      userMsg = 'Service temporarily unavailable. Please try again shortly.';
+    } else {
+      userMsg = 'Something went wrong generating your birth chart. Please try again.';
+    }
+    const loadingEl = document.querySelector('.bc-loading');
+    loadingEl.querySelector('p').textContent = userMsg;
+    loadingEl.innerHTML += '<button class="btn-next" onclick="document.getElementById(\'btn-gen-bc\').click()" style="margin-top:16px"><span class="btn-text">Try Again</span></button>';
+  } finally {
+    setLoading(btn, false);
   }
 });
 
 function renderBirthChart(bc) {
-  const sections = [
-    { key: 'opening_essence', label: 'Essence', cls: 'opening' },
-    { key: 'core_signature', label: 'Core Signature' },
-    { key: 'temperament', label: 'Temperament' },
-    { key: 'emotional_nature', label: 'Emotional Nature' },
-    { key: 'key_yogas', label: 'Key Yogas' },
-    { key: 'strengths_and_blessings', label: 'Strengths & Blessings' },
-    { key: 'growth_edges', label: 'Growth Edges' },
-    { key: 'relationship_patterning', label: 'Relationships' },
-    { key: 'work_and_calling', label: 'Work & Calling' },
-    { key: 'wealth_and_resources', label: 'Wealth & Resources' },
-    { key: 'health_and_energy', label: 'Health & Energy' },
-    { key: 'spiritual_orientation', label: 'Spiritual Orientation' },
-    { key: 'current_dasha_chapter', label: 'Current Chapter' },
-    { key: 'current_phase', label: 'Current Phase' },
-    { key: 'late_life_arc', label: 'Late-Life Arc' },
-    { key: 'closing_integration', label: 'Integration', cls: 'closing' },
-  ];
-
+  console.log('renderBirthChart called with:', JSON.stringify(bc).substring(0, 500));
+  console.log('great_yogas:', bc.great_yogas?.length, 'first:', JSON.stringify(bc.great_yogas?.[0])?.substring(0, 200));
   const container = document.getElementById('bc-content');
   container.innerHTML = '';
 
-  sections.forEach(s => {
-    if (!bc[s.key]) return;
+  function addSection(label, text, cls = '') {
+    if (!text) return;
     const div = document.createElement('div');
-    div.className = `bc-section ${s.cls || ''}`;
-    div.innerHTML = `
-      <div class="bc-label">${s.label}</div>
-      <p>${bc[s.key]}</p>
-    `;
+    div.className = `bc-section ${cls}`;
+    div.innerHTML = `<div class="bc-label">${label}</div><p>${text}</p>`;
     container.appendChild(div);
-  });
+  }
+
+  function addForceList(label, forces) {
+    if (!forces || !forces.length) return;
+    console.log(`addForceList: ${label}, ${forces.length} items, first:`, JSON.stringify(forces[0]));
+    const wrapper = document.createElement('div');
+    wrapper.className = 'bc-section';
+    wrapper.innerHTML = `<div class="bc-label">${label}</div>`;
+    forces.forEach(f => {
+      console.log(`  Force: ${f.name}, sacred_capacity length: ${(f.sacred_capacity||'').length}, keys: ${Object.keys(f)}`);
+      const name = f.name || f.title || '';
+      const subtitle = f.subtitle || '';
+      const capacity = f.sacred_capacity || f.body || f.capacity || f.description || '';
+      const distortion = f.distortion || f.shadow || '';
+      const purified = f.purified_expression || '';
+      let html = `<div class="bc-force"><h4>${name}</h4>`;
+      if (subtitle) html += `<div class="bc-force-sub">${subtitle}</div>`;
+      if (capacity) html += `<p>${distortion || purified ? '<strong>Sacred capacity:</strong> ' : ''}${capacity}</p>`;
+      if (distortion) html += `<p><strong>Distortion:</strong> ${distortion}</p>`;
+      if (purified) html += `<p><strong>Purified expression:</strong> ${purified}</p>`;
+      html += '</div>';
+      wrapper.innerHTML += html;
+    });
+    container.appendChild(wrapper);
+  }
+
+  function addTimingList(label, timings) {
+    if (!timings || !timings.length) return;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'bc-section';
+    wrapper.innerHTML = `<div class="bc-label">${label}</div>`;
+    timings.forEach(t => {
+      const name = t.name || t.title || '';
+      const subtitle = t.subtitle || '';
+      const body = t.chapter_body || t.body || t.sacred_capacity || t.description || '';
+      let html = `<div class="bc-timing"><h4>${name}</h4>`;
+      if (subtitle) html += `<div class="bc-force-sub">${subtitle}</div>`;
+      if (body) html += `<p>${body}</p>`;
+      html += '</div>';
+      wrapper.innerHTML += html;
+    });
+    container.appendChild(wrapper);
+  }
+
+  function addPhaseList(label, phases) {
+    if (!phases || !phases.length) return;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'bc-section';
+    wrapper.innerHTML = `<div class="bc-label">${label}</div>`;
+    phases.forEach(p => {
+      const title = p.title || p.name || p.phase || '';
+      const age = p.age_range || '';
+      const body = p.body || '';
+      let html = `<div class="bc-phase"><h4>${title}${age ? ' (' + age + ')' : ''}</h4>`;
+      if (body) html += `<p>${body}</p>`;
+      html += '</div>';
+      wrapper.innerHTML += html;
+    });
+    container.appendChild(wrapper);
+  }
+
+  // v2.1 sacred study structure
+  if (bc.title) addSection('', `<strong style="font-size:18px">${bc.title}</strong>`, 'opening');
+  addSection('Opening Promise', bc.opening_promise, 'opening');
+  addSection('Entrusted Beauty', bc.entrusted_beauty);
+  addSection('Central Knot', bc.central_knot);
+  addForceList('The Great Yogas', bc.great_yogas);
+  addForceList('The Finer Yogas', bc.finer_yogas);
+  addForceList('Deeper Shaping Forces', bc.deeper_shaping_forces);
+  addTimingList('Great Timing Currents', bc.great_timing_currents);
+  addPhaseList('Life Phases', bc.life_phases);
+  addSection('Present Threshold', bc.present_threshold);
+  addSection('Love', bc.love);
+  addSection('Work', bc.work);
+  addSection('Embodiment', bc.embodiment);
+  addSection('Closing Destiny', bc.closing_destiny, 'closing');
+
+  // Fallback: v1.4 flat structure (if old schema response)
+  if (!bc.title && bc.opening_essence) {
+    const oldSections = [
+      { key: 'opening_essence', label: 'Essence', cls: 'opening' },
+      { key: 'core_signature', label: 'Core Signature' },
+      { key: 'temperament', label: 'Temperament' },
+      { key: 'emotional_nature', label: 'Emotional Nature' },
+      { key: 'key_yogas', label: 'Key Yogas' },
+      { key: 'strengths_and_blessings', label: 'Strengths & Blessings' },
+      { key: 'growth_edges', label: 'Growth Edges' },
+      { key: 'relationship_patterning', label: 'Relationships' },
+      { key: 'work_and_calling', label: 'Work & Calling' },
+      { key: 'closing_integration', label: 'Integration', cls: 'closing' },
+    ];
+    oldSections.forEach(s => addSection(s.label, bc[s.key], s.cls || ''));
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
