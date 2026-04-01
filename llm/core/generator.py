@@ -22,6 +22,7 @@ from pydantic import BaseModel
 from llm.core.client import AstroLLMClient
 from llm.core.config import Surface
 from llm.guards.style_guard import AstroStyleGuard, Violation
+from llm.guards.response_validator import ResponseValidator, ValidationFailure
 from llm.prompts.assembler import assemble_prompt
 from llm.schemas.surfaces import SURFACE_SCHEMAS
 from llm.schemas.inputs import (
@@ -107,6 +108,7 @@ class AstroGenerator:
     def __init__(self, api_key: str | None = None):
         self.client = AstroLLMClient(api_key=api_key)
         self.guard = AstroStyleGuard()
+        self.validator = ResponseValidator()
 
     def generate(
         self,
@@ -176,6 +178,13 @@ class AstroGenerator:
             violations = self.guard.check(result_dict, surface.value, input_dict)
 
             retry_reasons = self._retry_reasons(violations, word_warnings)
+
+            # Structural validation (schema shape, nulls, business rules)
+            val_failures = self.validator.validate(result_dict, surface.value)
+            if val_failures:
+                for f in val_failures:
+                    logger.warning("[%s] Validation: %s — %s", surface.value, f.check, f.detail)
+                retry_reasons.extend(f.detail for f in val_failures if f.is_retryable)
 
             if not retry_reasons or attempt == max_style_retries:
                 return GenerationResult(
