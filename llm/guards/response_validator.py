@@ -50,12 +50,49 @@ class ResponseValidator:
 
     def _check_empty_fields(self, data: dict, surface: str) -> list[ValidationFailure]:
         failures = []
-        for key, value in data.items():
-            if value is None:
-                failures.append(ValidationFailure("empty", key, f"'{key}' is null"))
-            elif isinstance(value, str) and not value.strip():
-                failures.append(ValidationFailure("empty", key, f"'{key}' is empty string"))
+        self._check_empty_recursive(data, "", failures)
         return failures
+
+    def _check_empty_recursive(self, obj, path: str, failures: list[ValidationFailure]):
+        """Recursively check for null/empty values in nested dicts and lists.
+
+        Catches empty sacred_capacity inside StudyForce, empty chapter_body
+        inside TimingCurrent, etc. -- the exact issue that caused yogas to
+        render as title-only in the birth chart.
+        """
+        if isinstance(obj, dict):
+            for key, value in obj.items():
+                full_path = f"{path}.{key}" if path else key
+                if value is None:
+                    failures.append(ValidationFailure("empty", full_path, f"'{full_path}' is null"))
+                elif isinstance(value, str) and not value.strip():
+                    # Skip fields that are intentionally optional/empty
+                    skip_fields = {"subtitle", "distortion", "purified_expression",
+                                   "shadow", "age_range", "cta", "closing_anchor",
+                                   "invitation", "time_note"}
+                    field_name = key.split(".")[-1] if "." in key else key
+                    if field_name not in skip_fields:
+                        failures.append(ValidationFailure("empty", full_path, f"'{full_path}' is empty string"))
+                elif isinstance(value, (dict, list)):
+                    self._check_empty_recursive(value, full_path, failures)
+        elif isinstance(obj, list):
+            for i, item in enumerate(obj):
+                full_path = f"{path}[{i}]"
+                if isinstance(item, dict):
+                    # For nested objects (StudyForce, TimingCurrent, LifePhase),
+                    # check that at least the primary content field has text
+                    content_fields = ["sacred_capacity", "chapter_body", "body"]
+                    has_content = any(
+                        isinstance(item.get(f), str) and item.get(f, "").strip()
+                        for f in content_fields
+                    )
+                    if not has_content and any(f in item for f in content_fields):
+                        name = item.get("name", item.get("title", f"item {i}"))
+                        failures.append(ValidationFailure(
+                            "empty", full_path,
+                            f"'{name}' has no body content (sacred_capacity/chapter_body/body all empty)"
+                        ))
+                    self._check_empty_recursive(item, full_path, failures)
 
     def _check_business_constraints(self, data: dict, surface: str) -> list[ValidationFailure]:
         failures = []
