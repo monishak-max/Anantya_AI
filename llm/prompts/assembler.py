@@ -92,13 +92,17 @@ def build_schema_instruction(schema_class: type[BaseModel]) -> str:
         "Do not include any text outside the JSON object.\n\n"
     )
 
-    if schema_class.__name__ == "BirthChartCore":
+    birth_chart_section_schemas = {
+        "BirthChartCore", "BirthChartYogasSection", "BirthChartForcesSection",
+        "BirthChartTimingSection", "BirthChartSynthesisSection",
+    }
+    if schema_class.__name__ in birth_chart_section_schemas:
         constraints = (
             "CRITICAL: This is a sacred long-form study, not a compact UI card. "
             "Respect the structure and field intentions exactly, but do not compress truth merely to stay neat. "
-            "Word ranges are guidance for proportion and readability, not excuses to omit meaningful yogas, shaping forces, or timing layers. "
+            "Word ranges are guidance for proportion and readability, not excuses to omit meaningful factors. "
             "Preserve every meaningful factor individually and scale by depth, not omission.\n\n"
-            "Before producing the final JSON, silently plan the reading using: entrusted beauty, central knot, great yogas, finer yogas, deeper shaping forces, timing body, love, work, present threshold, embodiment, and closing destiny. Do not output that scaffold.\n\n"
+            "Before producing the final JSON, silently plan the section using the chart_essence and ledger data provided. Do not output that scaffold.\n\n"
         )
     else:
         constraints = (
@@ -109,6 +113,82 @@ def build_schema_instruction(schema_class: type[BaseModel]) -> str:
         )
 
     return base + constraints + f"Schema: {schema_class.__name__}\n" + f"Fields:\n" + "\n".join(fields_desc)
+
+
+# ── Section surfaces (parallel birth chart) ──────────────────────
+
+_SECTION_SURFACES = frozenset({
+    Surface.BIRTH_CHART_YOGAS,
+    Surface.BIRTH_CHART_FORCES,
+    Surface.BIRTH_CHART_TIMING,
+    Surface.BIRTH_CHART_SYNTHESIS,
+})
+
+
+def _build_voice_anchor(input_data: BaseModel) -> str:
+    """Build the GLOBAL CONTEXT block from ChartEssence.
+
+    This identical block is injected into the system prompt of every parallel
+    section call. It carries both tonal anchors AND cross-referencing data
+    so every section writes with full awareness of the reading's landscape.
+    """
+    data = input_data.model_dump()
+    essence = data.get("chart_essence")
+    if not essence:
+        return ""
+
+    yoga_names = essence.get("yoga_names", [])
+    force_names = essence.get("force_names", [])
+    recurring = essence.get("recurring_threads", [])
+    current_chapter = essence.get("current_timing_chapter", "")
+
+    lines = [
+        "GLOBAL CONTEXT — This block is identical across all parallel sections of this reading.",
+        "Every section must honor the identity, tone, themes, and cross-references below.",
+        "",
+        "═══ IDENTITY ═══",
+        f"Moon: {essence.get('moon_sign', '')} / {essence.get('moon_nakshatra', '')}",
+        f"Lagna: {essence.get('lagna_sign', '')}",
+        f"Active chapter: {current_chapter}",
+        "",
+        "═══ TONAL ANCHORS ═══",
+        f"Natal signature: {essence.get('natal_signature_summary', '')}",
+        f"Current chapter: {essence.get('current_chapter_summary', '')}",
+        f"Central knot: {essence.get('central_knot_summary', '')}",
+        f"Entrusted beauty: {essence.get('entrusted_beauty_summary', '')}",
+        f"Confidence: {essence.get('confidence_summary', '')}",
+        "",
+        "Dominant themes: " + "; ".join(essence.get("dominant_themes", [])),
+    ]
+
+    if recurring:
+        lines += [
+            "",
+            "═══ RECURRING THREADS (appear across multiple chart factors) ═══",
+            "These threads must feel present across the entire reading, not confined to one section:",
+            *[f"  - {t}" for t in recurring],
+        ]
+
+    lines += [
+        "",
+        "═══ CROSS-REFERENCES (names every section may reference) ═══",
+        f"Yogas in this chart: {', '.join(yoga_names) if yoga_names else 'none detected'}",
+        f"Shaping forces: {', '.join(force_names) if force_names else 'none detected'}",
+        f"Active timing: {current_chapter}",
+        "",
+        "When your section touches a theme that connects to one of these names, reference",
+        "it naturally (e.g., 'what Hamsa Yoga carries is tested under Saturn's chapter').",
+        "This ensures the final reading feels like one intelligence wrote it.",
+        "",
+        "═══ TONE RULES (binding) ═══",
+        "- Write as one coherent intelligence speaking to one life",
+        "- Match the emotional weight of the knot and beauty above",
+        "- No generic spiritual language; every line must feel specific to this chart",
+        "- Sacred, intimate, direct, precise — never clinical or templated",
+        "- Vary rhythm and cadence; do not repeat a rigid structure across entries",
+        "- When threads recur across your section, connect them — do not treat each entry as isolated",
+    ]
+    return "\n".join(lines)
 
 
 # ── Full assembly ──────────────────────────────────────────────────
@@ -133,10 +213,17 @@ def assemble_prompt(
     # 3. Schema constraints
     schema_instruction = build_schema_instruction(output_schema)
 
-    # System prompt = core + feature + schema
-    system_prompt = f"{core}\n\n---\n\n{feature}\n\n---\n\n{schema_instruction}"
+    # 4. For section surfaces, inject the shared voice anchor between
+    #    feature prompt and schema so it is prominent in the LLM context.
+    if surface in _SECTION_SURFACES:
+        voice_anchor = _build_voice_anchor(input_data)
+        system_prompt = (
+            f"{core}\n\n---\n\n{feature}\n\n---\n\n{voice_anchor}\n\n---\n\n{schema_instruction}"
+        )
+    else:
+        system_prompt = f"{core}\n\n---\n\n{feature}\n\n---\n\n{schema_instruction}"
 
-    # 4. User message = structured input data
+    # 5. User message = structured input data
     user_message = (
         "Generate the reading for this member based on the following astrological data.\n\n"
         f"```json\n{input_data.model_dump_json(indent=2)}\n```"

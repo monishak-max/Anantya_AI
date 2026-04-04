@@ -242,3 +242,88 @@ class PeriodOverviewInput(BaseModel):
     period_end: date
     period_focus_summary: Optional[str] = Field(default=None, description="Hidden summary of the broader period arc.")
     key_windows: list[PeriodWindow] = Field(default_factory=list, description="Important windows inside the period.")
+
+
+# ── Birth Chart Parallel Section Inputs ──────────────────────────
+
+class ChartEssence(BaseModel):
+    """Shared global context injected into every parallel section call.
+
+    Contains both tonal anchors AND cross-referencing data so every section
+    knows the full landscape of the reading — which yogas exist, which forces,
+    what timing chapter is active — and can write coherently without needing
+    to see other sections' outputs.
+    """
+    # Identity
+    moon_sign: str
+    moon_nakshatra: str
+    lagna_sign: str
+    mahadasha_lord: str
+    antardasha_lord: str
+
+    # Tonal summaries
+    natal_signature_summary: str
+    current_chapter_summary: str
+    central_knot_summary: str
+    entrusted_beauty_summary: str
+    dominant_themes: list[str] = Field(default_factory=list)
+    confidence_summary: str = ""
+    reasoning_hierarchy_summary: str = ""
+    conflict_resolution_summary: str = ""
+    interpretive_anchors: list[str] = Field(default_factory=list)
+
+    # Cross-referencing data (pre-computed from chart, shared across all sections)
+    yoga_names: list[str] = Field(default_factory=list, description="Names of all yogas in this chart. Every section can reference these by name.")
+    force_names: list[str] = Field(default_factory=list, description="Names of all shaping forces in this chart.")
+    current_timing_chapter: str = Field(default="", description="The active mahadasha/antardasha label.")
+    recurring_threads: list[str] = Field(default_factory=list, description="Thematic threads that appear across multiple chart factors. All sections should honor these.")
+
+
+class BirthChartYogasInput(BaseModel):
+    chart_essence: ChartEssence
+    verified_yoga_ledger: list[LedgerEntry] = Field(default_factory=list)
+    absent_or_do_not_claim_ledger: list[str] = Field(default_factory=list)
+    grouped_insights: list[GroupedInsight] = Field(default_factory=list, description="Rule engine grouped insights relevant to yogas.")
+
+
+class BirthChartForcesInput(BaseModel):
+    chart_essence: ChartEssence
+    verified_shaping_forces_ledger: list[LedgerEntry] = Field(default_factory=list)
+    grouped_insights: list[GroupedInsight] = Field(default_factory=list, description="Rule engine grouped insights relevant to forces.")
+
+
+class BirthChartTimingInput(BaseModel):
+    chart_essence: ChartEssence
+    verified_timing_ledger: list[TimingLedgerEntry] = Field(default_factory=list)
+
+
+class SectionDigest(BaseModel):
+    """Compact summary of a completed content section for synthesis cross-referencing."""
+    yoga_names: list[str] = Field(default_factory=list, description="Names of all yogas that were written, in order.")
+    yoga_themes: list[str] = Field(default_factory=list, description="One-line theme per yoga as actually written.")
+    force_names: list[str] = Field(default_factory=list, description="Names of all shaping forces that were written.")
+    force_themes: list[str] = Field(default_factory=list, description="One-line theme per force as actually written.")
+    timing_names: list[str] = Field(default_factory=list, description="Names of all timing currents that were written.")
+    current_chapter: Optional[str] = Field(default=None, description="The timing current that is active now.")
+    life_phase_titles: list[str] = Field(default_factory=list, description="Titles of all life phases that were written.")
+    recurring_threads: list[str] = Field(default_factory=list, description="Themes or tensions that appeared across multiple sections.")
+
+
+class BirthChartSynthesisInput(BaseModel):
+    chart_essence: ChartEssence
+    present_center_summary: Optional[str] = None
+    past_pattern_summary: Optional[str] = None
+    future_arc_summary: Optional[str] = None
+    navamsha_summary: Optional[str] = None
+    panchanga_birth_summary: Optional[str] = None
+    central_knot_summary: Optional[str] = None
+    entrusted_beauty_summary: Optional[str] = None
+    external_modifiers: list[ContextModifier] = Field(default_factory=list)
+    lagna: Optional[LagnaInfo] = None
+    planets: Optional[list[PlanetPlacement]] = None
+    house_lords: Optional[list[HouseLordship]] = None
+    grouped_insights: list[GroupedInsight] = Field(default_factory=list)
+    # 3+1: actual prose from completed content sections
+    completed_yogas_prose: Optional[str] = Field(default=None, description="Actual prose written by the yogas section. Reference these exact themes in your narrative.")
+    completed_forces_prose: Optional[str] = Field(default=None, description="Actual prose written by the forces section. Reference these exact themes in your narrative.")
+    completed_timing_prose: Optional[str] = Field(default=None, description="Actual prose written by the timing section. Reference these chapter descriptions in your narrative.")

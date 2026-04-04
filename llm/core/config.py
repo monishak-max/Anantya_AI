@@ -42,6 +42,10 @@ class Surface(str, Enum):
     UNION_SNAPSHOT = "union_snapshot"
     UNION_DEEP_READ = "union_deep_read"
     BIRTH_CHART_CORE = "birth_chart_core"
+    BIRTH_CHART_YOGAS = "birth_chart_yogas"
+    BIRTH_CHART_FORCES = "birth_chart_forces"
+    BIRTH_CHART_TIMING = "birth_chart_timing"
+    BIRTH_CHART_SYNTHESIS = "birth_chart_synthesis"
     WEEKLY_OVERVIEW = "weekly_overview"
     MONTHLY_OVERVIEW = "monthly_overview"
     CHART_REVEAL = "chart_reveal"
@@ -55,6 +59,10 @@ SURFACE_TO_TIER: dict[Surface, ModelTier] = {
     Surface.UNION_SNAPSHOT: ModelTier.STANDARD,
     Surface.UNION_DEEP_READ: ModelTier.PREMIUM,
     Surface.BIRTH_CHART_CORE: ModelTier.PREMIUM,
+    Surface.BIRTH_CHART_YOGAS: ModelTier.STANDARD,
+    Surface.BIRTH_CHART_FORCES: ModelTier.STANDARD,
+    Surface.BIRTH_CHART_TIMING: ModelTier.STANDARD,
+    Surface.BIRTH_CHART_SYNTHESIS: ModelTier.PREMIUM,
     Surface.WEEKLY_OVERVIEW: ModelTier.STANDARD,
     Surface.MONTHLY_OVERVIEW: ModelTier.STANDARD,
     Surface.CHART_REVEAL: ModelTier.STANDARD,
@@ -69,6 +77,10 @@ SURFACE_TO_PROMPT_FILE: dict[Surface, str] = {
     Surface.UNION_SNAPSHOT: "union_snapshot.txt",
     Surface.UNION_DEEP_READ: "union_deep_read.txt",
     Surface.BIRTH_CHART_CORE: "birth_chart_core.txt",
+    Surface.BIRTH_CHART_YOGAS: "birth_chart_yogas.txt",
+    Surface.BIRTH_CHART_FORCES: "birth_chart_forces.txt",
+    Surface.BIRTH_CHART_TIMING: "birth_chart_timing.txt",
+    Surface.BIRTH_CHART_SYNTHESIS: "birth_chart_synthesis.txt",
     Surface.WEEKLY_OVERVIEW: "weekly_overview.txt",
     Surface.MONTHLY_OVERVIEW: "monthly_overview.txt",
     Surface.CHART_REVEAL: "chart_reveal.txt",
@@ -84,6 +96,10 @@ SURFACE_MAX_TOKENS: dict[Surface, int] = {
     Surface.UNION_SNAPSHOT: 400,
     Surface.UNION_DEEP_READ: 1500,
     Surface.BIRTH_CHART_CORE: 12000,  # Sacred life study: nested yogas, forces, timing, phases
+    Surface.BIRTH_CHART_YOGAS: 3000,
+    Surface.BIRTH_CHART_FORCES: 2500,
+    Surface.BIRTH_CHART_TIMING: 3000,
+    Surface.BIRTH_CHART_SYNTHESIS: 3500,
     Surface.WEEKLY_OVERVIEW: 800,
     Surface.MONTHLY_OVERVIEW: 1000,
     Surface.CHART_REVEAL: 300,

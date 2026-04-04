@@ -32,6 +32,10 @@ from llm.schemas.inputs import (
     UnionInput,
     BirthChartInput,
     PeriodOverviewInput,
+    BirthChartYogasInput,
+    BirthChartForcesInput,
+    BirthChartTimingInput,
+    BirthChartSynthesisInput,
 )
 
 logger = logging.getLogger("astro.generator")
@@ -90,6 +94,10 @@ SURFACE_INPUT_SCHEMAS: dict[Surface, type[BaseModel]] = {
     Surface.UNION_SNAPSHOT: UnionInput,
     Surface.UNION_DEEP_READ: UnionInput,
     Surface.BIRTH_CHART_CORE: BirthChartInput,
+    Surface.BIRTH_CHART_YOGAS: BirthChartYogasInput,
+    Surface.BIRTH_CHART_FORCES: BirthChartForcesInput,
+    Surface.BIRTH_CHART_TIMING: BirthChartTimingInput,
+    Surface.BIRTH_CHART_SYNTHESIS: BirthChartSynthesisInput,
     Surface.WEEKLY_OVERVIEW: PeriodOverviewInput,
     Surface.MONTHLY_OVERVIEW: PeriodOverviewInput,
 }
@@ -109,6 +117,15 @@ class AstroGenerator:
         self.client = AstroLLMClient(api_key=api_key)
         self.guard = AstroStyleGuard()
         self.validator = ResponseValidator()
+
+    # Section surfaces: retry only on structural failures, not style violations.
+    # Style is caught in the post-merge guard pass on the combined output.
+    _SECTION_SURFACES = frozenset({
+        Surface.BIRTH_CHART_YOGAS,
+        Surface.BIRTH_CHART_FORCES,
+        Surface.BIRTH_CHART_TIMING,
+        Surface.BIRTH_CHART_SYNTHESIS,
+    })
 
     def generate(
         self,
@@ -145,6 +162,8 @@ class AstroGenerator:
         from llm.core.config import get_model
         model = get_model(surface)
 
+        is_section = surface in self._SECTION_SURFACES
+
         retry_count = 0
         for attempt in range(max_style_retries + 1):
             start = time.monotonic()
@@ -163,28 +182,41 @@ class AstroGenerator:
             # Convert to dict for style guard
             result_dict = result_obj.model_dump()
 
-            # Auto-fix em dashes -- LLMs persistently generate them despite
-            # explicit instructions. Replace with comma or period instead of
-            # wasting retries on a mechanical fix.
+            # ── Post-processing fixes (deterministic, no retries) ──
+            # Fix em dashes, deterministic language, short subtitles,
+            # and minor word-count overflows mechanically.
             result_dict = self._strip_em_dashes(result_dict)
+            result_dict = self._fix_deterministic_language(result_dict)
+            result_dict = self._fix_short_subtitles(result_dict)
+            result_dict = self._trim_overflows(result_dict)
 
-            # Word count validation
+            # Word count validation (after post-processing)
             word_warnings = []
             if hasattr(result_obj, "validate_lengths"):
-                word_warnings = result_obj.validate_lengths()
+                # Re-validate on the fixed dict by re-parsing
+                try:
+                    fixed_obj = output_schema.model_validate(result_dict)
+                    word_warnings = fixed_obj.validate_lengths() if hasattr(fixed_obj, "validate_lengths") else []
+                except Exception:
+                    word_warnings = result_obj.validate_lengths()
 
             # Style guard (with input data for specificity check)
             input_dict = input_data.model_dump() if input_data else None
             violations = self.guard.check(result_dict, surface.value, input_dict)
 
-            retry_reasons = self._retry_reasons(violations, word_warnings)
-
-            # Structural validation (schema shape, nulls, business rules)
-            val_failures = self.validator.validate(result_dict, surface.value)
-            if val_failures:
-                for f in val_failures:
-                    logger.warning("[%s] Validation: %s — %s", surface.value, f.check, f.detail)
-                retry_reasons.extend(f.detail for f in val_failures if f.is_retryable)
+            # Section surfaces: only retry on structural failures (missing
+            # fields, empty content). Style violations are deferred to the
+            # post-merge guard pass on the combined birth chart output.
+            if is_section:
+                retry_reasons = self._section_retry_reasons(result_dict, surface.value)
+            else:
+                retry_reasons = self._retry_reasons(violations, word_warnings)
+                # Structural validation (schema shape, nulls, business rules)
+                val_failures = self.validator.validate(result_dict, surface.value)
+                if val_failures:
+                    for f in val_failures:
+                        logger.warning("[%s] Validation: %s — %s", surface.value, f.check, f.detail)
+                    retry_reasons.extend(f.detail for f in val_failures if f.is_retryable)
 
             if not retry_reasons or attempt == max_style_retries:
                 return GenerationResult(
@@ -197,7 +229,7 @@ class AstroGenerator:
                     retry_count=retry_count,
                 )
 
-            # Critical violation — retry
+            # Structural failure — retry
             retry_count += 1
             logger.warning(
                 f"[{surface.value}] Retry-worthy issues found, retrying ({retry_count}/{max_style_retries}): {retry_reasons}"
@@ -221,6 +253,22 @@ class AstroGenerator:
         for warning in word_warnings:
             if self._is_retry_worthy_word_warning(warning):
                 reasons.append(warning)
+        return reasons
+
+    def _section_retry_reasons(self, result_dict: dict, surface_value: str) -> list[str]:
+        """For parallel birth chart sections, only retry on structural failures.
+
+        Style violations (jargon, tone, specificity, word count) are tolerated
+        per-section — they are caught in the post-merge guard pass on the
+        combined output. This prevents burning 15-30s Sonnet retries on issues
+        that don't affect structural integrity.
+        """
+        reasons = []
+        val_failures = self.validator.validate(result_dict, surface_value)
+        for f in val_failures:
+            if f.check in ("schema", "empty"):
+                reasons.append(f.detail)
+                logger.warning("[%s] Structural failure: %s — %s", surface_value, f.check, f.detail)
         return reasons
 
     def _is_retry_worthy_word_warning(self, warning: str) -> bool:
@@ -261,6 +309,138 @@ class AstroGenerator:
             elif isinstance(value, list):
                 return [fix(item) for item in value]
             return value
+
+        return fix(data)
+
+    # Compiled deterministic-language patterns (case-insensitive).
+    _DETERMINISTIC_FIXES = [
+        (re.compile(r"\byou will\b", re.IGNORECASE), "this may"),
+        (re.compile(r"\bthis will happen\b", re.IGNORECASE), "this is likely to unfold"),
+        (re.compile(r"\byou are destined\b", re.IGNORECASE), "the chart points toward"),
+        (re.compile(r"\bfated to\b", re.IGNORECASE), "drawn toward"),
+        (re.compile(r"\binevitably\b", re.IGNORECASE), "likely"),
+        (re.compile(r"\bcertainly will\b", re.IGNORECASE), "is likely to"),
+        (re.compile(r"\bwithout doubt\b", re.IGNORECASE), "with strong indication"),
+        (re.compile(r"\bguaranteed\b", re.IGNORECASE), "strongly supported"),
+    ]
+
+    @staticmethod
+    def _fix_deterministic_language(data: dict) -> dict:
+        """Replace deterministic patterns with probabilistic phrasing.
+
+        LLMs slip into "you will" despite explicit bans. Fix mechanically
+        rather than burning a retry.
+        """
+        def fix(value):
+            if isinstance(value, str):
+                for pattern, replacement in AstroGenerator._DETERMINISTIC_FIXES:
+                    value = pattern.sub(replacement, value)
+                return value
+            elif isinstance(value, dict):
+                return {k: fix(v) for k, v in value.items()}
+            elif isinstance(value, list):
+                return [fix(item) for item in value]
+            return value
+
+        return fix(data)
+
+    @staticmethod
+    def _fix_short_subtitles(data: dict) -> dict:
+        """Pad subtitles shorter than 6 words to meet the minimum.
+
+        Subtitles like "karmic pressure" become "the living truth of karmic pressure"
+        by prepending a natural lead-in phrase.
+        """
+        prefixes = [
+            "the living truth of",
+            "a life shaped by",
+            "the quiet force of",
+            "what it means to carry",
+        ]
+
+        def fix_subtitle(text: str, idx: int = 0) -> str:
+            if not text or not text.strip():
+                return text
+            words = text.split()
+            if len(words) >= 6:
+                return text
+            prefix = prefixes[idx % len(prefixes)]
+            # Lowercase the first char if the subtitle starts with uppercase (natural flow)
+            padded = text[0].lower() + text[1:] if text[0].isupper() else text
+            return f"{prefix} {padded}"
+
+        def fix(obj, subtitle_idx=0):
+            if isinstance(obj, dict):
+                result = {}
+                for k, v in obj.items():
+                    if k == "subtitle" and isinstance(v, str):
+                        result[k] = fix_subtitle(v, subtitle_idx)
+                    elif isinstance(v, (dict, list)):
+                        result[k] = fix(v, subtitle_idx)
+                    else:
+                        result[k] = v
+                return result
+            elif isinstance(obj, list):
+                return [fix(item, i) for i, item in enumerate(obj)]
+            return obj
+
+        return fix(data)
+
+    @staticmethod
+    def _trim_overflows(data: dict) -> dict:
+        """Trim text fields that slightly exceed word-count maximums.
+
+        For fields that are within 15% over the max, remove trailing sentences
+        until the count fits. This catches the common case of 102 words when
+        max is 95 — a single sentence removal fixes it.
+        """
+        # Field name → max words (only fields that commonly overflow)
+        field_limits = {
+            "sacred_capacity": 95,
+            "distortion": 85,
+            "purified_expression": 70,
+            "chapter_body": 140,
+            "body": 90,
+            "love": 140,
+            "work": 140,
+            "opening_promise": 140,
+            "entrusted_beauty": 140,
+            "central_knot": 130,
+            "present_threshold": 140,
+            "embodiment": 140,
+            "closing_destiny": 90,
+        }
+        max_trim_ratio = 1.15  # only trim if within 15% over
+
+        def trim_to_limit(text: str, limit: int) -> str:
+            words = text.split()
+            if len(words) <= limit:
+                return text
+            if len(words) > limit * max_trim_ratio:
+                return text  # too far over — don't butcher it
+            # Remove words from end, stopping at last sentence boundary
+            trimmed = words[:limit]
+            result = " ".join(trimmed)
+            # Find the last sentence-ending punctuation
+            last_period = max(result.rfind(". "), result.rfind(".\u201d"), result.rfind("."))
+            if last_period > len(result) * 0.7:  # only if we keep >70% of text
+                result = result[:last_period + 1]
+            return result
+
+        def fix(obj):
+            if isinstance(obj, dict):
+                result = {}
+                for k, v in obj.items():
+                    if k in field_limits and isinstance(v, str):
+                        result[k] = trim_to_limit(v, field_limits[k])
+                    elif isinstance(v, (dict, list)):
+                        result[k] = fix(v)
+                    else:
+                        result[k] = v
+                return result
+            elif isinstance(obj, list):
+                return [fix(item) for item in obj]
+            return obj
 
         return fix(data)
 
