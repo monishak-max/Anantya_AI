@@ -172,10 +172,10 @@ class UnionDeepRead(BaseModel):
 
 class StudyForce(BaseModel):
     name: str = Field(description="The sacred force, yoga, or shaping combination name. Keep Sanskrit terms where relevant.")
-    subtitle: str = Field(description="A short living explanation in plain language. 6-18 words.", default="")
-    sacred_capacity: str = Field(description="What beautiful power this force places in the life. 35-95 words.", default="")
-    distortion: str = Field(description="How this same force becomes costly when misused or strained. 25-85 words.", default="")
-    purified_expression: str = Field(description="What this force becomes when lived truthfully. 20-70 words.", default="")
+    subtitle: str = Field(description="A short living explanation in plain language. MUST be 6-18 words. Never fewer than 6.", default="")
+    sacred_capacity: str = Field(description="What beautiful power this force places in the life. HARD LIMIT: 35-95 words. Do not exceed 95.", default="")
+    distortion: str = Field(description="How this same force becomes costly when misused or strained. HARD LIMIT: 25-85 words. Do not exceed 85.", default="")
+    purified_expression: str = Field(description="What this force becomes when lived truthfully. HARD LIMIT: 20-70 words. Do not exceed 70.", default="")
 
     model_config = {"populate_by_name": True}
 
@@ -204,8 +204,8 @@ class StudyForce(BaseModel):
 
 class TimingCurrent(BaseModel):
     name: str = Field(description="Mahadasha or bhukti name, or other timing current heading.")
-    subtitle: str = Field(description="A short living explanation of what this chapter is about. 6-18 words.", default="")
-    chapter_body: str = Field(description="How this timing current shapes the life in lived terms. 45-140 words.", default="")
+    subtitle: str = Field(description="A short living explanation of what this chapter is about. MUST be 6-18 words. Never fewer than 6.", default="")
+    chapter_body: str = Field(description="How this timing current shapes the life in lived terms. HARD LIMIT: 45-140 words. Do not exceed 140.", default="")
 
     model_config = {"populate_by_name": True}
 
@@ -227,7 +227,7 @@ class TimingCurrent(BaseModel):
 class LifePhase(BaseModel):
     title: str = Field(description="Phase title for this life chapter. 2-8 words.", alias="title")
     age_range: str = Field(description="Age span label such as '0-18'.", default="")
-    body: str = Field(description="How this life chapter feels and what it is doing. 30-90 words.", default="")
+    body: str = Field(description="How this life chapter feels and what it is doing. HARD LIMIT: 30-90 words. Do not exceed 90.", default="")
 
     model_config = {"populate_by_name": True}
 
@@ -262,8 +262,8 @@ class BirthChartCore(BaseModel):
     great_timing_currents: list[TimingCurrent] = Field(description="Mahadashas, active bhuktis, and major timing bodies written as living chapters.")
     life_phases: list[LifePhase] = Field(description="The major life chapters from early life through late life.")
     present_threshold: str = Field(description="What is being asked of the life now. 55-140 words.")
-    love: str = Field(description="Love in this specific life. Direct, specific, and unmistakably personal. 60-140 words.")
-    work: str = Field(description="Work in this specific life. Direct, specific, and unmistakably personal. 60-140 words.")
+    love: str = Field(description="Love in this specific life. Direct, specific, and unmistakably personal. HARD LIMIT: 60-140 words. Do not exceed 140.")
+    work: str = Field(description="Work in this specific life. Direct, specific, and unmistakably personal. HARD LIMIT: 60-140 words. Do not exceed 140.")
     embodiment: str = Field(description="What the soul came here to embody when the life ripens. 60-140 words.")
     closing_destiny: str = Field(description="A final destiny-led closing that returns the life to beauty and purpose. 35-90 words.")
 
@@ -355,6 +355,69 @@ class ChartReveal(BaseModel):
         return warnings
 
 
+# ── Birth Chart Parallel Sections ────────────────────────────────
+
+class BirthChartYogasSection(BaseModel):
+    great_yogas: list[StudyForce] = Field(description="The great yogas moving through this life. Each must be named individually.")
+    finer_yogas: list[StudyForce] = Field(description="The finer yogas that still shape the life and must each be honored individually.")
+
+    def validate_lengths(self) -> list[str]:
+        warnings = []
+        for i, item in enumerate(self.great_yogas):
+            for w in item.validate_lengths(): warnings.append(f"great_yogas[{i}].{w}")
+        for i, item in enumerate(self.finer_yogas):
+            for w in item.validate_lengths(): warnings.append(f"finer_yogas[{i}].{w}")
+        return warnings
+
+
+class BirthChartForcesSection(BaseModel):
+    deeper_shaping_forces: list[StudyForce] = Field(description="Conjunctions, lordship truths, axis burdens, and other life-shaping combinations. Each must be named individually.")
+
+    def validate_lengths(self) -> list[str]:
+        warnings = []
+        for i, item in enumerate(self.deeper_shaping_forces):
+            for w in item.validate_lengths(): warnings.append(f"deeper_shaping_forces[{i}].{w}")
+        return warnings
+
+
+class BirthChartTimingSection(BaseModel):
+    great_timing_currents: list[TimingCurrent] = Field(description="Mahadashas, active bhuktis, and major timing bodies written as living chapters.")
+    life_phases: list[LifePhase] = Field(description="The major life chapters from early life through late life.")
+
+    def validate_lengths(self) -> list[str]:
+        warnings = []
+        for i, item in enumerate(self.great_timing_currents):
+            for w in item.validate_lengths(): warnings.append(f"great_timing_currents[{i}].{w}")
+        for i, item in enumerate(self.life_phases):
+            for w in item.validate_lengths(): warnings.append(f"life_phases[{i}].{w}")
+        return warnings
+
+
+class BirthChartSynthesisSection(BaseModel):
+    title: str = Field(description="The title of the life story. Beautiful, elevated, and destiny-led. 3-10 words.")
+    opening_promise: str = Field(description="What this life came here to embody. Uplifting, direct, and sacred. 60-140 words.")
+    entrusted_beauty: str = Field(description="The beauty, dignity, and entrusted force of the life before naming the knot. 60-140 words.")
+    central_knot: str = Field(description="The one great knot of the life. Specific, direct, and lived. 55-130 words.")
+    present_threshold: str = Field(description="What is being asked of the life now. 55-140 words.")
+    love: str = Field(description="Love in this specific life. Direct, specific, and unmistakably personal. HARD LIMIT: 60-140 words. Do not exceed 140.")
+    work: str = Field(description="Work in this specific life. Direct, specific, and unmistakably personal. HARD LIMIT: 60-140 words. Do not exceed 140.")
+    embodiment: str = Field(description="What the soul came here to embody when the life ripens. 60-140 words.")
+    closing_destiny: str = Field(description="A final destiny-led closing that returns the life to beauty and purpose. 35-90 words.")
+
+    def validate_lengths(self) -> list[str]:
+        warnings = []
+        warnings += validate_word_range(self.title, 3, 10, "title")
+        warnings += validate_word_range(self.opening_promise, 60, 140, "opening_promise")
+        warnings += validate_word_range(self.entrusted_beauty, 60, 140, "entrusted_beauty")
+        warnings += validate_word_range(self.central_knot, 55, 130, "central_knot")
+        warnings += validate_word_range(self.present_threshold, 55, 140, "present_threshold")
+        warnings += validate_word_range(self.love, 60, 140, "love")
+        warnings += validate_word_range(self.work, 60, 140, "work")
+        warnings += validate_word_range(self.embodiment, 60, 140, "embodiment")
+        warnings += validate_word_range(self.closing_destiny, 35, 90, "closing_destiny")
+        return warnings
+
+
 # ── Surface → Schema mapping ──────────────────────────────────────
 
 SURFACE_SCHEMAS: dict[str, type[BaseModel]] = {
@@ -365,6 +428,10 @@ SURFACE_SCHEMAS: dict[str, type[BaseModel]] = {
     "union_snapshot": UnionSnapshot,
     "union_deep_read": UnionDeepRead,
     "birth_chart_core": BirthChartCore,
+    "birth_chart_yogas": BirthChartYogasSection,
+    "birth_chart_forces": BirthChartForcesSection,
+    "birth_chart_timing": BirthChartTimingSection,
+    "birth_chart_synthesis": BirthChartSynthesisSection,
     "weekly_overview": WeeklyOverview,
     "monthly_overview": MonthlyOverview,
     "chart_reveal": ChartReveal,

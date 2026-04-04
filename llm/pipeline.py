@@ -3,9 +3,12 @@ End-to-end pipeline: birth data → computation → LLM → validated reading.
 """
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import logging
+import time
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from pathlib import Path
 
@@ -21,6 +24,11 @@ from llm.engine.bridge import (
     build_chart_reveal_input,
     build_birth_chart_input,
     build_period_overview_input,
+    build_chart_essence,
+    build_birth_chart_yogas_input,
+    build_birth_chart_forces_input,
+    build_birth_chart_timing_input,
+    build_birth_chart_synthesis_input,
 )
 from llm.engine.rules import (
     load_rules_from_file,
@@ -217,16 +225,153 @@ class AstroPipeline:
         return result
 
     def generate_birth_chart(self, name: str, birth_date: date, birth_time: str, lat: float, lng: float, external_modifiers: list[dict] | None = None) -> GenerationResult:
+        """Generate birth chart using parallel split-and-merge architecture.
+
+        Splits the monolithic birth chart into 4 parallel sections:
+        - Yogas (Sonnet)
+        - Shaping Forces (Sonnet)
+        - Timing + Life Phases (Sonnet)
+        - Synthesis / Narrative Frame (Opus)
+
+        Falls back to monolithic generation on failure.
+        """
         token = self._cache_token(name, self._name_payload(name, birth_date, birth_time, lat, lng, "birth_chart_core", extra={"modifiers": external_modifiers or []}))
         cached = self._load_from_cache("birth_chart_core", token, birth_date)
         if cached:
             return self._hydrate_cached_result(cached)
+
         chart = self._get_chart(name, birth_date, birth_time, lat, lng)
         rule_matches = self._evaluate_rules(chart)
-        input_data = build_birth_chart_input(chart, name, external_modifiers=external_modifiers, rule_matches=rule_matches)
-        result = self.generator.generate(Surface.BIRTH_CHART_CORE, input_data)
+
+        try:
+            result = self._generate_birth_chart_parallel(chart, name, rule_matches, external_modifiers)
+        except Exception as exc:
+            logger.warning("Parallel birth chart failed (%s), falling back to monolithic", exc)
+            input_data = build_birth_chart_input(chart, name, external_modifiers=external_modifiers, rule_matches=rule_matches)
+            result = self.generator.generate(Surface.BIRTH_CHART_CORE, input_data)
+
         self._save_to_cache("birth_chart_core", token, birth_date, result)
         return result
+
+    def _generate_birth_chart_parallel(
+        self,
+        chart: NatalChart,
+        name: str,
+        rule_matches: list,
+        external_modifiers: list[dict] | None = None,
+    ) -> GenerationResult:
+        """Run all 4 birth chart sections fully in parallel.
+
+        The shared ChartEssence carries both tonal anchors AND cross-referencing
+        data (yoga names, force names, timing chapter, recurring threads)
+        pre-computed from the chart. Every section — including synthesis —
+        receives the same global context, so synthesis writes the narrative
+        frame with full awareness of what the content sections are producing.
+        """
+        essence = build_chart_essence(chart)
+        start = time.monotonic()
+
+        # Build all section inputs (lightweight, no I/O)
+        yogas_input = build_birth_chart_yogas_input(chart, essence, rule_matches)
+        forces_input = build_birth_chart_forces_input(chart, essence, rule_matches)
+        timing_input = build_birth_chart_timing_input(chart, essence)
+        synthesis_input = build_birth_chart_synthesis_input(chart, essence, external_modifiers, rule_matches)
+
+        # All 4 sections fully in parallel
+        gen = self.generator
+        with ThreadPoolExecutor(max_workers=4, thread_name_prefix="bc_section") as pool:
+            yogas_future = pool.submit(
+                gen.generate, Surface.BIRTH_CHART_YOGAS, yogas_input,
+                0.7, 1,  # temperature, max_style_retries
+            )
+            forces_future = pool.submit(
+                gen.generate, Surface.BIRTH_CHART_FORCES, forces_input,
+                0.7, 1,
+            )
+            timing_future = pool.submit(
+                gen.generate, Surface.BIRTH_CHART_TIMING, timing_input,
+                0.7, 1,
+            )
+            synthesis_future = pool.submit(
+                gen.generate, Surface.BIRTH_CHART_SYNTHESIS, synthesis_input,
+                0.7, 1,
+            )
+
+        yogas_result = yogas_future.result()
+        forces_result = forces_future.result()
+        timing_result = timing_future.result()
+        synthesis_result = synthesis_future.result()
+
+        elapsed_ms = int((time.monotonic() - start) * 1000)
+
+        # Merge into single BirthChartCore-compatible dict
+        merged = self._merge_birth_chart_sections(
+            yogas_result, forces_result, timing_result, synthesis_result,
+        )
+
+        # Post-merge validation on full combined output
+        input_for_guard = build_birth_chart_input(chart, name, external_modifiers=external_modifiers, rule_matches=rule_matches)
+        input_dict = input_for_guard.model_dump()
+        all_violations = gen.guard.check(merged, "birth_chart_core", input_dict)
+        val_failures = gen.validator.validate(merged, "birth_chart_core")
+        if val_failures:
+            for f in val_failures:
+                logger.warning("[birth_chart_parallel] Validation: %s — %s", f.check, f.detail)
+
+        # Aggregate metadata
+        all_results = [yogas_result, forces_result, timing_result, synthesis_result]
+        all_warnings: list[str] = []
+        total_retries = 0
+        for r in all_results:
+            all_warnings.extend(r.word_count_warnings)
+            total_retries += r.retry_count
+
+        model_label = f"{synthesis_result.model}+{yogas_result.model}"
+        logger.info(
+            "[birth_chart_parallel] Done in %dms (yogas=%dms, forces=%dms, timing=%dms, synthesis=%dms, retries=%d)",
+            elapsed_ms,
+            yogas_result.generation_time_ms,
+            forces_result.generation_time_ms,
+            timing_result.generation_time_ms,
+            synthesis_result.generation_time_ms,
+            total_retries,
+        )
+
+        return GenerationResult(
+            surface="birth_chart_core",
+            data=merged,
+            model=model_label,
+            word_count_warnings=all_warnings,
+            style_violations=all_violations,
+            generation_time_ms=elapsed_ms,
+            retry_count=total_retries,
+        )
+
+    @staticmethod
+    def _merge_birth_chart_sections(
+        yogas: GenerationResult,
+        forces: GenerationResult,
+        timing: GenerationResult,
+        synthesis: GenerationResult,
+    ) -> dict:
+        """Mechanically merge 4 section outputs into a BirthChartCore dict."""
+        merged = {}
+
+        # Synthesis fields
+        for field in (
+            "title", "opening_promise", "entrusted_beauty", "central_knot",
+            "present_threshold", "love", "work", "embodiment", "closing_destiny",
+        ):
+            merged[field] = synthesis.data.get(field, "")
+
+        # Structured section fields
+        merged["great_yogas"] = yogas.data.get("great_yogas", [])
+        merged["finer_yogas"] = yogas.data.get("finer_yogas", [])
+        merged["deeper_shaping_forces"] = forces.data.get("deeper_shaping_forces", [])
+        merged["great_timing_currents"] = timing.data.get("great_timing_currents", [])
+        merged["life_phases"] = timing.data.get("life_phases", [])
+
+        return merged
 
     def generate_mandala_deep_read(self, name: str, birth_date: date, birth_time: str, lat: float, lng: float, activation_planet: str = "Saturn", target_date: date | None = None, external_modifiers: list[dict] | None = None) -> GenerationResult:
         target = target_date or date.today()

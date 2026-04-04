@@ -139,7 +139,7 @@ RED_LINE_PATTERNS = [
     r"\bfated love\b",
     r"\byou will (get |become )?(pregnant|sick|ill)\b",
     r"\byou will have \d+ child",
-    r"\bdiagnos(e[ds]?|is|tic)\b",
+    r"\bdiagnos(e[ds]?|is)\b",  # "diagnostic" alone is common English; "diagnosed/diagnosis" is medical
     r"\bdepression\b",
     r"\banxiety disorder\b",
     r"\bmental illness\b",

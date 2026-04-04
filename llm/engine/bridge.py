@@ -42,6 +42,11 @@ from llm.schemas.inputs import (
     GroupedInsight,
     LedgerEntry,
     TimingLedgerEntry,
+    ChartEssence,
+    BirthChartYogasInput,
+    BirthChartForcesInput,
+    BirthChartTimingInput,
+    BirthChartSynthesisInput,
 )
 
 
@@ -1202,6 +1207,164 @@ def build_chart_reveal_input(chart: NatalChart, name: str, external_modifiers: l
 
 def build_birth_chart_input(chart: NatalChart, name: str, external_modifiers: list[dict] | None = None, rule_matches: list[RuleMatch] | None = None) -> BirthChartInput:
     return BirthChartInput(user=chart_to_user_profile(chart, name, full=True, external_modifiers=external_modifiers, rule_matches=rule_matches))
+
+
+# ── Parallel birth chart section builders ────────────────────────
+
+def build_chart_essence(chart: NatalChart) -> ChartEssence:
+    """Shared global context for all parallel section calls.
+
+    Includes both tonal anchors AND cross-referencing data (yoga names,
+    force names, timing chapter, recurring threads) so every section
+    knows the full landscape of the reading at generation time.
+    """
+    yoga_names = [y.name for y in chart.yogas]
+    force_names = [e.name for e in _build_shaping_force_ledger(chart)]
+
+    current_chapter = f"{chart.mahadasha.lord} / {chart.antardasha.antardasha_lord}"
+
+    # Identify recurring threads from yoga descriptions + force names + planet themes
+    all_text = " ".join(
+        [y.description.lower() for y in chart.yogas]
+        + [f.lower() for f in force_names]
+        + [PLANET_THEMES.get(chart.mahadasha.lord, ""), PLANET_THEMES.get(chart.antardasha.antardasha_lord, "")]
+    )
+    recurring = []
+    thread_keywords = {
+        "strength": "strength and force",
+        "discipline": "discipline and restraint",
+        "authority": "authority and command",
+        "beauty": "beauty and refinement",
+        "wisdom": "wisdom and higher law",
+        "service": "service and imperfection",
+        "relationship": "relationship and bond",
+        "identity": "identity and self-definition",
+        "work": "work and visibility",
+        "value": "value and worth",
+        "intelligence": "intelligence and discernment",
+        "release": "release and completion",
+    }
+    for keyword, thread in thread_keywords.items():
+        if all_text.count(keyword) >= 2:
+            recurring.append(thread)
+
+    return ChartEssence(
+        moon_sign=chart.moon_sign,
+        moon_nakshatra=chart.moon_nakshatra,
+        lagna_sign=chart.lagna_sign,
+        mahadasha_lord=chart.mahadasha.lord,
+        antardasha_lord=chart.antardasha.antardasha_lord,
+        natal_signature_summary=_build_natal_signature_summary(chart),
+        current_chapter_summary=_build_current_chapter_summary(chart),
+        central_knot_summary=_build_central_knot_summary(chart),
+        entrusted_beauty_summary=_build_entrusted_beauty_summary(chart),
+        dominant_themes=_build_dominant_themes(chart),
+        confidence_summary=_build_confidence_summary(chart),
+        reasoning_hierarchy_summary=_build_reasoning_hierarchy_summary(chart),
+        conflict_resolution_summary=_build_conflict_resolution_summary(chart),
+        interpretive_anchors=_build_user_anchors(chart),
+        yoga_names=yoga_names,
+        force_names=force_names,
+        current_timing_chapter=current_chapter,
+        recurring_threads=recurring[:5],
+    )
+
+
+def build_birth_chart_yogas_input(
+    chart: NatalChart,
+    essence: ChartEssence,
+    rule_matches: list[RuleMatch] | None = None,
+) -> BirthChartYogasInput:
+    grouped = []
+    if rule_matches:
+        interps = _rule_matches_to_interpretations(rule_matches)
+        _, grouped = _group_rule_interpretations(interps)
+    return BirthChartYogasInput(
+        chart_essence=essence,
+        verified_yoga_ledger=_build_yoga_ledger(chart),
+        absent_or_do_not_claim_ledger=_build_absent_ledger(chart),
+        grouped_insights=grouped,
+    )
+
+
+def build_birth_chart_forces_input(
+    chart: NatalChart,
+    essence: ChartEssence,
+    rule_matches: list[RuleMatch] | None = None,
+) -> BirthChartForcesInput:
+    grouped = []
+    if rule_matches:
+        interps = _rule_matches_to_interpretations(rule_matches)
+        _, grouped = _group_rule_interpretations(interps)
+    return BirthChartForcesInput(
+        chart_essence=essence,
+        verified_shaping_forces_ledger=_build_shaping_force_ledger(chart),
+        grouped_insights=grouped,
+    )
+
+
+def build_birth_chart_timing_input(
+    chart: NatalChart,
+    essence: ChartEssence,
+) -> BirthChartTimingInput:
+    return BirthChartTimingInput(
+        chart_essence=essence,
+        verified_timing_ledger=_build_timing_ledger(chart),
+    )
+
+
+def build_birth_chart_synthesis_input(
+    chart: NatalChart,
+    essence: ChartEssence,
+    external_modifiers: list[dict] | None = None,
+    rule_matches: list[RuleMatch] | None = None,
+) -> BirthChartSynthesisInput:
+    grouped = []
+    if rule_matches:
+        interps = _rule_matches_to_interpretations(rule_matches)
+        _, grouped = _group_rule_interpretations(interps)
+    return BirthChartSynthesisInput(
+        chart_essence=essence,
+        present_center_summary=_build_present_center_summary(chart),
+        past_pattern_summary=_build_past_pattern_summary(chart),
+        future_arc_summary=_build_future_arc_summary(chart),
+        navamsha_summary=_build_navamsha_summary(chart),
+        panchanga_birth_summary=_build_birth_panchanga_summary(chart),
+        central_knot_summary=essence.central_knot_summary,
+        entrusted_beauty_summary=essence.entrusted_beauty_summary,
+        external_modifiers=_build_modifier_objects(external_modifiers),
+        lagna=LagnaInfo(
+            sign=chart.lagna_sign,
+            degree=chart.lagna_degree,
+            nakshatra=chart.lagna_nakshatra,
+        ),
+        planets=[
+            PlanetPlacement(
+                planet=p.planet,
+                sign=p.sign,
+                degree=p.degree_in_sign,
+                nakshatra=p.nakshatra,
+                house_from_lagna=p.house_from_lagna or 1,
+                house_from_moon=p.house_from_moon or 1,
+                retrograde=p.retrograde,
+                is_exalted=p.is_exalted,
+                is_debilitated=p.is_debilitated,
+                is_own_sign=p.is_own_sign,
+                navamsha_sign=p.navamsha_sign,
+            )
+            for p in chart.planets.values()
+        ],
+        house_lords=[
+            HouseLordship(
+                house=hl.house,
+                lord=hl.lord,
+                placed_in_house=hl.placed_in_house,
+                placed_in_sign=hl.placed_in_sign,
+            )
+            for hl in chart.house_lords
+        ],
+        grouped_insights=grouped,
+    )
 
 
 def build_mandala_deep_read_input(
