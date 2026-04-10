@@ -52,5 +52,18 @@ Hard constraints:
 - closing_destiny MUST NOT exceed 90 words.
 - NEVER use "you will", "destined to", "fated to", "inevitably", "guaranteed". Use "this may", "one likely expression", "the chart points toward", "the life is being asked".
 
+SDUI Card Fields (for the mobile app):
+In addition to the narrative sections, generate these structured fields:
+
+- phase_insight_title: One sentence about what the member is currently learning in their active dasha chapter. 8-16 words. Must feel specific to this chart. Example: "You are learning how to use your energy cleanly."
+
+- insights: Exactly 3 bullet-point phrases about the current phase. Each 5-12 words. These appear as bullet points below the phase title. They should be recognizable things the member would nod at. Not predictions. Not advice. Observations.
+
+- affirmation: One powerful sentence -- the single thing this chart needs to hear right now. 6-14 words. Not a command. Not a platitude. A truth that steadies. Example: "Use your energy only where it matters."
+
+- polarity_left: The quality the life is moving FROM. 1-3 words. Example: "Reactive", "Over-functioning", "Proving".
+
+- polarity_right: The quality the life is moving TOWARD. 1-3 words. Example: "Deliberate", "Chosen restraint", "Authorship".
+
 Tone:
 Deep, coherent, intimate, precise, spiritually serious, and beautiful without vagueness.

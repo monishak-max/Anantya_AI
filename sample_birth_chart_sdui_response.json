@@ -1,0 +1,1046 @@
+{
+  "ok": true,
+  "birth_chart": {
+    "title": "The Weight That Becomes the Road",
+    "model": "claude-opus-4-6+claude-sonnet-4-6",
+    "sections": [
+      {
+        "id": "current_phase",
+        "label": "YOUR CURRENT PHASE",
+        "title": "The Formation Years",
+        "media": {
+          "type": "phase_bar",
+          "data": {
+            "current_age": 27,
+            "remaining_years": 73,
+            "phase_start": 0,
+            "phase_end": 100
+          }
+        },
+        "cards": [
+          {
+            "id": "insight_card",
+            "pointers": [
+              "Old loyalties are being quietly outgrown",
+              "Discipline alone is not a reason to stay",
+              "Identity is clarifying through subtraction now"
+            ],
+            "headlines": [
+              {
+                "label": "Over-functioning",
+                "value": "Rightful authority"
+              }
+            ]
+          }
+        ],
+        "insight_label": "Right now, you may feel",
+        "insight_title": "You are learning what to release when identity no longer needs proof.",
+        "affirmation": "What remains after release is the truest part.",
+        "cta": {
+          "text": "Dive deeper",
+          "action": "expand"
+        }
+      },
+      {
+        "id": "practical_truth",
+        "label": "HOW PHASE IMPACTS",
+        "title": "Practical Truth",
+        "description": "Since July 2021, the Sun mahadasha has been pressing a single question: what is this life actually for, and who does it serve? Now, from March through",
+        "max_lines": 3,
+        "cards": [
+          {
+            "id": "work_card",
+            "icon": "briefcase.fill",
+            "title": "Work",
+            "description": "The tenth lord in the house of gains, the fifth lord in the house of gains, the lord of value joined with the lord of gains, this chart was built...",
+            "max_lines": 4,
+            "cta": {
+              "text": "Read more",
+              "action": "detail"
+            },
+            "detail": {
+              "title": "Work",
+              "body": "The tenth lord in the house of gains, the fifth lord in the house of gains, the lord of value joined with the lord of gains, this chart was built to produce. Vasumati Yoga builds material steadiness through accumulated skill. Raja Yoga through Saturn and Mercury gives the mind a capacity for meaningful consequence. The danger is not failure; it is over-functioning in service of outcomes that no longer carry the life's actual name. Vesi Yoga gives composure and visible steadiness, but composure can become a mask for exhaustion. The Sun mahadasha is asking whether this life's work reflects its authority or merely its competence. Authorship, not productivity, is what the chart is moving toward."
+            },
+            "headlines": [
+              {
+                "label": "What works",
+                "value": "The tenth lord in the house of gains, the fifth..."
+              },
+              {
+                "label": "What drains",
+                "value": " Authorship, not productivity, is what the chart is moving toward"
+              }
+            ]
+          },
+          {
+            "id": "love_card",
+            "icon": "heart.fill",
+            "title": "Love",
+            "description": "Mars in its own sign in the seventh house means that love in this life is not gentle, it is passionate, direct, and carries the full weight of the Ruchaka...",
+            "max_lines": 4,
+            "cta": {
+              "text": "Read more",
+              "action": "detail"
+            },
+            "detail": {
+              "title": "Love",
+              "body": "Mars in its own sign in the seventh house means that love in this life is not gentle, it is passionate, direct, and carries the full weight of the Ruchaka force. Partnerships attract intensity because the life itself is intense. The pattern is not avoidance; it is over-engagement. This life enters love with the same urgency the Bharani Moon brings to everything, act now, feel later, correct in the aftermath. Venus debilitated and then restored through Neecha Bhanga means that the sense of being worthy of love was not a given. It was rebuilt. The risk is staying in bonds that require constant refinement rather than recognizing when the correction has become the relationship itself. Love matures here when the life stops earning its place and simply occupies it."
+            }
+          }
+        ]
+      },
+      {
+        "id": "planetary_movements",
+        "label": "PLANETARY MOVEMENTS",
+        "title": "Your Forces",
+        "cards": [
+          {
+            "id": "yoga_0",
+            "title": "Noble Heart",
+            "subtitle": "Gaja Kesari Yoga",
+            "description": "You carry a natural emotional dignity that steadies others before you speak. Wisdom and warmth were always meant to move together in this life.",
+            "max_lines": 3,
+            "cta": {
+              "text": "Read more",
+              "action": "detail"
+            },
+            "detail": {
+              "title": "Gaja Kesari Yoga",
+              "body": "Where Jupiter and the Moon meet in angular relationship, something in the emotional life is quietly protected. This yoga gives the heart a larger frame, not immunity from difficulty, but a natural dignity that keeps grief from becoming collapse. Judgment ripens. Others sense the steadiness and lean toward it. Reputation builds not through effort alone but through a quality of presence that earns trust before a word is spoken.\n\nThe outer life can look composed and sufficient while the inner life quietly starves. The heart that sustains others may go long seasons without being sustained itself. Dignity becomes a kind of armor, and the warmth this yoga promises stays locked inside the very strength it created. The cost is not visible, which makes it harder to address.\n\nThis yoga ripens when strength and tenderness are no longer kept separate. When the warmth that has always been present is allowed to be seen, the life carries both stature and aliveness, and others feel the difference immediately."
+            },
+            "headlines": [
+              {
+                "label": "what it gives",
+                "value": "emotional resilience, dignified presence, respected judgment"
+              },
+              {
+                "label": "when strained",
+                "value": "composure hides an underfed inner life"
+              }
+            ],
+            "subheadlines": [
+              {
+                "label": "what it asks",
+                "value": "let warmth be visible, not only strength"
+              },
+              {
+                "label": "current relevance",
+                "value": "Sun/Ketu chapter sharpens the question of what deserves to remain"
+              }
+            ]
+          },
+          {
+            "id": "yoga_1",
+            "title": "The Force",
+            "subtitle": "Ruchaka Mahapurusha Yoga",
+            "description": "You carry a structural courage that others feel before you act. This is not performance, it is the shape of your will. The question is always what it serves.",
+            "max_lines": 3,
+            "cta": {
+              "text": "Read more",
+              "action": "detail"
+            },
+            "detail": {
+              "title": "Ruchaka Mahapurusha Yoga",
+              "body": "Mars placed in an angular house at strength gives this life a quality of force that is rare and immediately legible. Courage is not performed, it is structural. The body moves with purpose, the will does not waver under pressure, and there is a natural capacity to lead, to act, and to cut through what others hesitate before. The thread of authority and command that runs through this entire chart finds one of its strongest roots here.\n\nForce this concentrated can become its own trap. When Ruchaka's power is used in the wrong service, defending what should be released, fighting for what no longer deserves protection, the very strength that was meant to liberate begins to bind. The central knot of this chart speaks directly to this: sacred force becomes costly when it carries what the soul has already outgrown.\n\nThis yoga reaches its rightful expression when the force is aimed at what is true rather than what is merely familiar. Courage in service of rightness, not just momentum, is what Ruchaka was built for. Under the current Sun/Ketu chapter, this distinction matters more than ever."
+            },
+            "headlines": [
+              {
+                "label": "what it gives",
+                "value": "decisive action, physical vitality, natural command"
+              },
+              {
+                "label": "when strained",
+                "value": "force used to defend what should be released"
+              }
+            ],
+            "subheadlines": [
+              {
+                "label": "what it asks",
+                "value": "aim the strength at what is true, not just sustainable"
+              },
+              {
+                "label": "in relationships",
+                "value": "Mars in the seventh, passion and intensity in close bonds"
+              }
+            ]
+          },
+          {
+            "id": "yoga_2",
+            "title": "Authority",
+            "subtitle": "Raja Yoga (Saturn)",
+            "description": "Your path to recognition is built through time, not luck. Saturn shapes both your public standing and your deeper sense of purpose, they were always meant to align.",
+            "max_lines": 3,
+            "cta": {
+              "text": "Read more",
+              "action": "detail"
+            },
+            "detail": {
+              "title": "Raja Yoga (Saturn)",
+              "body": "When a single planet holds dominion over both a kendra and a trikona, it becomes the spine of the entire chart. Saturn here rules the tenth house of public consequence and the ninth house of dharma, wisdom, and larger faith. This is not a yoga of sudden elevation, it is a yoga of earned authority. The recognition this life may reach will carry weight precisely because it was built through discipline, time, and genuine consequence.\n\nSaturn's gift can become a burden when the life confuses the weight of responsibility with the worth of the self. When authority is pursued as proof of value rather than as a form of service, the recognition arrives but does not satisfy. The pressure Saturn applies is real, and without the ninth house's larger faith to hold it, it can compress the life into relentless effort without rest or meaning.\n\nThis yoga matures when responsibility is carried as a calling rather than a performance. Authority that is rightfully held, not merely achieved, this is what Saturn's dual rulership was always pointing toward. The entrusted beauty of this chart runs directly through this."
+            },
+            "headlines": [
+              {
+                "label": "what it builds",
+                "value": "earned authority, lasting recognition, structural influence"
+              },
+              {
+                "label": "when strained",
+                "value": "responsibility carried as burden rather than calling"
+              }
+            ],
+            "subheadlines": [
+              {
+                "label": "what it asks",
+                "value": "let dharma hold the weight, not ego alone"
+              }
+            ]
+          },
+          {
+            "id": "yoga_3",
+            "title": "Sharp Command",
+            "subtitle": "Raja Yoga (Saturn-Mercury)",
+            "description": "Your intelligence was built to carry weight, not just to refine. When thinking and structure move together, this yoga opens real doors in the world.",
+            "max_lines": 3,
+            "cta": {
+              "text": "Read more",
+              "action": "detail"
+            },
+            "detail": {
+              "title": "Raja Yoga (Saturn-Mercury)",
+              "body": "Saturn's authority and Mercury's discernment in conjunction create a mind built for meaningful consequence. The fifth house governs creativity, intelligence, and the power to think originally; the tenth governs public standing and the shape of a life's work. When their lords meet, the capacity to translate sharp intelligence into visible, structured achievement is genuinely present. This yoga supports leadership that thinks clearly under pressure and communicates with precision.\n\nMercury's restlessness can fracture what Saturn is trying to consolidate. The mind that refines everything may also delay commitment, always finding one more adjustment before the work can be called complete. When intelligence becomes a substitute for action, this yoga's promise stays theoretical. The Virgo instinct to perfect can quietly undermine the Saturnine need to build.\n\nWhen discernment serves the work rather than delaying it, this yoga produces something rare: intelligence that has been tested by time and made consequential. The chart points toward a life where sharp thinking and lasting structure are not in competition."
+            },
+            "headlines": [
+              {
+                "label": "what it gives",
+                "value": "precise thinking in service of lasting achievement"
+              },
+              {
+                "label": "when strained",
+                "value": "perfectionism delays what is ready to be built"
+              }
+            ],
+            "subheadlines": [
+              {
+                "label": "what it asks",
+                "value": "let the mind commit, not only refine"
+              }
+            ]
+          },
+          {
+            "id": "yoga_4",
+            "title": "Presence",
+            "subtitle": "Raja Yoga (Sun-Venus)",
+            "description": "Your sense of self and your sense of worth were meant to move as one. This yoga carries real magnetism, but it deepens only through the harder lessons, not around them.",
+            "max_lines": 3,
+            "cta": {
+              "text": "Read more",
+              "action": "detail"
+            },
+            "detail": {
+              "title": "Raja Yoga (Sun-Venus)",
+              "body": "Sun as the fourth house lord joined with Venus as the lagna lord creates a yoga where self-expression and inner worth move together. The fourth house carries the roots, emotional foundation, private life, the ground beneath everything visible. When its lord joins the lagna lord, the outer life can be built on something real. There is a natural quality of presence here that draws recognition without forcing it, the recurring thread of value and worth made visible.\n\nWhen Sun and Venus are placed in the sixth house, this yoga carries a complication: the conjunction exists, but both planets operate in the house of effort, opposition, and necessary friction. The gift is present but must be earned through challenge rather than received as ease. Identity built on external recognition alone, without the sixth house's harder lessons absorbed, may look confident while remaining fragile underneath.\n\nThis yoga ripens when the friction of the sixth house has been metabolized rather than avoided. The Sun/Ketu chapter is precisely the moment when this reckoning becomes possible, identity refined through release, not just assertion."
+            },
+            "headlines": [
+              {
+                "label": "what it gives",
+                "value": "natural presence, self-worth expressed as attraction"
+              },
+              {
+                "label": "when strained",
+                "value": "recognition sought before inner ground is stable"
+              }
+            ],
+            "subheadlines": [
+              {
+                "label": "sixth house note",
+                "value": "the gift arrives through earned friction, not bypassed"
+              }
+            ]
+          },
+          {
+            "id": "yoga_5",
+            "title": "Worth",
+            "subtitle": "Raja Yoga (Venus)",
+            "description": "You are the chart's own standard of value. Venus rules your entire identity, which means what you believe you deserve shapes everything that follows.",
+            "max_lines": 3,
+            "cta": {
+              "text": "Read more",
+              "action": "detail"
+            },
+            "detail": {
+              "title": "Raja Yoga (Venus)",
+              "body": "For a Taurus lagna, Venus rules the first house as both a kendra and a trikona lord simultaneously, a condition that makes Venus the single most important planet in this chart. The self, its expression, its values, and its beauty are all held within one planetary force. When Venus is well-placed, this creates a life with natural grace, a refined aesthetic intelligence, and an instinctive sense of what has lasting worth. The thread of value runs through this yoga at its deepest level.\n\nVenus is debilitated in this chart before its cancellation is applied. The raw placement carries a genuine wound around worth, a question of whether beauty, love, or value can be trusted to last. When this wound is unexamined, the life may keep building external structures of worth to compensate for an inner uncertainty that has never been directly addressed.\n\nNeecha Bhanga restores what debilitation threatened. But the restoration is not automatic, it requires that the wound be known. Once it is, Venus's singular dominion over this chart becomes genuinely beautiful: a life where the self and its values are one coherent thing."
+            },
+            "headlines": [
+              {
+                "label": "what it gives",
+                "value": "grace, aesthetic intelligence, instinct for lasting worth"
+              },
+              {
+                "label": "when strained",
+                "value": "external worth-building masks an unexamined inner wound"
+              }
+            ],
+            "subheadlines": [
+              {
+                "label": "what it asks",
+                "value": "know the wound before trusting the restoration"
+              }
+            ]
+          },
+          {
+            "id": "yoga_6",
+            "title": "Blessing",
+            "subtitle": "Lakshmi Yoga",
+            "description": "Grace and abundance are present in this chart, but they settle only when the life is inwardly aligned. Lakshmi responds to rightness, not just effort.",
+            "max_lines": 3,
+            "cta": {
+              "text": "Read more",
+              "action": "detail"
+            },
+            "detail": {
+              "title": "Lakshmi Yoga",
+              "body": "Lakshmi Yoga supports the kind of flourishing that is not merely material, it carries grace, refinement, and the sense that the life is aligned with something larger than effort alone. Prosperity here is not random; it follows right alignment. The beauty of this yoga is that it does not demand perfection, it responds to genuine orientation. When the life is pointed toward what is true, this yoga tends to open doors that pure effort could not.\n\nBlessing that arrives into a divided life cannot fully settle. When inner conflict persists, when the life is carrying what the soul has already outgrown, as the central knot names it, Lakshmi's gifts may appear and then recede without explanation. The abundance is present in potential; the division is what keeps it from rooting.\n\nThis yoga ripens into something genuinely beautiful when the life has grown truer. Not perfect, truer. Abundance with substance, beauty that lasts, prosperity that reflects what the life actually is."
+            },
+            "headlines": [
+              {
+                "label": "what it gives",
+                "value": "grace, refinement, prosperity that follows alignment"
+              },
+              {
+                "label": "when strained",
+                "value": "blessing arrives but cannot settle in a divided life"
+              }
+            ],
+            "subheadlines": [
+              {
+                "label": "what it asks",
+                "value": "grow truer, not merely more disciplined"
+              }
+            ]
+          },
+          {
+            "id": "yoga_7",
+            "title": "Restored",
+            "subtitle": "Neecha Bhanga (Venus)",
+            "description": "A wound around worth was written into this chart, and so was its healing. The mastery this yoga offers is only available to those who pass through the difficulty honestly.",
+            "max_lines": 3,
+            "cta": {
+              "text": "Read more",
+              "action": "detail"
+            },
+            "detail": {
+              "title": "Neecha Bhanga (Venus)",
+              "body": "Venus debilitated and then restored by Mercury's strength is not a neutral correction, it is a complete arc. The debilitation is real: there was a genuine challenge around value, beauty, love, or self-worth that this life had to pass through. The cancellation is also real: Mercury's placement restores what was threatened and, in doing so, creates a depth of understanding around these themes that an unafflicted Venus could never carry. Mastery through difficulty is qualitatively different from ease.\n\nThe danger in Neecha Bhanga is treating the cancellation as if the wound never existed. When the restoration is claimed without the difficulty being honored, the mastery is incomplete. The life may perform confidence around worth and value while the original question, am I enough, does beauty last, can I be truly valued, remains unanswered beneath the surface.\n\nWhen the wound is known and the restoration is lived rather than assumed, this yoga produces genuine authority around the themes of worth, value, and beauty. The chart points toward a life where what was hardest to trust becomes the most deeply understood."
+            },
+            "headlines": [
+              {
+                "label": "what it gives",
+                "value": "depth of understanding around worth, beauty, and value"
+              },
+              {
+                "label": "when strained",
+                "value": "restoration claimed before the wound has been known"
+              }
+            ],
+            "subheadlines": [
+              {
+                "label": "what it asks",
+                "value": "honor the difficulty before trusting the recovery"
+              }
+            ]
+          },
+          {
+            "id": "pattern_8",
+            "title": "Composure",
+            "subtitle": "Vesi Yoga",
+            "description": "You project steadiness before you speak. This yoga gives your outer life a quality of self-possession, but it asks that composure never become a way of hiding.",
+            "max_lines": 3,
+            "cta": {
+              "text": "Read more",
+              "action": "detail"
+            },
+            "detail": {
+              "title": "Vesi Yoga",
+              "body": "When planets occupy the second house from the Sun, the outward life takes on a quality of measured presence. Vesi Yoga gives composure, a visible steadiness that holds its field without unnecessary motion or expenditure. In a chart already shaped by Taurus patience and Saturnine discipline, this yoga reinforces the outer layer, the life that others encounter first is one of self-possession and deliberate movement.\n\nComposure that is never questioned can become concealment. The same steadiness that projects strength may quietly prevent the truth from surfacing, not through dishonesty, but through a habitual preference for holding the form together. The cost of this is internal and slow, which makes it easy to miss until it has accumulated.\n\nVesi matures into transparent steadiness, a composure that protects without hiding. The field is held, but the soul is not locked inside the discipline that holds it."
+            },
+            "headlines": [
+              {
+                "label": "what it gives",
+                "value": "measured presence, visible self-possession, disciplined outward life"
+              },
+              {
+                "label": "when strained",
+                "value": "composure hides cost rather than protecting truth"
+              }
+            ]
+          },
+          {
+            "id": "pattern_9",
+            "title": "Earned Wealth",
+            "subtitle": "Vasumati Yoga",
+            "description": "Your path to material stability runs through skill and time, not luck. Vasumati builds slowly and lasts, but it asks that outer building never become a substitute for inner truth.",
+            "max_lines": 3,
+            "cta": {
+              "text": "Read more",
+              "action": "detail"
+            },
+            "detail": {
+              "title": "Vasumati Yoga",
+              "body": "Vasumati Yoga builds material steadiness through the accumulation of skill, intelligence, and genuine effort over time. This is not sudden wealth, it is the kind of value that compounds. For a chart already shaped by Saturn's long view and Mercury's precision, this yoga reinforces a pattern: what is built carefully tends to last, and the resources that arrive through refinement carry more substance than those that arrive through chance.\n\nThe same orientation toward building value can become an overinvestment in the material layer while something more essential waits. When the life keeps developing resources, skills, and outer worth as a substitute for addressing what is inwardly unresolved, Vasumati's gift becomes a delay. The central knot is relevant here: carrying what has been outgrown, even in the form of productive effort, has a cost.\n\nThis yoga ripens into prosperity with truth beneath it, worth that reflects what the life actually is, not what it has been building toward in place of something harder."
+            },
+            "headlines": [
+              {
+                "label": "what it gives",
+                "value": "material steadiness through refinement, skill, and patient effort"
+              },
+              {
+                "label": "when strained",
+                "value": "outer value-building delays what is inwardly unresolved"
+              }
+            ],
+            "subheadlines": [
+              {
+                "label": "what it asks",
+                "value": "let worth have truth beneath it, not only effort"
+              }
+            ]
+          },
+          {
+            "id": "force_10",
+            "title": "Creative Fire",
+            "subtitle": "The fifth lord in the house of gains",
+            "description": "The mind in this chart was never meant to stay theoretical. Intelligence wants real fruit, work that matters, creations that outlast the effort they required.",
+            "max_lines": 3,
+            "cta": {
+              "text": "Read more",
+              "action": "detail"
+            },
+            "detail": {
+              "title": "The fifth lord in the house of gains",
+              "body": "Mercury rules the fifth from Taurus lagna, and its placement in the house of gains binds intelligence, creative fire, and the capacity for discernment directly to outcome and expansion. What this chart thinks, refines, and creates does not want to remain private or theoretical. The mind here carries a native hunger for consequence, not fame for its own sake, but for the kind of result that proves the work was worth the weight it asked to carry.\n\nWhen the outer life does not yet reflect what the inner intelligence knows it is capable of, restlessness becomes corrosive. The mind begins measuring its worth by what has not yet materialized. This is where the central knot tightens, sacred force in the wrong service, carrying ambitions the soul has already quietly outgrown.\n\nThis force ripens when creation stops chasing validation and starts carrying legacy. The chart points toward a life where intelligence becomes consequential because it is truthful, not merely productive."
+            },
+            "headlines": [
+              {
+                "label": "what animates this",
+                "value": "A native hunger for consequence, not recognition alone"
+              },
+              {
+                "label": "when strained",
+                "value": "Restlessness when created work does not yet carry enough weight"
+              }
+            ],
+            "subheadlines": [
+              {
+                "label": "what it connects to",
+                "value": "Raja Yoga (Saturn-Mercury), consequence earned through discipline"
+              },
+              {
+                "label": "purified form",
+                "value": "Creation that carries legacy because it carries truth"
+              }
+            ]
+          },
+          {
+            "id": "force_11",
+            "title": "Earned Authority",
+            "subtitle": "The tenth lord in the house of gains",
+            "description": "Saturn's command over public life flows directly into outcome and expansion here. This chart was built for work that compounds, not just effort, but consequence that lasts.",
+            "max_lines": 3,
+            "cta": {
+              "text": "Read more",
+              "action": "detail"
+            },
+            "detail": {
+              "title": "The tenth lord in the house of gains",
+              "body": "Saturn rules the tenth from Taurus lagna, and its lordship over public life, visible karma, and earned authority places the weight of consequence at the center of this chart's purpose. When Saturn's tenth-house energy flows into the house of gains, the chart's work is not merely professional, it is architectural. What is built in the world is meant to stand, compound, and return real fruit. This force connects directly to what the entrusted beauty names: strength, intelligence, and consequence turned into something rightful.\n\nThe same force that builds can over-identify with results when the soul is asking for truer authorship. Saturn's pressure here may keep the life inside structures that look correct from the outside while something deeper waits for permission to lead. The tenth lord in gains can make outcome feel like identity, and when outcomes stall, identity destabilizes.\n\nWhen this force is lived truthfully, the work becomes substantial not because it was relentless, but because it was rightful. Vasumati Yoga and Lakshmi Yoga both carry this same promise, gains that follow genuine authority rather than imitate it."
+            },
+            "headlines": [
+              {
+                "label": "what this builds",
+                "value": "Visible karma, earned reputation, and outcomes that compound over time"
+              },
+              {
+                "label": "when strained",
+                "value": "Over-identification with results when truer authorship is being asked for"
+              }
+            ],
+            "subheadlines": [
+              {
+                "label": "connected yogas",
+                "value": "Raja Yoga (Saturn), Vasumati Yoga, Lakshmi Yoga all echo this promise"
+              },
+              {
+                "label": "current chapter note",
+                "value": "Sun/Ketu asks: which structures still belong to you?"
+              }
+            ]
+          },
+          {
+            "id": "force_12",
+            "title": "True Worth",
+            "subtitle": "The lord of value joined with the lord of gains",
+            "description": "The lagna lord and the lord of gains are joined here. This chart carries genuine power to generate value, but only when what it builds reflects what it actually knows to be true.",
+            "max_lines": 3,
+            "cta": {
+              "text": "Read more",
+              "action": "detail"
+            },
+            "detail": {
+              "title": "The lord of value joined with the lord of gains",
+              "body": "Venus as the lagna lord carries the chart's fundamental sense of value, beauty, and self-worth. When this lord joins the lord of gains, the capacity to generate prosperity through quality, taste, intelligence, and usefulness becomes a genuine structural feature, not aspiration, but architecture. This combination feeds Lakshmi Yoga and resonates through the Neecha Bhanga that restores Venus's full power. The chart can produce real value because it carries a refined instinct for what is actually worth building.\n\nThe shadow here is subtle but consequential: when outer gain begins to stand in for inner rightness, the life becomes divided between what it earns and what it knows to be true. The recurring thread of value and worth runs through this chart's entire architecture, and when that thread is pulled toward accumulation alone, the deeper beauty goes unspent.\n\nProsperity that follows truth rather than replacing it. One likely expression is a life where what is earned and what is meaningful stop being separate questions."
+            },
+            "headlines": [
+              {
+                "label": "what this enables",
+                "value": "Generating real prosperity through taste, quality, and usefulness"
+              },
+              {
+                "label": "when strained",
+                "value": "Outer gain standing in for inner rightness; earning replacing meaning"
+              }
+            ],
+            "subheadlines": [
+              {
+                "label": "connected yogas",
+                "value": "Lakshmi Yoga, Neecha Bhanga (Venus), Raja Yoga (Venus) all amplify this"
+              },
+              {
+                "label": "recurring thread",
+                "value": "Value and worth appear across the entire chart, this is the root"
+              }
+            ]
+          },
+          {
+            "id": "force_13",
+            "title": "Sacred Craft",
+            "subtitle": "Sun, Mercury, and Venus in the sixth",
+            "description": "Three of the chart's most powerful planets gather in the house of imperfection and service. The gift here is refinement, but the cost is learning when to stop fixing and start building.",
+            "max_lines": 3,
+            "cta": {
+              "text": "Read more",
+              "action": "detail"
+            },
+            "detail": {
+              "title": "Sun, Mercury, and Venus in the sixth",
+              "body": "Three planets, Sun, Mercury, and Venus, gather in the sixth house. The Sun carries identity and authority. Mercury carries discernment and refinement. Venus carries beauty, value, and the lagna's core sense of self. Together, they place the chart's most visible powers inside the domain of difficulty, service, health, opposition, and what is unfinished. This is not a placement of ease, but it is a placement of extraordinary craft. Vesi Yoga forms here, giving the Sun's presence a quality of preparation, depth, and purposeful action.\n\nThe cost of this gathering is that struggle can become too familiar. The sixth house rewards those who fix, refine, and endure, but it can also make the life stay inside what still needs endless repair. The central knot speaks directly here: sacred force becomes costly when it is used in the wrong service. Sun, Mercury, and Venus in the sixth may keep the chart's finest powers occupied with problems rather than legacy.\n\nSacred craftsmanship. This force ripens when the chart improves what is genuinely its to improve, and releases the rest. What Ruchaka Mahapurusha Yoga carries in courage, this placement channels into precision and service."
+            },
+            "headlines": [
+              {
+                "label": "what this gives",
+                "value": "Power to bring clarity, beauty, and refinement into what is difficult"
+              },
+              {
+                "label": "when strained",
+                "value": "Staying inside endless repair when legacy is asking for attention"
+              }
+            ],
+            "subheadlines": [
+              {
+                "label": "yoga formed here",
+                "value": "Vesi Yoga, depth, preparation, and purposeful action around the Sun"
+              },
+              {
+                "label": "current chapter note",
+                "value": "Sun/Ketu chapter asks for release, including what no longer needs fixing"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "the_lesson",
+        "label": "THE LESSON",
+        "description": "This life was never meant to be efficient. It was meant to be consequential. Gaja Kesari Yoga protects the heart. Ruchaka Yoga gives the courage. And the long arc from Sun's chapter of self-definition through Moon's decade of emotional truth is the road where force finally meets its rightful name. The chart points toward a life that stops carrying what it has outgrown, and discovers that what remains is more than enough.",
+        "cards": []
+      }
+    ],
+    "raw": {
+      "title": "The Weight That Becomes the Road",
+      "opening_promise": "This life came here to turn sacred force into rightful consequence. Not the kind of consequence that punishes, the kind that builds. Jupiter exalted in Cancer gave the heart a larger frame than most lives can hold. Saturn exalted in Libra gave the spine to carry what that heart knows. Ruchaka Mahapurusha Yoga gave the courage to act when acting costs something. And Venus, debilitated and then restored, gave the understanding that worth is not a starting condition, it is something the life earns back from itself, slowly, through honest refinement. This is not a chart that was ever meant for a small road. The question has always been whether the road the life is walking is actually its own.",
+      "entrusted_beauty": "There is a dignity in this life that others feel before they can name it. Gaja Kesari Yoga protects the emotional core, not by shielding it from difficulty, but by giving it a frame large enough to hold difficulty without being diminished. Saturn's Raja Yoga through the ninth and tenth houses means that authority was never something to be borrowed or performed; it was given at birth, woven into the structure of the chart itself. Lakshmi Yoga carries a grace that aligns the life with something flourishing when the effort is genuine. And the Bharani Moon, direct, urgent, capable of bearing enormous creative weight, gives the emotional life a force that does not wait for permission. This is a life built to carry consequence and turn it into something lived.",
+      "central_knot": "The knot is this: sacred force becomes costly when it is used in the wrong service, and this life keeps carrying what the soul has already outgrown. Sun, Mercury, and Venus gathered in the sixth house means that identity, discernment, and self-worth have all been poured into service, refinement, and the correction of what is broken, often in others' lives, often at the expense of the life's own creative fire. The fifth lord placed in the house of gains means intelligence earns, but it earns for structures that may no longer deserve it. The tenth lord in the same house means that public authority flows toward outcomes rather than authorship. The life functions brilliantly. The question is whether it functions for itself.",
+      "present_threshold": "Since July 2021, the Sun mahadasha has been pressing a single question: what is this life actually for, and who does it serve? Now, from March through July 2026, Ketu sharpens that question into something more surgical. Within a chapter already asking for self-definition, Ketu introduces release, detachment, and the severing of what no longer belongs. This is not a time for building. It is a time for recognizing what the life has been maintaining through discipline alone, and asking whether discipline is enough reason to keep holding it. The chart points toward a threshold where identity is no longer proved through effort but through the willingness to let effort go where it is not wanted.",
+      "love": "Mars in its own sign in the seventh house means that love in this life is not gentle, it is passionate, direct, and carries the full weight of the Ruchaka force. Partnerships attract intensity because the life itself is intense. The pattern is not avoidance; it is over-engagement. This life enters love with the same urgency the Bharani Moon brings to everything, act now, feel later, correct in the aftermath. Venus debilitated and then restored through Neecha Bhanga means that the sense of being worthy of love was not a given. It was rebuilt. The risk is staying in bonds that require constant refinement rather than recognizing when the correction has become the relationship itself. Love matures here when the life stops earning its place and simply occupies it.",
+      "work": "The tenth lord in the house of gains, the fifth lord in the house of gains, the lord of value joined with the lord of gains, this chart was built to produce. Vasumati Yoga builds material steadiness through accumulated skill. Raja Yoga through Saturn and Mercury gives the mind a capacity for meaningful consequence. The danger is not failure; it is over-functioning in service of outcomes that no longer carry the life's actual name. Vesi Yoga gives composure and visible steadiness, but composure can become a mask for exhaustion. The Sun mahadasha is asking whether this life's work reflects its authority or merely its competence. Authorship, not productivity, is what the chart is moving toward.",
+      "embodiment": "When this life ripens, it embodies the rare convergence its chart has always carried: Jupiter's wisdom held inside Saturn's discipline, Mars's courage directed by Venus's restored sense of worth. The Gaja Kesari promise of emotional resilience and quiet reputation does not need to be performed, it simply becomes the way the life moves through rooms. The Bharani Moon's creative intensity, which once demanded immediate expression, learns to bear its own weight without urgency. What was once force in the wrong service becomes force in rightful service. The life stops building for proof and begins building because the thing being built is beautiful, necessary, and unmistakably its own.",
+      "closing_destiny": "This life was never meant to be efficient. It was meant to be consequential. Gaja Kesari Yoga protects the heart. Ruchaka Yoga gives the courage. And the long arc from Sun's chapter of self-definition through Moon's decade of emotional truth is the road where force finally meets its rightful name. The chart points toward a life that stops carrying what it has outgrown, and discovers that what remains is more than enough.",
+      "phase_insight_title": "You are learning what to release when identity no longer needs proof.",
+      "affirmation": "What remains after release is the truest part.",
+      "polarity_left": "Over-functioning",
+      "polarity_right": "Rightful authority",
+      "insights": [
+        "Old loyalties are being quietly outgrown",
+        "Discipline alone is not a reason to stay",
+        "Identity is clarifying through subtraction now"
+      ],
+      "great_yogas": [
+        {
+          "name": "Gaja Kesari Yoga",
+          "subtitle": "Wisdom stands behind the heart and steadies it",
+          "sacred_capacity": "Where Jupiter and the Moon meet in angular relationship, something in the emotional life is quietly protected. This yoga gives the heart a larger frame, not immunity from difficulty, but a natural dignity that keeps grief from becoming collapse. Judgment ripens. Others sense the steadiness and lean toward it. Reputation builds not through effort alone but through a quality of presence that earns trust before a word is spoken.",
+          "distortion": "The outer life can look composed and sufficient while the inner life quietly starves. The heart that sustains others may go long seasons without being sustained itself. Dignity becomes a kind of armor, and the warmth this yoga promises stays locked inside the very strength it created. The cost is not visible, which makes it harder to address.",
+          "purified_expression": "This yoga ripens when strength and tenderness are no longer kept separate. When the warmth that has always been present is allowed to be seen, the life carries both stature and aliveness, and others feel the difference immediately.",
+          "card_title": "Noble Heart",
+          "card_description": "You carry a natural emotional dignity that steadies others before you speak. Wisdom and warmth were always meant to move together in this life.",
+          "details": [
+            {
+              "label": "what it gives",
+              "value": "emotional resilience, dignified presence, respected judgment"
+            },
+            {
+              "label": "when strained",
+              "value": "composure hides an underfed inner life"
+            },
+            {
+              "label": "what it asks",
+              "value": "let warmth be visible, not only strength"
+            },
+            {
+              "label": "current relevance",
+              "value": "Sun/Ketu chapter sharpens the question of what deserves to remain"
+            }
+          ],
+          "comparisons": [
+            {
+              "left": "Strength that holds others together",
+              "right": "Warmth that finally feeds itself too"
+            }
+          ]
+        },
+        {
+          "name": "Ruchaka Mahapurusha Yoga",
+          "subtitle": "Mars at full power, courage, command, and decisive force",
+          "sacred_capacity": "Mars placed in an angular house at strength gives this life a quality of force that is rare and immediately legible. Courage is not performed, it is structural. The body moves with purpose, the will does not waver under pressure, and there is a natural capacity to lead, to act, and to cut through what others hesitate before. The thread of authority and command that runs through this entire chart finds one of its strongest roots here.",
+          "distortion": "Force this concentrated can become its own trap. When Ruchaka's power is used in the wrong service, defending what should be released, fighting for what no longer deserves protection, the very strength that was meant to liberate begins to bind. The central knot of this chart speaks directly to this: sacred force becomes costly when it carries what the soul has already outgrown.",
+          "purified_expression": "This yoga reaches its rightful expression when the force is aimed at what is true rather than what is merely familiar. Courage in service of rightness, not just momentum, is what Ruchaka was built for. Under the current Sun/Ketu chapter, this distinction matters more than ever.",
+          "card_title": "The Force",
+          "card_description": "You carry a structural courage that others feel before you act. This is not performance, it is the shape of your will. The question is always what it serves.",
+          "details": [
+            {
+              "label": "what it gives",
+              "value": "decisive action, physical vitality, natural command"
+            },
+            {
+              "label": "when strained",
+              "value": "force used to defend what should be released"
+            },
+            {
+              "label": "what it asks",
+              "value": "aim the strength at what is true, not just sustainable"
+            },
+            {
+              "label": "in relationships",
+              "value": "Mars in the seventh, passion and intensity in close bonds"
+            }
+          ],
+          "comparisons": [
+            {
+              "left": "Force that holds a position past its time",
+              "right": "Force that clears the road for what is rightful"
+            }
+          ]
+        },
+        {
+          "name": "Raja Yoga (Saturn)",
+          "subtitle": "Saturn ruling both the peak and the foundation of the chart",
+          "sacred_capacity": "When a single planet holds dominion over both a kendra and a trikona, it becomes the spine of the entire chart. Saturn here rules the tenth house of public consequence and the ninth house of dharma, wisdom, and larger faith. This is not a yoga of sudden elevation, it is a yoga of earned authority. The recognition this life may reach will carry weight precisely because it was built through discipline, time, and genuine consequence.",
+          "distortion": "Saturn's gift can become a burden when the life confuses the weight of responsibility with the worth of the self. When authority is pursued as proof of value rather than as a form of service, the recognition arrives but does not satisfy. The pressure Saturn applies is real, and without the ninth house's larger faith to hold it, it can compress the life into relentless effort without rest or meaning.",
+          "purified_expression": "This yoga matures when responsibility is carried as a calling rather than a performance. Authority that is rightfully held, not merely achieved, this is what Saturn's dual rulership was always pointing toward. The entrusted beauty of this chart runs directly through this.",
+          "card_title": "Authority",
+          "card_description": "Your path to recognition is built through time, not luck. Saturn shapes both your public standing and your deeper sense of purpose, they were always meant to align.",
+          "details": [
+            {
+              "label": "what it builds",
+              "value": "earned authority, lasting recognition, structural influence"
+            },
+            {
+              "label": "when strained",
+              "value": "responsibility carried as burden rather than calling"
+            },
+            {
+              "label": "what it asks",
+              "value": "let dharma hold the weight, not ego alone"
+            }
+          ],
+          "comparisons": null
+        },
+        {
+          "name": "Raja Yoga (Saturn-Mercury)",
+          "subtitle": "The tenth lord and fifth lord joined, achievement through intelligence",
+          "sacred_capacity": "Saturn's authority and Mercury's discernment in conjunction create a mind built for meaningful consequence. The fifth house governs creativity, intelligence, and the power to think originally; the tenth governs public standing and the shape of a life's work. When their lords meet, the capacity to translate sharp intelligence into visible, structured achievement is genuinely present. This yoga supports leadership that thinks clearly under pressure and communicates with precision.",
+          "distortion": "Mercury's restlessness can fracture what Saturn is trying to consolidate. The mind that refines everything may also delay commitment, always finding one more adjustment before the work can be called complete. When intelligence becomes a substitute for action, this yoga's promise stays theoretical. The Virgo instinct to perfect can quietly undermine the Saturnine need to build.",
+          "purified_expression": "When discernment serves the work rather than delaying it, this yoga produces something rare: intelligence that has been tested by time and made consequential. The chart points toward a life where sharp thinking and lasting structure are not in competition.",
+          "card_title": "Sharp Command",
+          "card_description": "Your intelligence was built to carry weight, not just to refine. When thinking and structure move together, this yoga opens real doors in the world.",
+          "details": [
+            {
+              "label": "what it gives",
+              "value": "precise thinking in service of lasting achievement"
+            },
+            {
+              "label": "when strained",
+              "value": "perfectionism delays what is ready to be built"
+            },
+            {
+              "label": "what it asks",
+              "value": "let the mind commit, not only refine"
+            }
+          ],
+          "comparisons": null
+        },
+        {
+          "name": "Raja Yoga (Sun-Venus)",
+          "subtitle": "Identity and value aligned, presence that commands and attracts",
+          "sacred_capacity": "Sun as the fourth house lord joined with Venus as the lagna lord creates a yoga where self-expression and inner worth move together. The fourth house carries the roots, emotional foundation, private life, the ground beneath everything visible. When its lord joins the lagna lord, the outer life can be built on something real. There is a natural quality of presence here that draws recognition without forcing it, the recurring thread of value and worth made visible.",
+          "distortion": "When Sun and Venus are placed in the sixth house, this yoga carries a complication: the conjunction exists, but both planets operate in the house of effort, opposition, and necessary friction. The gift is present but must be earned through challenge rather than received as ease. Identity built on external recognition alone, without the sixth house's harder lessons absorbed, may look confident while remaining fragile underneath.",
+          "purified_expression": "This yoga ripens when the friction of the sixth house has been metabolized rather than avoided. The Sun/Ketu chapter is precisely the moment when this reckoning becomes possible, identity refined through release, not just assertion.",
+          "card_title": "Presence",
+          "card_description": "Your sense of self and your sense of worth were meant to move as one. This yoga carries real magnetism, but it deepens only through the harder lessons, not around them.",
+          "details": [
+            {
+              "label": "what it gives",
+              "value": "natural presence, self-worth expressed as attraction"
+            },
+            {
+              "label": "when strained",
+              "value": "recognition sought before inner ground is stable"
+            },
+            {
+              "label": "sixth house note",
+              "value": "the gift arrives through earned friction, not bypassed"
+            }
+          ],
+          "comparisons": null
+        },
+        {
+          "name": "Raja Yoga (Venus)",
+          "subtitle": "Venus ruling both the self and its expression, a rare singular dignity",
+          "sacred_capacity": "For a Taurus lagna, Venus rules the first house as both a kendra and a trikona lord simultaneously, a condition that makes Venus the single most important planet in this chart. The self, its expression, its values, and its beauty are all held within one planetary force. When Venus is well-placed, this creates a life with natural grace, a refined aesthetic intelligence, and an instinctive sense of what has lasting worth. The thread of value runs through this yoga at its deepest level.",
+          "distortion": "Venus is debilitated in this chart before its cancellation is applied. The raw placement carries a genuine wound around worth, a question of whether beauty, love, or value can be trusted to last. When this wound is unexamined, the life may keep building external structures of worth to compensate for an inner uncertainty that has never been directly addressed.",
+          "purified_expression": "Neecha Bhanga restores what debilitation threatened. But the restoration is not automatic, it requires that the wound be known. Once it is, Venus's singular dominion over this chart becomes genuinely beautiful: a life where the self and its values are one coherent thing.",
+          "card_title": "Worth",
+          "card_description": "You are the chart's own standard of value. Venus rules your entire identity, which means what you believe you deserve shapes everything that follows.",
+          "details": [
+            {
+              "label": "what it gives",
+              "value": "grace, aesthetic intelligence, instinct for lasting worth"
+            },
+            {
+              "label": "when strained",
+              "value": "external worth-building masks an unexamined inner wound"
+            },
+            {
+              "label": "what it asks",
+              "value": "know the wound before trusting the restoration"
+            }
+          ],
+          "comparisons": null
+        },
+        {
+          "name": "Lakshmi Yoga",
+          "subtitle": "Blessing that roots when the life becomes truthful",
+          "sacred_capacity": "Lakshmi Yoga supports the kind of flourishing that is not merely material, it carries grace, refinement, and the sense that the life is aligned with something larger than effort alone. Prosperity here is not random; it follows right alignment. The beauty of this yoga is that it does not demand perfection, it responds to genuine orientation. When the life is pointed toward what is true, this yoga tends to open doors that pure effort could not.",
+          "distortion": "Blessing that arrives into a divided life cannot fully settle. When inner conflict persists, when the life is carrying what the soul has already outgrown, as the central knot names it, Lakshmi's gifts may appear and then recede without explanation. The abundance is present in potential; the division is what keeps it from rooting.",
+          "purified_expression": "This yoga ripens into something genuinely beautiful when the life has grown truer. Not perfect, truer. Abundance with substance, beauty that lasts, prosperity that reflects what the life actually is.",
+          "card_title": "Blessing",
+          "card_description": "Grace and abundance are present in this chart, but they settle only when the life is inwardly aligned. Lakshmi responds to rightness, not just effort.",
+          "details": [
+            {
+              "label": "what it gives",
+              "value": "grace, refinement, prosperity that follows alignment"
+            },
+            {
+              "label": "when strained",
+              "value": "blessing arrives but cannot settle in a divided life"
+            },
+            {
+              "label": "what it asks",
+              "value": "grow truer, not merely more disciplined"
+            }
+          ],
+          "comparisons": null
+        },
+        {
+          "name": "Neecha Bhanga (Venus)",
+          "subtitle": "A wound in worth that becomes the source of mastery",
+          "sacred_capacity": "Venus debilitated and then restored by Mercury's strength is not a neutral correction, it is a complete arc. The debilitation is real: there was a genuine challenge around value, beauty, love, or self-worth that this life had to pass through. The cancellation is also real: Mercury's placement restores what was threatened and, in doing so, creates a depth of understanding around these themes that an unafflicted Venus could never carry. Mastery through difficulty is qualitatively different from ease.",
+          "distortion": "The danger in Neecha Bhanga is treating the cancellation as if the wound never existed. When the restoration is claimed without the difficulty being honored, the mastery is incomplete. The life may perform confidence around worth and value while the original question, am I enough, does beauty last, can I be truly valued, remains unanswered beneath the surface.",
+          "purified_expression": "When the wound is known and the restoration is lived rather than assumed, this yoga produces genuine authority around the themes of worth, value, and beauty. The chart points toward a life where what was hardest to trust becomes the most deeply understood.",
+          "card_title": "Restored",
+          "card_description": "A wound around worth was written into this chart, and so was its healing. The mastery this yoga offers is only available to those who pass through the difficulty honestly.",
+          "details": [
+            {
+              "label": "what it gives",
+              "value": "depth of understanding around worth, beauty, and value"
+            },
+            {
+              "label": "when strained",
+              "value": "restoration claimed before the wound has been known"
+            },
+            {
+              "label": "what it asks",
+              "value": "honor the difficulty before trusting the recovery"
+            }
+          ],
+          "comparisons": [
+            {
+              "left": "Performing confidence around worth",
+              "right": "Carrying genuine authority through what was survived"
+            }
+          ]
+        }
+      ],
+      "finer_yogas": [
+        {
+          "name": "Vesi Yoga",
+          "subtitle": "Composure as a visible field, steadiness without waste",
+          "sacred_capacity": "When planets occupy the second house from the Sun, the outward life takes on a quality of measured presence. Vesi Yoga gives composure, a visible steadiness that holds its field without unnecessary motion or expenditure. In a chart already shaped by Taurus patience and Saturnine discipline, this yoga reinforces the outer layer, the life that others encounter first is one of self-possession and deliberate movement.",
+          "distortion": "Composure that is never questioned can become concealment. The same steadiness that projects strength may quietly prevent the truth from surfacing, not through dishonesty, but through a habitual preference for holding the form together. The cost of this is internal and slow, which makes it easy to miss until it has accumulated.",
+          "purified_expression": "Vesi matures into transparent steadiness, a composure that protects without hiding. The field is held, but the soul is not locked inside the discipline that holds it.",
+          "card_title": "Composure",
+          "card_description": "You project steadiness before you speak. This yoga gives your outer life a quality of self-possession, but it asks that composure never become a way of hiding.",
+          "details": [
+            {
+              "label": "what it gives",
+              "value": "measured presence, visible self-possession, disciplined outward life"
+            },
+            {
+              "label": "when strained",
+              "value": "composure hides cost rather than protecting truth"
+            }
+          ],
+          "comparisons": null
+        },
+        {
+          "name": "Vasumati Yoga",
+          "subtitle": "Prosperity built through skill, refinement, and unhurried time",
+          "sacred_capacity": "Vasumati Yoga builds material steadiness through the accumulation of skill, intelligence, and genuine effort over time. This is not sudden wealth, it is the kind of value that compounds. For a chart already shaped by Saturn's long view and Mercury's precision, this yoga reinforces a pattern: what is built carefully tends to last, and the resources that arrive through refinement carry more substance than those that arrive through chance.",
+          "distortion": "The same orientation toward building value can become an overinvestment in the material layer while something more essential waits. When the life keeps developing resources, skills, and outer worth as a substitute for addressing what is inwardly unresolved, Vasumati's gift becomes a delay. The central knot is relevant here: carrying what has been outgrown, even in the form of productive effort, has a cost.",
+          "purified_expression": "This yoga ripens into prosperity with truth beneath it, worth that reflects what the life actually is, not what it has been building toward in place of something harder.",
+          "card_title": "Earned Wealth",
+          "card_description": "Your path to material stability runs through skill and time, not luck. Vasumati builds slowly and lasts, but it asks that outer building never become a substitute for inner truth.",
+          "details": [
+            {
+              "label": "what it gives",
+              "value": "material steadiness through refinement, skill, and patient effort"
+            },
+            {
+              "label": "when strained",
+              "value": "outer value-building delays what is inwardly unresolved"
+            },
+            {
+              "label": "what it asks",
+              "value": "let worth have truth beneath it, not only effort"
+            }
+          ],
+          "comparisons": null
+        }
+      ],
+      "deeper_shaping_forces": [
+        {
+          "name": "The fifth lord in the house of gains",
+          "subtitle": "When the mind's fire insists on leaving something real behind",
+          "sacred_capacity": "Mercury rules the fifth from Taurus lagna, and its placement in the house of gains binds intelligence, creative fire, and the capacity for discernment directly to outcome and expansion. What this chart thinks, refines, and creates does not want to remain private or theoretical. The mind here carries a native hunger for consequence, not fame for its own sake, but for the kind of result that proves the work was worth the weight it asked to carry.",
+          "distortion": "When the outer life does not yet reflect what the inner intelligence knows it is capable of, restlessness becomes corrosive. The mind begins measuring its worth by what has not yet materialized. This is where the central knot tightens, sacred force in the wrong service, carrying ambitions the soul has already quietly outgrown.",
+          "purified_expression": "This force ripens when creation stops chasing validation and starts carrying legacy. The chart points toward a life where intelligence becomes consequential because it is truthful, not merely productive.",
+          "card_title": "Creative Fire",
+          "card_description": "The mind in this chart was never meant to stay theoretical. Intelligence wants real fruit, work that matters, creations that outlast the effort they required.",
+          "details": [
+            {
+              "label": "what animates this",
+              "value": "A native hunger for consequence, not recognition alone"
+            },
+            {
+              "label": "when strained",
+              "value": "Restlessness when created work does not yet carry enough weight"
+            },
+            {
+              "label": "what it connects to",
+              "value": "Raja Yoga (Saturn-Mercury), consequence earned through discipline"
+            },
+            {
+              "label": "purified form",
+              "value": "Creation that carries legacy because it carries truth"
+            }
+          ],
+          "comparisons": [
+            {
+              "left": "Mind measuring worth by what hasn't arrived yet",
+              "right": "Mind building what only this life could have built"
+            }
+          ]
+        },
+        {
+          "name": "The tenth lord in the house of gains",
+          "subtitle": "Vocation and visible karma reaching toward genuine outcome",
+          "sacred_capacity": "Saturn rules the tenth from Taurus lagna, and its lordship over public life, visible karma, and earned authority places the weight of consequence at the center of this chart's purpose. When Saturn's tenth-house energy flows into the house of gains, the chart's work is not merely professional, it is architectural. What is built in the world is meant to stand, compound, and return real fruit. This force connects directly to what the entrusted beauty names: strength, intelligence, and consequence turned into something rightful.",
+          "distortion": "The same force that builds can over-identify with results when the soul is asking for truer authorship. Saturn's pressure here may keep the life inside structures that look correct from the outside while something deeper waits for permission to lead. The tenth lord in gains can make outcome feel like identity, and when outcomes stall, identity destabilizes.",
+          "purified_expression": "When this force is lived truthfully, the work becomes substantial not because it was relentless, but because it was rightful. Vasumati Yoga and Lakshmi Yoga both carry this same promise, gains that follow genuine authority rather than imitate it.",
+          "card_title": "Earned Authority",
+          "card_description": "Saturn's command over public life flows directly into outcome and expansion here. This chart was built for work that compounds, not just effort, but consequence that lasts.",
+          "details": [
+            {
+              "label": "what this builds",
+              "value": "Visible karma, earned reputation, and outcomes that compound over time"
+            },
+            {
+              "label": "when strained",
+              "value": "Over-identification with results when truer authorship is being asked for"
+            },
+            {
+              "label": "connected yogas",
+              "value": "Raja Yoga (Saturn), Vasumati Yoga, Lakshmi Yoga all echo this promise"
+            },
+            {
+              "label": "current chapter note",
+              "value": "Sun/Ketu asks: which structures still belong to you?"
+            }
+          ],
+          "comparisons": null
+        },
+        {
+          "name": "The lord of value joined with the lord of gains",
+          "subtitle": "Worth, speech, and earning woven into a single thread",
+          "sacred_capacity": "Venus as the lagna lord carries the chart's fundamental sense of value, beauty, and self-worth. When this lord joins the lord of gains, the capacity to generate prosperity through quality, taste, intelligence, and usefulness becomes a genuine structural feature, not aspiration, but architecture. This combination feeds Lakshmi Yoga and resonates through the Neecha Bhanga that restores Venus's full power. The chart can produce real value because it carries a refined instinct for what is actually worth building.",
+          "distortion": "The shadow here is subtle but consequential: when outer gain begins to stand in for inner rightness, the life becomes divided between what it earns and what it knows to be true. The recurring thread of value and worth runs through this chart's entire architecture, and when that thread is pulled toward accumulation alone, the deeper beauty goes unspent.",
+          "purified_expression": "Prosperity that follows truth rather than replacing it. One likely expression is a life where what is earned and what is meaningful stop being separate questions.",
+          "card_title": "True Worth",
+          "card_description": "The lagna lord and the lord of gains are joined here. This chart carries genuine power to generate value, but only when what it builds reflects what it actually knows to be true.",
+          "details": [
+            {
+              "label": "what this enables",
+              "value": "Generating real prosperity through taste, quality, and usefulness"
+            },
+            {
+              "label": "when strained",
+              "value": "Outer gain standing in for inner rightness; earning replacing meaning"
+            },
+            {
+              "label": "connected yogas",
+              "value": "Lakshmi Yoga, Neecha Bhanga (Venus), Raja Yoga (Venus) all amplify this"
+            },
+            {
+              "label": "recurring thread",
+              "value": "Value and worth appear across the entire chart, this is the root"
+            }
+          ],
+          "comparisons": [
+            {
+              "left": "Earning as proof of worth",
+              "right": "Earning as expression of what is already true"
+            }
+          ]
+        },
+        {
+          "name": "Sun, Mercury, and Venus in the sixth",
+          "subtitle": "Identity, intelligence, and beauty entering the house of imperfection",
+          "sacred_capacity": "Three planets, Sun, Mercury, and Venus, gather in the sixth house. The Sun carries identity and authority. Mercury carries discernment and refinement. Venus carries beauty, value, and the lagna's core sense of self. Together, they place the chart's most visible powers inside the domain of difficulty, service, health, opposition, and what is unfinished. This is not a placement of ease, but it is a placement of extraordinary craft. Vesi Yoga forms here, giving the Sun's presence a quality of preparation, depth, and purposeful action.",
+          "distortion": "The cost of this gathering is that struggle can become too familiar. The sixth house rewards those who fix, refine, and endure, but it can also make the life stay inside what still needs endless repair. The central knot speaks directly here: sacred force becomes costly when it is used in the wrong service. Sun, Mercury, and Venus in the sixth may keep the chart's finest powers occupied with problems rather than legacy.",
+          "purified_expression": "Sacred craftsmanship. This force ripens when the chart improves what is genuinely its to improve, and releases the rest. What Ruchaka Mahapurusha Yoga carries in courage, this placement channels into precision and service.",
+          "card_title": "Sacred Craft",
+          "card_description": "Three of the chart's most powerful planets gather in the house of imperfection and service. The gift here is refinement, but the cost is learning when to stop fixing and start building.",
+          "details": [
+            {
+              "label": "what this gives",
+              "value": "Power to bring clarity, beauty, and refinement into what is difficult"
+            },
+            {
+              "label": "when strained",
+              "value": "Staying inside endless repair when legacy is asking for attention"
+            },
+            {
+              "label": "yoga formed here",
+              "value": "Vesi Yoga, depth, preparation, and purposeful action around the Sun"
+            },
+            {
+              "label": "current chapter note",
+              "value": "Sun/Ketu chapter asks for release, including what no longer needs fixing"
+            }
+          ],
+          "comparisons": [
+            {
+              "left": "Refining what is broken because it feels familiar",
+              "right": "Refining what is yours because it carries your name"
+            }
+          ]
+        }
+      ],
+      "great_timing_currents": [
+        {
+          "name": "Venus Mahadasha",
+          "subtitle": "Learning what the life is truly drawn toward and why",
+          "chapter_body": "From 2014 to 2021, the chapter was governed by attraction, refinement, and the question of worth. Venus rules this lagna, and so its mahadasha carried unusual weight, not merely pleasure-seeking but a deep reckoning with what holds real value. Neecha Bhanga and Raja Yoga both live inside Venus, which means this chapter likely moved between compromise and recovery, between undervaluing and reclaiming. The thread of value and worth that runs through the whole chart was most alive here. What the life was drawn toward during these years carries the shape of what it is still building."
+        },
+        {
+          "name": "Sun Mahadasha",
+          "subtitle": "Standing in light, claiming direction, burning what no longer belongs",
+          "chapter_body": "Since July 2021, the chapter has been governed by identity, will, and the pressure of visibility. The Sun asks: what is this life actually for, and who is willing to say so plainly? Raja Yoga through Sun and Venus gives this chapter a certain authority, not borrowed, but earned through clarity. The central knot sharpens here. Sacred force becomes costly when it serves the wrong structures, and the Sun chapter makes that cost visible. What the life is carrying that it has already outgrown becomes harder to ignore. Authority and command are not abstractions now; they are daily tests of alignment."
+        },
+        {
+          "name": "Sun / Ketu",
+          "subtitle": "Identity meeting its own edge, release sharpening the present threshold",
+          "chapter_body": "From March 2026 through July 2026, the sub-period belongs to Ketu. Within a chapter already asking for self-definition, Ketu introduces a finer and more interior demand: sever. Not dramatically, but precisely. Ketu does not take what belongs to the life, it removes what the life has been holding out of habit or fear. This sub-period may bring a quality of inner silence, of certain roles or narratives losing their grip. Vesi Yoga and the Sun's placement alongside Mercury and Venus in the sixth suggest that the completion happening now is connected to service, discipline, and the refinement of how strength is offered. What falls away here clears the road for Moon's chapter to begin from a truer foundation."
+        },
+        {
+          "name": "Moon Mahadasha",
+          "subtitle": "The heart becomes harder to silence, living from within begins",
+          "chapter_body": "From 2027 to 2037, the chapter passes to the Moon, Aries, Bharani, the emotional core of this chart. After years of Sun's outward pressure and Ketu's severing, the Moon chapter asks what can actually be lived in from the inside. Bharani carries sacred force and the weight of what has been held. Gaja Kesari Yoga belongs to this chapter in a particular way, Jupiter's angular relationship to the Moon brings dignity, resilience, and the sense of being held by something larger. This is not a soft chapter; Aries Moon does not rest easily. But it may be the most honest decade, the one where the life stops performing steadiness and starts inhabiting it."
+        },
+        {
+          "name": "Mars Mahadasha",
+          "subtitle": "Force moves what the heart has long known and no longer postpones",
+          "chapter_body": "From 2037 to 2044, Mars takes the chapter. Ruchaka Mahapurusha Yoga is Mars's signature in this chart, strength, command, and the capacity to act with consequence. After Moon's decade of inner reckoning, Mars moves what has been clarified. The urgency native to Aries Moon finds its instrument here. Authority and command, threads that run through the whole chart, reach a more direct expression. This is a chapter of doing, not merely knowing. What was outgrown and released in earlier chapters becomes the ground from which Mars builds."
+        },
+        {
+          "name": "Rahu Mahadasha",
+          "subtitle": "Appetite, scale, and the life's larger karmic tests arrive together",
+          "chapter_body": "From 2044 to 2062, Rahu governs a long and stretching chapter. The life reaches toward scale, ambition, and the edges of its own appetite. Rahu amplifies whatever it touches, and in this chart, carrying Lakshmi Yoga, Vasumati Yoga, and the tenth lord in the house of gains, the amplification is likely material as well as existential. The central knot may reassert itself here: sacred force in the wrong service becomes most costly at scale. The question is not whether the life grows large, but whether the growth serves what is rightful and deeply lived."
+        },
+        {
+          "name": "Jupiter Mahadasha",
+          "subtitle": "Blessing widens the road and the life breathes inside a larger law",
+          "chapter_body": "From 2062 to 2078, Jupiter governs. Gaja Kesari Yoga, the promise of wisdom and reputation carried since birth, fully ripens here. This is the chapter where what was built across decades is recognized not just outwardly but inwardly, where the life feels, perhaps for the first time without reservation, that it was never meant for a small road. The entrusted beauty of this chart, strength, intelligence, and consequence turned toward something rightful, finds its fullest expression under Jupiter's long governance."
+        },
+        {
+          "name": "Saturn Mahadasha",
+          "subtitle": "Authority ripens into its heaviest and truest form, what has the life earned?",
+          "chapter_body": "From 2078 onward, Saturn governs. Raja Yoga through Saturn and Mercury, Raja Yoga through Saturn alone, this planet carries enormous structural weight in this chart. Its mahadasha does not arrive gently. It asks what the strength of the life has actually earned, not claimed. The pressure that matures is not punishment; it is the final refinement. What authority and command mean at this stage of the life is not visibility but consequence, the kind that outlasts the person who generated it."
+        }
+      ],
+      "life_phases": [
+        {
+          "title": "The Formation Years",
+          "age_range": "0–18",
+          "body": "Early life is shaped by Taurus steadiness and Aries emotional urgency existing side by side, a child who appears patient but moves internally at speed. The instinct to refine, to build, to discern arrives early. What is absorbed in these years about authority, worth, and what the life is for becomes the substrate every later chapter draws from. The central knot may already be forming: learning whose service is worth the force being offered."
+        },
+        {
+          "title": "The Chapter of Attraction and Reckoning",
+          "age_range": "18–35",
+          "body": "Venus and then Sun govern much of this stretch. The life is learning what it is drawn toward, what holds real value, and what it is willing to stand for visibly. Neecha Bhanga's recovery arc is likely felt here, a period of compromise followed by a return to something truer. The question of worth is not abstract; it arrives in relationships, in work, in how strength is offered and whether it is honored."
+        },
+        {
+          "title": "The Threshold of Identity",
+          "age_range": "35–45",
+          "body": "Sun's chapter and the Ketu sub-period bring the life to its clearest test of self-definition. What has been carried out of habit falls away. The life stops being shaped by what it inherited and begins being shaped by what it has chosen. Moon's chapter follows immediately, the heart becomes harder to silence. This decade may feel like the turning point the entire chart was building toward."
+        },
+        {
+          "title": "The Living From Within Years",
+          "age_range": "45–60",
+          "body": "Moon and Mars govern here. After the severing of Sun/Ketu and the honesty of Moon's chapter, Mars moves what has been clarified. Ruchaka Mahapurusha Yoga expresses through action, command, and consequence. This phase carries the life's most direct expression of what it is actually for, not performed, not borrowed, but lived from within and built outward with force."
+        },
+        {
+          "title": "The Season of Scale and Ripening",
+          "age_range": "60–80",
+          "body": "Rahu's long chapter stretches the life toward its largest tests, followed by Jupiter's blessing and recognition. Gaja Kesari Yoga, Lakshmi Yoga, the tenth lord in the house of gains, these promises mature here. What was built across decades becomes visible at a scale the earlier self could not have imagined. The entrusted beauty of this chart finds its fullest, most rightful expression."
+        },
+        {
+          "title": "The Weight of What Was Earned",
+          "age_range": "80 onward",
+          "body": "Saturn governs the final long chapter. Not decline, consequence. What authority and command mean at this stage is legacy: the kind of strength that outlasts its source. Raja Yoga through Saturn asks not what was claimed but what was earned. This is the chapter where the life, if it has been lived rightly, becomes something others draw from long after."
+        }
+      ]
+    }
+  }
+}

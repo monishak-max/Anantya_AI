@@ -1094,3 +1094,53 @@ html, body {
 .bc-force h4, .bc-timing h4, .bc-phase h4 { font-size: 14px; font-weight: 600; color: #333; margin: 0 0 4px 0; }
 .bc-force-sub { font-size: 12px; color: #888; font-style: italic; margin-bottom: 8px; }
 .bc-force p, .bc-timing p, .bc-phase p { font-size: 13px; color: #555; line-height: 1.6; margin: 4px 0; }
+
+/* ── SDUI Section Rendering ─────────────────────────────────── */
+.sdui-section { margin-bottom: 32px; }
+.sdui-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #999; margin-bottom: 6px; text-align: center; }
+.sdui-title { font-family: 'Instrument Serif', serif; font-size: 24px; font-weight: 600; color: #222; text-align: center; margin-bottom: 8px; }
+.sdui-subtitle { font-size: 13px; color: #888; text-align: center; margin-bottom: 12px; }
+.sdui-desc { font-size: 14px; color: #555; line-height: 1.65; text-align: center; padding: 0 8px; }
+.sdui-cta { font-size: 12px; color: #999; text-align: center; cursor: pointer; margin-top: 4px; text-decoration: underline; }
+
+/* Phase Bar */
+.sdui-phase-bar { padding: 16px 0; text-align: center; }
+.phase-age { font-size: 14px; color: #6366f1; font-weight: 600; margin-bottom: 8px; }
+.phase-age span { font-weight: 400; color: #888; }
+.phase-track { height: 6px; background: #e8e0d4; border-radius: 3px; position: relative; margin: 8px 0; }
+.phase-fill { height: 100%; background: #6366f1; border-radius: 3px; }
+.phase-dot { width: 14px; height: 14px; background: #6366f1; border-radius: 50%; position: absolute; top: -4px; transform: translateX(-50%); border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.phase-range { display: flex; justify-content: space-between; font-size: 11px; color: #999; }
+
+/* Timeline */
+.sdui-timeline { display: flex; flex-direction: column; gap: 8px; padding: 8px 0; }
+.timeline-period { padding: 12px; border-left: 3px solid #e8e0d4; }
+.timeline-period.current { border-left-color: #6366f1; background: #f8f6f3; }
+.timeline-period strong { font-size: 14px; color: #333; }
+.timeline-sub { font-size: 12px; color: #888; margin-top: 2px; }
+
+/* Cards */
+.sdui-carousel { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px 0; -webkit-overflow-scrolling: touch; }
+.sdui-carousel::-webkit-scrollbar { display: none; }
+.sdui-card { min-width: 280px; max-width: 320px; scroll-snap-align: start; background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.sdui-cards-single .sdui-card { max-width: 100%; min-width: auto; }
+.sdui-card-icon { font-size: 28px; text-align: center; margin-bottom: 8px; }
+.sdui-card-title { font-family: 'Instrument Serif', serif; font-size: 18px; font-weight: 600; color: #222; text-align: center; }
+.sdui-card-subtitle { font-size: 12px; color: #888; text-align: center; margin-bottom: 8px; }
+.sdui-card-desc { font-size: 13px; color: #555; line-height: 1.6; text-align: center; margin: 8px 0; }
+.sdui-pointers { margin: 12px 0; }
+.sdui-pointer { font-size: 13px; color: #555; padding: 4px 0; }
+.sdui-headlines { margin: 12px 0; border-top: 1px solid #eee; padding-top: 12px; }
+.sdui-headline { font-size: 13px; color: #444; margin-bottom: 6px; text-align: center; }
+.sdui-subheadline { font-size: 13px; color: #666; margin-bottom: 6px; text-align: center; }
+.sdui-comparisons { display: flex; gap: 12px; margin: 12px 0; }
+.sdui-comp { display: flex; gap: 12px; }
+.comp-left, .comp-right { flex: 1; font-size: 12px; color: #555; }
+.comp-left { font-weight: 600; }
+.sdui-card-cta { font-size: 12px; color: #999; text-align: center; margin-top: 12px; cursor: pointer; padding: 8px; border: 1px solid #eee; border-radius: 8px; }
+.sdui-detail { margin-top: 12px; border-top: 1px solid #eee; padding-top: 12px; }
+.sdui-detail h4 { font-size: 14px; color: #333; margin-bottom: 8px; }
+.sdui-detail p { font-size: 13px; color: #555; line-height: 1.6; }
+
+/* Affirmation */
+.sdui-affirmation { font-family: 'Instrument Serif', serif; font-size: 20px; font-weight: 600; color: #222; text-align: center; padding: 20px 16px; line-height: 1.4; }

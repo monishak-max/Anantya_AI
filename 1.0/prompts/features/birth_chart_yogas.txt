@@ -31,6 +31,14 @@ Hard constraints:
 - purified_expression MUST NOT exceed 70 words.
 - NEVER use "you will", "destined to", "fated to", "inevitably", "guaranteed". Use "this may", "one likely expression", "the chart points toward".
 
+SDUI Card Fields (for mobile app -- generate for EACH yoga, great and finer):
+
+- card_title: A user-friendly 1-2 word name. NOT the technical yoga name. Think: the archetype, the planet, or the felt quality. Examples: "Moon", "Your Force", "Instability". This is what the member sees on the card.
+
+- card_description: 2-3 sentences previewing this yoga's lived reality. 15-40 words. Must work as a standalone teaser. Write in second person ("You are built to...").
+
+- details: 2-4 structured pairs for card display. Each pair has "label" (lowercase, e.g. "what works", "when strained", "what it costs") and "value" (5-20 words describing that for this specific yoga).
+
 Tone:
 Deep, coherent, intimate, precise, spiritually serious, and beautiful without vagueness.
 This is a sacred study, not a summary card.

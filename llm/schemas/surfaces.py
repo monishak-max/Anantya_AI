@@ -177,6 +177,12 @@ class StudyForce(BaseModel):
     distortion: str = Field(description="How this same force becomes costly when misused or strained. HARD LIMIT: 25-85 words. Do not exceed 85.", default="")
     purified_expression: str = Field(description="What this force becomes when lived truthfully. HARD LIMIT: 20-70 words. Do not exceed 70.", default="")
 
+    # SDUI card fields for mobile UI
+    card_title: Optional[str] = Field(default=None, description="User-friendly 1-2 word name for the card. Not the technical yoga name. Think: the archetype or felt quality. E.g., 'Moon', 'Your Force', 'Instability'.")
+    card_description: Optional[str] = Field(default=None, description="2-3 sentence preview for the card. 15-40 words. What the reader sees before tapping Read more.")
+    details: Optional[list[dict]] = Field(default=None, description="2-4 structured pairs. Each has 'label' (lowercase, e.g. 'what works', 'when strained') and 'value' (5-20 words).")
+    comparisons: Optional[list[dict]] = Field(default=None, description="Side-by-side comparison pairs. Each has 'left' and 'right' (5-15 words each). Only when a meaningful contrast exists.")
+
     model_config = {"populate_by_name": True}
 
     def __init__(self, **data):
@@ -403,6 +409,13 @@ class BirthChartSynthesisSection(BaseModel):
     work: str = Field(description="Work in this specific life. Direct, specific, and unmistakably personal. HARD LIMIT: 60-140 words. Do not exceed 140.")
     embodiment: str = Field(description="What the soul came here to embody when the life ripens. 60-140 words.")
     closing_destiny: str = Field(description="A final destiny-led closing that returns the life to beauty and purpose. 35-90 words.")
+
+    # SDUI fields for mobile UI
+    phase_insight_title: Optional[str] = Field(default=None, description="One sentence about what the member is currently learning in their active dasha chapter. 8-16 words. Specific to this chart.")
+    insights: Optional[list[str]] = Field(default=None, description="Exactly 3 bullet-point insights about the current phase. Each 5-12 words. Short, felt, recognizable.")
+    affirmation: Optional[str] = Field(default=None, description="One powerful affirmation sentence about the current threshold. 6-14 words. Specific to this chart, not generic.")
+    polarity_left: Optional[str] = Field(default=None, description="What the life is moving FROM. 1-3 words. E.g., 'Reactive', 'Over-functioning', 'Proving'.")
+    polarity_right: Optional[str] = Field(default=None, description="What the life is moving TOWARD. 1-3 words. E.g., 'Deliberate', 'Chosen restraint', 'Authorship'.")
 
     def validate_lengths(self) -> list[str]:
         warnings = []

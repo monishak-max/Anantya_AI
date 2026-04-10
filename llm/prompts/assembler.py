@@ -213,12 +213,14 @@ def assemble_prompt(
     # 3. Schema constraints
     schema_instruction = build_schema_instruction(output_schema)
 
-    # 4. For section surfaces, inject the shared voice anchor between
-    #    feature prompt and schema so it is prominent in the LLM context.
+    # 4. For section surfaces, skip core prompts (saves ~4.5K tokens per call).
+    #    The voice anchor carries identity, tone, themes, and rules.
+    #    The section prompt has its own writing laws.
+    #    Core prompts are redundant and add 30-40s latency per section.
     if surface in _SECTION_SURFACES:
         voice_anchor = _build_voice_anchor(input_data)
         system_prompt = (
-            f"{core}\n\n---\n\n{feature}\n\n---\n\n{voice_anchor}\n\n---\n\n{schema_instruction}"
+            f"{feature}\n\n---\n\n{voice_anchor}\n\n---\n\n{schema_instruction}"
         )
     else:
         system_prompt = f"{core}\n\n---\n\n{feature}\n\n---\n\n{schema_instruction}"

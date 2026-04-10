@@ -395,12 +395,16 @@ class AstroPipeline:
         """Mechanically merge 4 section outputs into a BirthChartCore dict."""
         merged = {}
 
-        # Synthesis fields
+        # Synthesis fields (narrative + SDUI)
         for field in (
             "title", "opening_promise", "entrusted_beauty", "central_knot",
             "present_threshold", "love", "work", "embodiment", "closing_destiny",
+            # SDUI fields
+            "phase_insight_title", "affirmation", "polarity_left", "polarity_right",
         ):
             merged[field] = synthesis.data.get(field, "")
+        # insights is a list, handle separately
+        merged["insights"] = synthesis.data.get("insights")
 
         # Structured section fields
         merged["great_yogas"] = yogas.data.get("great_yogas", [])

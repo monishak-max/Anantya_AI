@@ -96,10 +96,10 @@ SURFACE_MAX_TOKENS: dict[Surface, int] = {
     Surface.UNION_SNAPSHOT: 400,
     Surface.UNION_DEEP_READ: 1500,
     Surface.BIRTH_CHART_CORE: 12000,  # Sacred life study: nested yogas, forces, timing, phases
-    Surface.BIRTH_CHART_YOGAS: 3000,
-    Surface.BIRTH_CHART_FORCES: 2500,
+    Surface.BIRTH_CHART_YOGAS: 5000,   # Needs room for SDUI card fields per yoga
+    Surface.BIRTH_CHART_FORCES: 3100,  # +600 for SDUI card fields + comparisons
     Surface.BIRTH_CHART_TIMING: 3000,
-    Surface.BIRTH_CHART_SYNTHESIS: 3500,
+    Surface.BIRTH_CHART_SYNTHESIS: 3700,  # +200 for SDUI insights/affirmation/polarity
     Surface.WEEKLY_OVERVIEW: 800,
     Surface.MONTHLY_OVERVIEW: 1000,
     Surface.CHART_REVEAL: 300,

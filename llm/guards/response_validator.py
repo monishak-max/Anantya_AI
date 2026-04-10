@@ -64,12 +64,25 @@ class ResponseValidator:
             for key, value in obj.items():
                 full_path = f"{path}.{key}" if path else key
                 if value is None:
-                    failures.append(ValidationFailure("empty", full_path, f"'{full_path}' is null"))
+                    # Skip fields that are intentionally optional/nullable
+                    nullable_fields = {"subtitle", "distortion", "purified_expression",
+                                       "shadow", "age_range", "cta", "closing_anchor",
+                                       "invitation", "time_note", "comparisons", "details",
+                                       "card_title", "card_description", "headlines",
+                                       "subheadlines", "pointers", "image", "icon",
+                                       "phase_insight_title", "insights", "affirmation",
+                                       "polarity_left", "polarity_right",
+                                       "completed_yogas_prose", "completed_forces_prose",
+                                       "completed_timing_prose"}
+                    field_name = key.split(".")[-1] if "." in key else key
+                    if field_name not in nullable_fields:
+                        failures.append(ValidationFailure("empty", full_path, f"'{full_path}' is null"))
                 elif isinstance(value, str) and not value.strip():
                     # Skip fields that are intentionally optional/empty
                     skip_fields = {"subtitle", "distortion", "purified_expression",
                                    "shadow", "age_range", "cta", "closing_anchor",
-                                   "invitation", "time_note"}
+                                   "invitation", "time_note", "comparisons", "details",
+                                   "card_title", "card_description"}
                     field_name = key.split(".")[-1] if "." in key else key
                     if field_name not in skip_fields:
                         failures.append(ValidationFailure("empty", full_path, f"'{full_path}' is empty string"))

@@ -29,6 +29,16 @@ Hard constraints:
 - purified_expression MUST NOT exceed 70 words.
 - NEVER use "you will", "destined to", "fated to", "inevitably", "guaranteed". Use "this may", "one likely expression", "the chart points toward".
 
+SDUI Card Fields (for mobile app -- generate for EACH force):
+
+- card_title: A user-friendly 1-2 word name. NOT the technical combination name. Think: the felt quality. Examples: "Service", "Hidden Authority", "The Bridge".
+
+- card_description: 2-3 sentences previewing this force's lived reality. 15-40 words.
+
+- details: 2-4 structured pairs. Each has "label" (lowercase) and "value" (5-20 words).
+
+- comparisons (optional): Include ONLY when a meaningful side-by-side contrast exists. Each has "left" and "right" (5-15 words each). Max 1-2 per force. Do not force a comparison where none exists.
+
 Tone:
 Deep, coherent, intimate, precise, spiritually serious, and beautiful without vagueness.
 This is a sacred study, not a summary card.

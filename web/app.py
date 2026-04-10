@@ -180,7 +180,19 @@ def generate_birth_chart():
             lng=float(data["lng"]),
             external_modifiers=_modifiers(data),
         )
-        return jsonify({"ok": True, "birth_chart": result.data, "model": result.model})
+        # SDUI: transform flat birth chart into sections[] for iOS
+        from llm.sdui import build_sdui_sections, calculate_age
+        user_age = calculate_age(data["birth_date"])
+        sections = build_sdui_sections(result.data, user_age)
+        return jsonify({
+            "ok": True,
+            "birth_chart": {
+                "title": result.data.get("title", ""),
+                "model": result.model,
+                "sections": sections,
+                "raw": result.data,  # Keep raw data for backward compatibility
+            },
+        })
     except Exception as e:
         traceback.print_exc()
         return jsonify({"ok": False, "error": str(e)}), 500

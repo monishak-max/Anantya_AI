@@ -240,6 +240,9 @@ document.getElementById('btn-generate').addEventListener('click', async () => {
     showRevealScreen();
     // Fetch LLM-generated reveal content in background
     loadRevealContent();
+    // Start generating birth chart in background immediately.
+    // By the time the user explores Now/Mandala and taps Birth Chart, it's cached.
+    preGenerateBirthChart();
   } catch (e) {
     toast('Could not compute chart: ' + e.message, true);
     setLoading(btn, false);
@@ -654,7 +657,56 @@ document.getElementById('btn-union-new').addEventListener('click', () => {
 });
 
 // ═══════════════════════════════════════════════════════════════
-// BIRTH CHART TAB
+// BIRTH CHART — Background Pre-Generation
+// ═══════════════════════════════════════════════════════════════
+
+let birthChartData = null;       // Cached result once ready
+let birthChartLoading = false;   // True while generating
+let birthChartError = null;      // Error if generation failed
+
+async function preGenerateBirthChart() {
+  if (!userData || birthChartLoading || birthChartData) return;
+  birthChartLoading = true;
+  birthChartError = null;
+  console.log('[birth_chart] Background generation started...');
+
+  try {
+    const res = await fetch('/api/birth-chart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData),
+      // No timeout — let it take as long as needed in background
+    });
+    const json = await res.json();
+    if (json.ok) {
+      birthChartData = json.birth_chart;
+      console.log('[birth_chart] Background generation complete. Cached.');
+      // If user is already on the birth chart screen, render it
+      if (document.querySelector('.bc-loading')?.style.display === 'flex') {
+        showBirthChartResult();
+      }
+    } else {
+      birthChartError = json.error || 'Generation failed';
+      console.warn('[birth_chart] Background generation failed:', birthChartError);
+    }
+  } catch (e) {
+    birthChartError = e.message;
+    console.warn('[birth_chart] Background generation error:', e.message);
+  } finally {
+    birthChartLoading = false;
+  }
+}
+
+function showBirthChartResult() {
+  if (birthChartData) {
+    renderBirthChart(birthChartData);
+    document.querySelector('.bc-loading').style.display = 'none';
+    document.getElementById('bc-content').style.display = 'block';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BIRTH CHART TAB — Uses pre-generated data or waits for it
 // ═══════════════════════════════════════════════════════════════
 
 document.getElementById('btn-gen-bc').addEventListener('click', async () => {
@@ -663,134 +715,218 @@ document.getElementById('btn-gen-bc').addEventListener('click', async () => {
   document.querySelector('.bc-loading').style.display = 'flex';
   document.getElementById('bc-intro').style.display = 'none';
 
-  try {
-    const res = await api('/api/birth-chart', userData);
-    renderBirthChart(res.birth_chart);
-    document.querySelector('.bc-loading').style.display = 'none';
-    document.getElementById('bc-content').style.display = 'block';
-  } catch (e) {
-    const msg = e.message || '';
-    let userMsg;
-    if (msg.includes('Overloaded') || msg.includes('529')) {
-      userMsg = 'Our servers are busy right now. Your sacred study takes deep computation. Please try again in a minute.';
-    } else if (msg.includes('credit') || msg.includes('balance')) {
-      userMsg = 'Service temporarily unavailable. Please try again shortly.';
-    } else {
-      userMsg = 'Something went wrong generating your birth chart. Please try again.';
-    }
-    const loadingEl = document.querySelector('.bc-loading');
-    loadingEl.querySelector('p').textContent = userMsg;
-    loadingEl.innerHTML += '<button class="btn-next" onclick="document.getElementById(\'btn-gen-bc\').click()" style="margin-top:16px"><span class="btn-text">Try Again</span></button>';
-  } finally {
+  // Case 1: Already cached from background generation
+  if (birthChartData) {
+    showBirthChartResult();
     setLoading(btn, false);
+    return;
   }
+
+  // Case 2: Still generating in background — show progress message and wait
+  if (birthChartLoading) {
+    document.querySelector('.bc-loading').innerHTML = `
+      <div class="loader"></div>
+      <p>Anantya is studying your chart... this takes about a minute.</p>
+    `;
+    // Poll until ready
+    const poll = setInterval(() => {
+      if (birthChartData) {
+        clearInterval(poll);
+        showBirthChartResult();
+        setLoading(btn, false);
+      } else if (birthChartError && !birthChartLoading) {
+        clearInterval(poll);
+        document.querySelector('.bc-loading').innerHTML = `
+          <div class="loader"></div>
+          <p>${birthChartError.includes('Overloaded') ? 'Our servers are busy. Please try again in a minute.' : 'Something went wrong. Please try again.'}</p>
+          <button class="btn-next" onclick="birthChartError=null;preGenerateBirthChart();document.getElementById('btn-gen-bc').click()" style="margin-top:16px"><span class="btn-text">Try Again</span></button>
+        `;
+        setLoading(btn, false);
+      }
+    }, 1000);
+    return;
+  }
+
+  // Case 3: Not started yet (shouldn't happen, but fallback)
+  preGenerateBirthChart();
+  document.querySelector('.bc-loading').innerHTML = `
+    <div class="loader"></div>
+    <p>Anantya is studying your chart... this takes about a minute.</p>
+  `;
+  const poll = setInterval(() => {
+    if (birthChartData) {
+      clearInterval(poll);
+      showBirthChartResult();
+      setLoading(btn, false);
+    } else if (birthChartError && !birthChartLoading) {
+      clearInterval(poll);
+      document.querySelector('.bc-loading').innerHTML = `
+        <div class="loader"></div>
+        <p>Something went wrong. Please try again.</p>
+        <button class="btn-next" onclick="birthChartError=null;preGenerateBirthChart();document.getElementById('btn-gen-bc').click()" style="margin-top:16px"><span class="btn-text">Try Again</span></button>
+      `;
+      setLoading(btn, false);
+    }
+  }, 1000);
 });
 
 function renderBirthChart(bc) {
-  console.log('renderBirthChart called with:', JSON.stringify(bc).substring(0, 500));
-  console.log('great_yogas:', bc.great_yogas?.length, 'first:', JSON.stringify(bc.great_yogas?.[0])?.substring(0, 200));
   const container = document.getElementById('bc-content');
   container.innerHTML = '';
 
-  function addSection(label, text, cls = '') {
-    if (!text) return;
-    const div = document.createElement('div');
-    div.className = `bc-section ${cls}`;
-    div.innerHTML = `<div class="bc-label">${label}</div><p>${text}</p>`;
-    container.appendChild(div);
+  const sections = bc.sections || [];
+  if (!sections.length) {
+    container.innerHTML = '<p>No birth chart data available.</p>';
+    return;
   }
 
-  function addForceList(label, forces) {
-    if (!forces || !forces.length) return;
-    console.log(`addForceList: ${label}, ${forces.length} items, first:`, JSON.stringify(forces[0]));
-    const wrapper = document.createElement('div');
-    wrapper.className = 'bc-section';
-    wrapper.innerHTML = `<div class="bc-label">${label}</div>`;
-    forces.forEach(f => {
-      console.log(`  Force: ${f.name}, sacred_capacity length: ${(f.sacred_capacity||'').length}, keys: ${Object.keys(f)}`);
-      const name = f.name || f.title || '';
-      const subtitle = f.subtitle || '';
-      const capacity = f.sacred_capacity || f.body || f.capacity || f.description || '';
-      const distortion = f.distortion || f.shadow || '';
-      const purified = f.purified_expression || '';
-      let html = `<div class="bc-force"><h4>${name}</h4>`;
-      if (subtitle) html += `<div class="bc-force-sub">${subtitle}</div>`;
-      if (capacity) html += `<p>${distortion || purified ? '<strong>Sacred capacity:</strong> ' : ''}${capacity}</p>`;
-      if (distortion) html += `<p><strong>Distortion:</strong> ${distortion}</p>`;
-      if (purified) html += `<p><strong>Purified expression:</strong> ${purified}</p>`;
-      html += '</div>';
-      wrapper.innerHTML += html;
-    });
-    container.appendChild(wrapper);
-  }
+  sections.forEach(section => {
+    const sDiv = document.createElement('div');
+    sDiv.className = 'sdui-section';
 
-  function addTimingList(label, timings) {
-    if (!timings || !timings.length) return;
-    const wrapper = document.createElement('div');
-    wrapper.className = 'bc-section';
-    wrapper.innerHTML = `<div class="bc-label">${label}</div>`;
-    timings.forEach(t => {
-      const name = t.name || t.title || '';
-      const subtitle = t.subtitle || '';
-      const body = t.chapter_body || t.body || t.sacred_capacity || t.description || '';
-      let html = `<div class="bc-timing"><h4>${name}</h4>`;
-      if (subtitle) html += `<div class="bc-force-sub">${subtitle}</div>`;
-      if (body) html += `<p>${body}</p>`;
-      html += '</div>';
-      wrapper.innerHTML += html;
-    });
-    container.appendChild(wrapper);
-  }
+    // Label (small caps)
+    if (section.label) {
+      sDiv.innerHTML += `<div class="sdui-label">${section.label}</div>`;
+    }
 
-  function addPhaseList(label, phases) {
-    if (!phases || !phases.length) return;
-    const wrapper = document.createElement('div');
-    wrapper.className = 'bc-section';
-    wrapper.innerHTML = `<div class="bc-label">${label}</div>`;
-    phases.forEach(p => {
-      const title = p.title || p.name || p.phase || '';
-      const age = p.age_range || '';
-      const body = p.body || '';
-      let html = `<div class="bc-phase"><h4>${title}${age ? ' (' + age + ')' : ''}</h4>`;
-      if (body) html += `<p>${body}</p>`;
-      html += '</div>';
-      wrapper.innerHTML += html;
-    });
-    container.appendChild(wrapper);
-  }
+    // Title
+    if (section.title) {
+      sDiv.innerHTML += `<div class="sdui-title">${section.title}</div>`;
+    }
 
-  // v2.1 sacred study structure
-  if (bc.title) addSection('', `<strong style="font-size:18px">${bc.title}</strong>`, 'opening');
-  addSection('Opening Promise', bc.opening_promise, 'opening');
-  addSection('Entrusted Beauty', bc.entrusted_beauty);
-  addSection('Central Knot', bc.central_knot);
-  addForceList('The Great Yogas', bc.great_yogas);
-  addForceList('The Finer Yogas', bc.finer_yogas);
-  addForceList('Deeper Shaping Forces', bc.deeper_shaping_forces);
-  addTimingList('Great Timing Currents', bc.great_timing_currents);
-  addPhaseList('Life Phases', bc.life_phases);
-  addSection('Present Threshold', bc.present_threshold);
-  addSection('Love', bc.love);
-  addSection('Work', bc.work);
-  addSection('Embodiment', bc.embodiment);
-  addSection('Closing Destiny', bc.closing_destiny, 'closing');
+    // Subtitle
+    if (section.subtitle) {
+      sDiv.innerHTML += `<div class="sdui-subtitle">${section.subtitle}</div>`;
+    }
 
-  // Fallback: v1.4 flat structure (if old schema response)
-  if (!bc.title && bc.opening_essence) {
-    const oldSections = [
-      { key: 'opening_essence', label: 'Essence', cls: 'opening' },
-      { key: 'core_signature', label: 'Core Signature' },
-      { key: 'temperament', label: 'Temperament' },
-      { key: 'emotional_nature', label: 'Emotional Nature' },
-      { key: 'key_yogas', label: 'Key Yogas' },
-      { key: 'strengths_and_blessings', label: 'Strengths & Blessings' },
-      { key: 'growth_edges', label: 'Growth Edges' },
-      { key: 'relationship_patterning', label: 'Relationships' },
-      { key: 'work_and_calling', label: 'Work & Calling' },
-      { key: 'closing_integration', label: 'Integration', cls: 'closing' },
-    ];
-    oldSections.forEach(s => addSection(s.label, bc[s.key], s.cls || ''));
-  }
+    // Description (expandable)
+    if (section.description) {
+      const maxLines = section.max_lines || 0;
+      const clamp = maxLines > 0 ? `style="-webkit-line-clamp:${maxLines}; display:-webkit-box; -webkit-box-orient:vertical; overflow:hidden;"` : '';
+      const descId = `desc_${section.id}`;
+      sDiv.innerHTML += `<div class="sdui-desc" id="${descId}" ${clamp}>${section.description}</div>`;
+      if (maxLines > 0 && section.cta) {
+        sDiv.innerHTML += `<div class="sdui-cta" onclick="document.getElementById('${descId}').style.cssText='';this.style.display='none'">${section.cta.text}</div>`;
+      }
+    }
+
+    // Media (phase bar, timeline)
+    if (section.media) {
+      if (section.media.type === 'phase_bar' && section.media.data) {
+        const d = section.media.data;
+        const start = d.phase_start || 0;
+        const end = d.phase_end || 100;
+        const age = d.current_age || 0;
+        const remaining = d.remaining_years || (end - age);
+        const pct = Math.min(100, Math.max(0, ((age - start) / (end - start)) * 100));
+        sDiv.innerHTML += `
+          <div class="sdui-phase-bar">
+            <div class="phase-age">${age} <span>(${remaining} more years)</span></div>
+            <div class="phase-track"><div class="phase-fill" style="width:${pct}%"></div><div class="phase-dot" style="left:${pct}%"></div></div>
+            <div class="phase-range"><span>From Age of ${start}</span><span>Till Age of ${end}</span></div>
+          </div>`;
+      }
+      if (section.media.type === 'timeline_chart' && section.media.data) {
+        const periods = section.media.data.periods || [];
+        let html = '<div class="sdui-timeline">';
+        periods.forEach(p => {
+          html += `<div class="timeline-period ${p.is_current ? 'current' : ''}"><strong>${p.name}</strong><div class="timeline-sub">${p.subtitle || ''}</div></div>`;
+        });
+        html += '</div>';
+        sDiv.innerHTML += html;
+      }
+    }
+
+    // Insight label + title (for phase_insight section)
+    if (section.insight_label) {
+      sDiv.innerHTML += `<div class="sdui-label" style="margin-top:16px">${section.insight_label}</div>`;
+    }
+    if (section.insight_title) {
+      sDiv.innerHTML += `<div class="sdui-title" style="font-size:20px">${section.insight_title}</div>`;
+    }
+
+    // Affirmation
+    if (section.affirmation) {
+      sDiv.innerHTML += `<div class="sdui-affirmation">${section.affirmation}</div>`;
+    }
+
+    // Cards
+    if (section.cards && section.cards.length > 0) {
+      const isCarousel = section.cards.length >= 2;
+      const cardsDiv = document.createElement('div');
+      cardsDiv.className = isCarousel ? 'sdui-carousel' : 'sdui-cards-single';
+
+      section.cards.forEach(card => {
+        const cardEl = document.createElement('div');
+        cardEl.className = 'sdui-card';
+
+        let html = '';
+
+        // Icon
+        if (card.icon) {
+          html += `<div class="sdui-card-icon">${card.icon === 'heart.fill' ? '❤️' : card.icon === 'briefcase.fill' ? '💼' : card.icon === 'moon.fill' ? '🌙' : card.icon === 'flame.fill' ? '🔥' : '✦'}</div>`;
+        }
+
+        // Title + Subtitle
+        if (card.title) html += `<div class="sdui-card-title">${card.title}</div>`;
+        if (card.subtitle) html += `<div class="sdui-card-subtitle">${card.subtitle}</div>`;
+
+        // Description
+        if (card.description) {
+          html += `<div class="sdui-card-desc">${card.description}</div>`;
+        }
+
+        // Pointers (bullet list)
+        if (card.pointers) {
+          html += '<div class="sdui-pointers">';
+          card.pointers.forEach(p => { html += `<div class="sdui-pointer">→ ${p}</div>`; });
+          html += '</div>';
+        }
+
+        // Headlines (label:value pairs)
+        if (card.headlines) {
+          html += '<div class="sdui-headlines">';
+          card.headlines.forEach(h => {
+            html += `<div class="sdui-headline"><strong>${h.label}:</strong> ${h.value}</div>`;
+          });
+          html += '</div>';
+        }
+
+        // Subheadlines
+        if (card.subheadlines) {
+          card.subheadlines.forEach(h => {
+            html += `<div class="sdui-subheadline"><strong>${h.label}:</strong> ${h.value}</div>`;
+          });
+        }
+
+        // Comparisons (side by side)
+        if (card.comparisons) {
+          html += '<div class="sdui-comparisons">';
+          card.comparisons.forEach(c => {
+            html += `<div class="sdui-comp"><div class="comp-left">${c.left}</div><div class="comp-right">${c.right}</div></div>`;
+          });
+          html += '</div>';
+        }
+
+        // CTA
+        if (card.cta) {
+          if (card.cta.action === 'detail' && card.detail) {
+            html += `<div class="sdui-card-cta" onclick="this.parentElement.querySelector('.sdui-detail').style.display='block';this.style.display='none'">${card.cta.text} →</div>`;
+            html += `<div class="sdui-detail" style="display:none"><h4>${card.detail.title || ''}</h4><p>${card.detail.body || ''}</p></div>`;
+          } else {
+            html += `<div class="sdui-card-cta">${card.cta.text} →</div>`;
+          }
+        }
+
+        cardEl.innerHTML = html;
+        cardsDiv.appendChild(cardEl);
+      });
+
+      sDiv.appendChild(cardsDiv);
+    }
+
+    container.appendChild(sDiv);
+  });
 }
 
 // ═══════════════════════════════════════════════════════════════
