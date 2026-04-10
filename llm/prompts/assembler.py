@@ -213,15 +213,22 @@ def assemble_prompt(
     # 3. Schema constraints
     schema_instruction = build_schema_instruction(output_schema)
 
-    # 4. For section surfaces, skip core prompts (saves ~4.5K tokens per call).
-    #    The voice anchor carries identity, tone, themes, and rules.
-    #    The section prompt has its own writing laws.
-    #    Core prompts are redundant and add 30-40s latency per section.
+    # 4. For section surfaces:
+    #    - Yogas/Forces/Timing (Sonnet): skip core prompts for speed
+    #    - Synthesis (Opus): KEEP core prompts -- it writes all member-facing
+    #      content and needs ethics, translation, and reasoning guardrails
     if surface in _SECTION_SURFACES:
         voice_anchor = _build_voice_anchor(input_data)
-        system_prompt = (
-            f"{feature}\n\n---\n\n{voice_anchor}\n\n---\n\n{schema_instruction}"
-        )
+        if surface == Surface.BIRTH_CHART_SYNTHESIS:
+            # Synthesis gets full core prompts -- it writes the narrative
+            system_prompt = (
+                f"{core}\n\n---\n\n{feature}\n\n---\n\n{voice_anchor}\n\n---\n\n{schema_instruction}"
+            )
+        else:
+            # Content sections (Sonnet) skip core prompts for speed
+            system_prompt = (
+                f"{feature}\n\n---\n\n{voice_anchor}\n\n---\n\n{schema_instruction}"
+            )
     else:
         system_prompt = f"{core}\n\n---\n\n{feature}\n\n---\n\n{schema_instruction}"
 

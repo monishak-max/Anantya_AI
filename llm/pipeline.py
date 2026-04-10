@@ -403,8 +403,9 @@ class AstroPipeline:
             "phase_insight_title", "affirmation", "polarity_left", "polarity_right",
         ):
             merged[field] = synthesis.data.get(field, "")
-        # insights is a list, handle separately
+        # Lists, handle separately
         merged["insights"] = synthesis.data.get("insights")
+        merged["life_areas"] = synthesis.data.get("life_areas")
 
         # Structured section fields
         merged["great_yogas"] = yogas.data.get("great_yogas", [])

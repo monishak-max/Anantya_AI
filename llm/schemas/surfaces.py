@@ -416,6 +416,7 @@ class BirthChartSynthesisSection(BaseModel):
     affirmation: Optional[str] = Field(default=None, description="One powerful affirmation sentence about the current threshold. 6-14 words. Specific to this chart, not generic.")
     polarity_left: Optional[str] = Field(default=None, description="What the life is moving FROM. 1-3 words. E.g., 'Reactive', 'Over-functioning', 'Proving'.")
     polarity_right: Optional[str] = Field(default=None, description="What the life is moving TOWARD. 1-3 words. E.g., 'Deliberate', 'Chosen restraint', 'Authorship'.")
+    life_areas: Optional[list[dict]] = Field(default=None, description="3-5 life area cards. Each has: title, icon, headline, subline, what_works, what_drains, body. Areas chosen based on what this chart is actually activating.")
 
     def validate_lengths(self) -> list[str]:
         warnings = []

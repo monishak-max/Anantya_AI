@@ -1144,3 +1144,10 @@ html, body {
 
 /* Affirmation */
 .sdui-affirmation { font-family: 'Instrument Serif', serif; font-size: 20px; font-weight: 600; color: #222; text-align: center; padding: 20px 16px; line-height: 1.4; }
+
+/* Polarity two-column layout */
+.sdui-polarity { display: flex; justify-content: space-between; padding: 12px 0; border-top: 1px solid #eee; margin-top: 12px; }
+.polarity-left, .polarity-right { flex: 1; }
+.polarity-left { text-align: left; }
+.polarity-right { text-align: right; }
+.polarity-left strong, .polarity-right strong { font-size: 15px; color: #333; display: block; }

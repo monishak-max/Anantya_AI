@@ -885,11 +885,21 @@ function renderBirthChart(bc) {
 
         // Headlines (label:value pairs)
         if (card.headlines) {
-          html += '<div class="sdui-headlines">';
-          card.headlines.forEach(h => {
-            html += `<div class="sdui-headline"><strong>${h.label}:</strong> ${h.value}</div>`;
-          });
-          html += '</div>';
+          // Inside insight card (pointers present): render as polarity columns
+          if (card.pointers) {
+            html += '<div class="sdui-polarity">';
+            card.headlines.forEach(h => {
+              html += `<div class="polarity-left"><strong>${h.label}</strong></div><div class="polarity-right"><strong>${h.value}</strong></div>`;
+            });
+            html += '</div>';
+          } else {
+            // Regular cards: render as label:value list
+            html += '<div class="sdui-headlines">';
+            card.headlines.forEach(h => {
+              html += `<div class="sdui-headline"><strong>${h.label}:</strong> ${h.value}</div>`;
+            });
+            html += '</div>';
+          }
         }
 
         // Subheadlines
@@ -911,8 +921,12 @@ function renderBirthChart(bc) {
         // CTA
         if (card.cta) {
           if (card.cta.action === 'detail' && card.detail) {
-            html += `<div class="sdui-card-cta" onclick="this.parentElement.querySelector('.sdui-detail').style.display='block';this.style.display='none'">${card.cta.text} →</div>`;
-            html += `<div class="sdui-detail" style="display:none"><h4>${card.detail.title || ''}</h4><p>${card.detail.body || ''}</p></div>`;
+            const descId = `card_desc_${card.id}`;
+            const detailId = `card_detail_${card.id}`;
+            html += `<div class="sdui-card-cta" onclick="document.getElementById('${descId}').style.display='none';document.getElementById('${detailId}').style.display='block';this.style.display='none'">${card.cta.text} →</div>`;
+            html += `<div id="${detailId}" class="sdui-detail" style="display:none"><p>${card.detail.body || ''}</p></div>`;
+            // Wrap description with ID for hiding
+            html = html.replace('class="sdui-card-desc"', `class="sdui-card-desc" id="${descId}"`);
           } else {
             html += `<div class="sdui-card-cta">${card.cta.text} →</div>`;
           }

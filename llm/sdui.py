@@ -79,42 +79,63 @@ def build_sdui_sections(data: dict, user_age: int) -> list[dict]:
 
     # ── SECTION 2: HOW PHASE IMPACTS ──────────────────────────────
     impact_cards = []
-    if data.get("work"):
-        work_card = {
-            "id": "work_card",
-            "icon": "briefcase.fill",
-            "title": "Work",
-            "description": _truncate(data["work"], 30),
-            "max_lines": 4,
-            "cta": {"text": "Read more", "action": "detail"},
-            "detail": {"title": "Work", "body": data["work"]},
-        }
-        # Add headlines from work content
-        work_card["headlines"] = [
-            {"label": "What works", "value": _extract_theme(data["work"], "strength")},
-            {"label": "What drains", "value": _extract_theme(data["work"], "drain")},
-        ]
-        impact_cards.append(work_card)
 
-    if data.get("love"):
-        love_card = {
-            "id": "love_card",
-            "icon": "heart.fill",
-            "title": "Love",
-            "description": _truncate(data["love"], 30),
+    # Dynamic life areas from LLM (Work, Relationships, Inner Life, Health, etc.)
+    life_areas = data.get("life_areas") or []
+    icon_map = {
+        "briefcase": "💼", "heart": "❤️", "sparkles": "✨", "leaf": "🍃",
+        "coins": "💰", "people": "👥", "flame": "🔥", "compass": "🧭",
+        "lotus": "🪷", "home": "🏠",
+    }
+
+    for i, area in enumerate(life_areas):
+        card = {
+            "id": f"life_area_{i}",
+            "icon": icon_map.get(area.get("icon", ""), "✦"),
+            "title": area.get("title", ""),
+            "description": area.get("headline", ""),
             "max_lines": 4,
             "cta": {"text": "Read more", "action": "detail"},
-            "detail": {"title": "Love", "body": data["love"]},
+            "detail": {"title": area.get("title", ""), "body": area.get("body", "")},
         }
-        impact_cards.append(love_card)
+        if area.get("subline"):
+            card["subtitle"] = area["subline"]
+        headlines = []
+        if area.get("what_works"):
+            headlines.append({"label": "What works", "value": area["what_works"]})
+        if area.get("what_drains"):
+            headlines.append({"label": "What drains", "value": area["what_drains"]})
+        if headlines:
+            card["headlines"] = headlines
+        impact_cards.append(card)
+
+    # Fallback: if LLM didn't generate life_areas, use flat work/love
+    if not impact_cards:
+        if data.get("work"):
+            impact_cards.append({
+                "id": "work_card", "icon": "💼", "title": "Work",
+                "description": " ".join(_split_sentences(data["work"])[:2]),
+                "max_lines": 4,
+                "cta": {"text": "Read more", "action": "detail"},
+                "detail": {"title": "Work", "body": data["work"]},
+            })
+        if data.get("love"):
+            impact_cards.append({
+                "id": "love_card", "icon": "❤️", "title": "Relationships",
+                "description": " ".join(_split_sentences(data["love"])[:2]),
+                "max_lines": 4,
+                "cta": {"text": "Read more", "action": "detail"},
+                "detail": {"title": "Relationships", "body": data["love"]},
+            })
 
     if impact_cards:
         sections.append({
             "id": "practical_truth",
             "label": "HOW PHASE IMPACTS",
             "title": "Practical Truth",
-            "description": data.get("present_threshold", "")[:150] if data.get("present_threshold") else "",
-            "max_lines": 3,
+            "description": data.get("present_threshold", ""),
+            "max_lines": 6,
+            "cta": {"text": "Read more", "action": "expand"},
             "cards": impact_cards,
         })
 
@@ -211,6 +232,12 @@ def _extract_theme(text: str, theme_type: str) -> str:
     if theme_type == "drain" and len(sentences) > 2:
         return _truncate(sentences[-2], 10)
     return _truncate(text, 10)
+
+
+def _split_sentences(text: str) -> list[str]:
+    """Split text into sentences."""
+    import re
+    return [s.strip() for s in re.split(r'(?<=[.!?])\s+', text) if s.strip()]
 
 
 def _truncate(text: str, max_words: int) -> str:

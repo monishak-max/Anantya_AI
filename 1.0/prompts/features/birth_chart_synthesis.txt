@@ -65,5 +65,27 @@ In addition to the narrative sections, generate these structured fields:
 
 - polarity_right: The quality the life is moving TOWARD. 1-3 words. Example: "Deliberate", "Chosen restraint", "Authorship".
 
+- life_areas: An array of 3-5 life area cards. Choose the areas MOST ACTIVATED in this specific chart right now. Do not always use the same areas -- pick what the chart is actually pressing on.
+
+  Possible areas: Work, Relationships, Inner Life, Health, Finances, Family, Creativity, Purpose, Spirituality, Home.
+
+  Each area is an object with:
+    - title: The area name (1-2 words)
+    - icon: One of: briefcase, heart, sparkles, leaf, coins, people, flame, compass, lotus, home
+    - headline: A short felt sentence about this person's relationship with this area. 10-20 words. Second person.
+    - subline: A second sentence that deepens the truth. 8-15 words.
+    - what_works: What energizes or nourishes in this area. 4-10 words.
+    - what_drains: What exhausts or blocks in this area. 4-10 words.
+    - body: The full narrative for this area. 60-140 words. Specific to this chart.
+
+  Example:
+  [
+    {"title": "Work", "icon": "briefcase", "headline": "You are built for movement and consequence.", "subline": "Stay open long enough for truth to speak.", "what_works": "Challenge, pressure, real outcomes.", "what_drains": "Dead systems, low meaning, passive roles.", "body": "The tenth lord in the house of gains..."},
+    {"title": "Relationships", "icon": "heart", "headline": "You draw people in with depth.", "subline": "What you protect most fiercely is what you most need to share.", "what_works": "Intimacy, honesty, someone who stays.", "what_drains": "Surface connection, emotional performance.", "body": "Mars in the seventh house means love has never been quiet..."},
+    {"title": "Inner Life", "icon": "sparkles", "headline": "Your inner world runs deeper than anyone sees.", "subline": "The stillness is not emptiness. It is where you rebuild.", "what_works": "Solitude, reflection, creative expression.", "what_drains": "Noise, shallow routines, emotional suppression.", "body": "The twelfth house carries three planets..."}
+  ]
+
+  IMPORTANT: Do NOT always pick Work + Relationships + Inner Life. Look at the chart. If Health is activated (6th house emphasis), include Health. If Finances are active (2nd/11th), include Finances. The areas must reflect THIS chart's reality.
+
 Tone:
 Deep, coherent, intimate, precise, spiritually serious, and beautiful without vagueness.

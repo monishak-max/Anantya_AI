@@ -73,7 +73,8 @@ class ResponseValidator:
                                        "phase_insight_title", "insights", "affirmation",
                                        "polarity_left", "polarity_right",
                                        "completed_yogas_prose", "completed_forces_prose",
-                                       "completed_timing_prose"}
+                                       "completed_timing_prose",
+                                       "life_areas"}
                     field_name = key.split(".")[-1] if "." in key else key
                     if field_name not in nullable_fields:
                         failures.append(ValidationFailure("empty", full_path, f"'{full_path}' is null"))
