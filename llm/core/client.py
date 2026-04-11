@@ -68,7 +68,11 @@ class AstroLLMClient:
         # Split system prompt for caching:
         # Core prompts (before first feature section) get cache_control
         # Feature + schema instructions are surface-specific (not cached)
-        core_end = system_prompt.find("\n\n---\n\n", system_prompt.find("clarity over spectacle"))
+        # Try full core marker first, fall back to condensed core marker
+        marker_pos = system_prompt.find("clarity over spectacle")
+        if marker_pos < 0:
+            marker_pos = system_prompt.find("communicate selectively")  # condensed core end marker
+        core_end = system_prompt.find("\n\n---\n\n", marker_pos) if marker_pos >= 0 else -1
         if core_end > 0:
             core_part = system_prompt[:core_end]
             feature_part = system_prompt[core_end:]

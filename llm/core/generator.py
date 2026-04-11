@@ -36,6 +36,7 @@ from llm.schemas.inputs import (
     BirthChartForcesInput,
     BirthChartTimingInput,
     BirthChartSynthesisInput,
+    BirthChartSDUIInput,
 )
 
 logger = logging.getLogger("astro.generator")
@@ -98,6 +99,7 @@ SURFACE_INPUT_SCHEMAS: dict[Surface, type[BaseModel]] = {
     Surface.BIRTH_CHART_FORCES: BirthChartForcesInput,
     Surface.BIRTH_CHART_TIMING: BirthChartTimingInput,
     Surface.BIRTH_CHART_SYNTHESIS: BirthChartSynthesisInput,
+    Surface.BIRTH_CHART_SDUI: BirthChartSDUIInput,
     Surface.WEEKLY_OVERVIEW: PeriodOverviewInput,
     Surface.MONTHLY_OVERVIEW: PeriodOverviewInput,
 }
@@ -125,6 +127,7 @@ class AstroGenerator:
         Surface.BIRTH_CHART_FORCES,
         Surface.BIRTH_CHART_TIMING,
         Surface.BIRTH_CHART_SYNTHESIS,
+        Surface.BIRTH_CHART_SDUI,
     })
 
     def generate(
@@ -396,21 +399,21 @@ class AstroGenerator:
         """
         # Field name → max words (only fields that commonly overflow)
         field_limits = {
-            "sacred_capacity": 95,
-            "distortion": 85,
-            "purified_expression": 70,
-            "chapter_body": 140,
-            "body": 90,
-            "love": 140,
-            "work": 140,
-            "opening_promise": 140,
-            "entrusted_beauty": 140,
-            "central_knot": 130,
-            "present_threshold": 140,
-            "embodiment": 140,
-            "closing_destiny": 90,
+            "sacred_capacity": 80,
+            "distortion": 50,
+            "purified_expression": 60,
+            "chapter_body": 100,
+            "body": 70,
+            "love": 100,
+            "work": 100,
+            "opening_promise": 100,
+            "entrusted_beauty": 110,
+            "central_knot": 110,
+            "present_threshold": 90,
+            "embodiment": 110,
+            "closing_destiny": 80,
         }
-        max_trim_ratio = 1.15  # only trim if within 15% over
+        max_trim_ratio = 1.20  # trim if within 20% over (tighter limits need wider trim window)
 
         def trim_to_limit(text: str, limit: int) -> str:
             words = text.split()

@@ -47,6 +47,7 @@ from llm.schemas.inputs import (
     BirthChartForcesInput,
     BirthChartTimingInput,
     BirthChartSynthesisInput,
+    BirthChartSDUIInput,
 )
 
 
@@ -1364,6 +1365,66 @@ def build_birth_chart_synthesis_input(
             for hl in chart.house_lords
         ],
         grouped_insights=grouped,
+    )
+
+
+def build_birth_chart_sdui_input(
+    chart: NatalChart,
+    essence: ChartEssence,
+    narrative_data: dict,
+    yogas_prose: str,
+    forces_prose: str,
+    timing_prose: str,
+) -> BirthChartSDUIInput:
+    """Build Phase 3 input from completed Phase 1 + Phase 2 outputs.
+
+    Includes planet placements and house lords so Sonnet can write
+    chart-specific life_area bodies (e.g. "the tenth lord in the
+    house of gains") without needing Opus-level inference.
+    """
+    # Condense narrative into a summary string for SDUI context
+    narrative_parts = []
+    if narrative_data.get("title"):
+        narrative_parts.append(f"Title: {narrative_data['title']}")
+    if narrative_data.get("central_knot"):
+        narrative_parts.append(f"Central knot: {narrative_data['central_knot'][:200]}")
+    if narrative_data.get("present_threshold"):
+        narrative_parts.append(f"Present threshold: {narrative_data['present_threshold'][:200]}")
+    if narrative_data.get("love"):
+        narrative_parts.append(f"Love theme: {narrative_data['love'][:120]}")
+    if narrative_data.get("work"):
+        narrative_parts.append(f"Work theme: {narrative_data['work'][:120]}")
+
+    return BirthChartSDUIInput(
+        chart_essence=essence,
+        narrative_summary="\n".join(narrative_parts),
+        yogas_summary=yogas_prose,
+        forces_summary=forces_prose,
+        timing_summary=timing_prose,
+        planets=[
+            PlanetPlacement(
+                planet=p.planet,
+                sign=p.sign,
+                degree=p.degree_in_sign,
+                nakshatra=p.nakshatra,
+                house_from_lagna=p.house_from_lagna or 1,
+                house_from_moon=p.house_from_moon or 1,
+                retrograde=p.retrograde,
+                is_exalted=p.is_exalted,
+                is_debilitated=p.is_debilitated,
+                is_own_sign=p.is_own_sign,
+            )
+            for p in chart.planets.values()
+        ],
+        house_lords=[
+            HouseLordship(
+                house=hl.house,
+                lord=hl.lord,
+                placed_in_house=hl.placed_in_house,
+                placed_in_sign=hl.placed_in_sign,
+            )
+            for hl in chart.house_lords
+        ],
     )
 
 

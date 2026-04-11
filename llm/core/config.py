@@ -46,6 +46,7 @@ class Surface(str, Enum):
     BIRTH_CHART_FORCES = "birth_chart_forces"
     BIRTH_CHART_TIMING = "birth_chart_timing"
     BIRTH_CHART_SYNTHESIS = "birth_chart_synthesis"
+    BIRTH_CHART_SDUI = "birth_chart_sdui"
     WEEKLY_OVERVIEW = "weekly_overview"
     MONTHLY_OVERVIEW = "monthly_overview"
     CHART_REVEAL = "chart_reveal"
@@ -63,6 +64,7 @@ SURFACE_TO_TIER: dict[Surface, ModelTier] = {
     Surface.BIRTH_CHART_FORCES: ModelTier.STANDARD,
     Surface.BIRTH_CHART_TIMING: ModelTier.STANDARD,
     Surface.BIRTH_CHART_SYNTHESIS: ModelTier.PREMIUM,
+    Surface.BIRTH_CHART_SDUI: ModelTier.STANDARD,      # Phase 3: Sonnet for SDUI
     Surface.WEEKLY_OVERVIEW: ModelTier.STANDARD,
     Surface.MONTHLY_OVERVIEW: ModelTier.STANDARD,
     Surface.CHART_REVEAL: ModelTier.STANDARD,
@@ -81,6 +83,7 @@ SURFACE_TO_PROMPT_FILE: dict[Surface, str] = {
     Surface.BIRTH_CHART_FORCES: "birth_chart_forces.txt",
     Surface.BIRTH_CHART_TIMING: "birth_chart_timing.txt",
     Surface.BIRTH_CHART_SYNTHESIS: "birth_chart_synthesis.txt",
+    Surface.BIRTH_CHART_SDUI: "birth_chart_sdui.txt",
     Surface.WEEKLY_OVERVIEW: "weekly_overview.txt",
     Surface.MONTHLY_OVERVIEW: "monthly_overview.txt",
     Surface.CHART_REVEAL: "chart_reveal.txt",
@@ -99,7 +102,8 @@ SURFACE_MAX_TOKENS: dict[Surface, int] = {
     Surface.BIRTH_CHART_YOGAS: 5000,   # Needs room for SDUI card fields per yoga
     Surface.BIRTH_CHART_FORCES: 3100,  # +600 for SDUI card fields + comparisons
     Surface.BIRTH_CHART_TIMING: 3000,
-    Surface.BIRTH_CHART_SYNTHESIS: 5000,  # life_areas (3-5 cards with body) + insights/affirmation/polarity
+    Surface.BIRTH_CHART_SYNTHESIS: 3000,  # Narrative only — no SDUI, reduced from 5000
+    Surface.BIRTH_CHART_SDUI: 3500,      # Phase 3: life_areas (3-5 cards) + insights/affirmation/polarity
     Surface.WEEKLY_OVERVIEW: 800,
     Surface.MONTHLY_OVERVIEW: 1000,
     Surface.CHART_REVEAL: 300,

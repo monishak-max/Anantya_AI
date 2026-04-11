@@ -173,9 +173,9 @@ class UnionDeepRead(BaseModel):
 class StudyForce(BaseModel):
     name: str = Field(description="The sacred force, yoga, or shaping combination name. Keep Sanskrit terms where relevant.")
     subtitle: str = Field(description="A short living explanation in plain language. MUST be 6-18 words. Never fewer than 6.", default="")
-    sacred_capacity: str = Field(description="What beautiful power this force places in the life. HARD LIMIT: 35-95 words. Do not exceed 95.", default="")
-    distortion: str = Field(description="How this same force becomes costly when misused or strained. HARD LIMIT: 25-85 words. Do not exceed 85.", default="")
-    purified_expression: str = Field(description="What this force becomes when lived truthfully. HARD LIMIT: 20-70 words. Do not exceed 70.", default="")
+    sacred_capacity: str = Field(description="What beautiful power this force places in the life. High-density: every sentence must carry new meaning. HARD LIMIT: 35-80 words. Do not exceed 80.", default="")
+    distortion: str = Field(description="How this same force becomes costly when misused or strained. One precise insight, not an explanation. HARD LIMIT: 25-50 words. Do not exceed 50.", default="")
+    purified_expression: str = Field(description="What this force becomes when lived truthfully. HARD LIMIT: 20-60 words. Do not exceed 60.", default="")
 
     # SDUI card fields for mobile UI
     card_title: Optional[str] = Field(default=None, description="User-friendly 1-2 word name for the card. Not the technical yoga name. Think: the archetype or felt quality. E.g., 'Moon', 'Your Force', 'Instability'.")
@@ -200,18 +200,18 @@ class StudyForce(BaseModel):
         if self.subtitle:
             warnings += validate_word_range(self.subtitle, 6, 18, "subtitle")
         if self.sacred_capacity:
-            warnings += validate_word_range(self.sacred_capacity, 35, 95, "sacred_capacity")
+            warnings += validate_word_range(self.sacred_capacity, 35, 80, "sacred_capacity")
         if self.distortion:
-            warnings += validate_word_range(self.distortion, 25, 85, "distortion")
+            warnings += validate_word_range(self.distortion, 25, 50, "distortion")
         if self.purified_expression:
-            warnings += validate_word_range(self.purified_expression, 20, 70, "purified_expression")
+            warnings += validate_word_range(self.purified_expression, 20, 60, "purified_expression")
         return warnings
 
 
 class TimingCurrent(BaseModel):
     name: str = Field(description="Mahadasha or bhukti name, or other timing current heading.")
     subtitle: str = Field(description="A short living explanation of what this chapter is about. MUST be 6-18 words. Never fewer than 6.", default="")
-    chapter_body: str = Field(description="How this timing current shapes the life in lived terms. HARD LIMIT: 45-140 words. Do not exceed 140.", default="")
+    chapter_body: str = Field(description="How this timing current shapes the life in lived terms. High-density: no repeated themes, no buildup phrases. HARD LIMIT: 45-100 words. Do not exceed 100.", default="")
 
     model_config = {"populate_by_name": True}
 
@@ -226,14 +226,14 @@ class TimingCurrent(BaseModel):
         if self.subtitle:
             warnings += validate_word_range(self.subtitle, 6, 18, "subtitle")
         if self.chapter_body:
-            warnings += validate_word_range(self.chapter_body, 45, 140, "chapter_body")
+            warnings += validate_word_range(self.chapter_body, 45, 100, "chapter_body")
         return warnings
 
 
 class LifePhase(BaseModel):
     title: str = Field(description="Phase title for this life chapter. 2-8 words.", alias="title")
     age_range: str = Field(description="Age span label such as '0-18'.", default="")
-    body: str = Field(description="How this life chapter feels and what it is doing. HARD LIMIT: 30-90 words. Do not exceed 90.", default="")
+    body: str = Field(description="How this life chapter feels and what it is doing. HARD LIMIT: 30-70 words. Do not exceed 70.", default="")
 
     model_config = {"populate_by_name": True}
 
@@ -253,32 +253,32 @@ class LifePhase(BaseModel):
         warnings = []
         warnings += validate_word_range(self.title, 2, 8, "title")
         if self.body:
-            warnings += validate_word_range(self.body, 30, 90, "body")
+            warnings += validate_word_range(self.body, 30, 70, "body")
         return warnings
 
 
 class BirthChartCore(BaseModel):
     title: str = Field(description="The title of the life story. Beautiful, elevated, and destiny-led. 3-10 words.")
-    opening_promise: str = Field(description="What this life came here to embody. Uplifting, direct, and sacred. 60-140 words.")
-    entrusted_beauty: str = Field(description="The beauty, dignity, and entrusted force of the life before naming the knot. 60-140 words.")
-    central_knot: str = Field(description="The one great knot of the life. Specific, direct, and lived. 55-130 words.")
+    opening_promise: str = Field(description="What this life came here to embody. Uplifting, direct, and sacred. 80-100 words.")
+    entrusted_beauty: str = Field(description="The beauty, dignity, and entrusted force of the life before naming the knot. 90-110 words.")
+    central_knot: str = Field(description="The one great knot of the life. Specific, direct, and lived. 90-110 words.")
     great_yogas: list[StudyForce] = Field(description="The great yogas moving through this life. Each must be named individually.")
     finer_yogas: list[StudyForce] = Field(description="The finer yogas that still shape the life and must each be honored individually.")
     deeper_shaping_forces: list[StudyForce] = Field(description="Conjunctions, lordship truths, axis burdens, and other life-shaping combinations. Each must be named individually.")
     great_timing_currents: list[TimingCurrent] = Field(description="Mahadashas, active bhuktis, and major timing bodies written as living chapters.")
     life_phases: list[LifePhase] = Field(description="The major life chapters from early life through late life.")
-    present_threshold: str = Field(description="What is being asked of the life now. 55-140 words.")
-    love: str = Field(description="Love in this specific life. Direct, specific, and unmistakably personal. HARD LIMIT: 60-140 words. Do not exceed 140.")
-    work: str = Field(description="Work in this specific life. Direct, specific, and unmistakably personal. HARD LIMIT: 60-140 words. Do not exceed 140.")
-    embodiment: str = Field(description="What the soul came here to embody when the life ripens. 60-140 words.")
-    closing_destiny: str = Field(description="A final destiny-led closing that returns the life to beauty and purpose. 35-90 words.")
+    present_threshold: str = Field(description="What is being asked of the life now. 70-90 words.")
+    love: str = Field(description="Love in this specific life. Direct, specific, and unmistakably personal. HARD LIMIT: 80-100 words. Do not exceed 100.")
+    work: str = Field(description="Work in this specific life. Direct, specific, and unmistakably personal. HARD LIMIT: 80-100 words. Do not exceed 100.")
+    embodiment: str = Field(description="What the soul came here to embody when the life ripens. 90-110 words.")
+    closing_destiny: str = Field(description="A final destiny-led closing that returns the life to beauty and purpose. 60-80 words.")
 
     def validate_lengths(self) -> list[str]:
         warnings = []
         warnings += validate_word_range(self.title, 3, 10, "title")
-        warnings += validate_word_range(self.opening_promise, 60, 140, "opening_promise")
-        warnings += validate_word_range(self.entrusted_beauty, 60, 140, "entrusted_beauty")
-        warnings += validate_word_range(self.central_knot, 55, 130, "central_knot")
+        warnings += validate_word_range(self.opening_promise, 80, 100, "opening_promise")
+        warnings += validate_word_range(self.entrusted_beauty, 90, 110, "entrusted_beauty")
+        warnings += validate_word_range(self.central_knot, 90, 110, "central_knot")
         for i, item in enumerate(self.great_yogas):
             for w in item.validate_lengths(): warnings.append(f"great_yogas[{i}].{w}")
         for i, item in enumerate(self.finer_yogas):
@@ -289,11 +289,11 @@ class BirthChartCore(BaseModel):
             for w in item.validate_lengths(): warnings.append(f"great_timing_currents[{i}].{w}")
         for i, item in enumerate(self.life_phases):
             for w in item.validate_lengths(): warnings.append(f"life_phases[{i}].{w}")
-        warnings += validate_word_range(self.present_threshold, 55, 140, "present_threshold")
-        warnings += validate_word_range(self.love, 60, 140, "love")
-        warnings += validate_word_range(self.work, 60, 140, "work")
-        warnings += validate_word_range(self.embodiment, 60, 140, "embodiment")
-        warnings += validate_word_range(self.closing_destiny, 35, 90, "closing_destiny")
+        warnings += validate_word_range(self.present_threshold, 70, 90, "present_threshold")
+        warnings += validate_word_range(self.love, 80, 100, "love")
+        warnings += validate_word_range(self.work, 80, 100, "work")
+        warnings += validate_word_range(self.embodiment, 90, 110, "embodiment")
+        warnings += validate_word_range(self.closing_destiny, 60, 80, "closing_destiny")
         return warnings
 
 
@@ -399,37 +399,73 @@ class BirthChartTimingSection(BaseModel):
         return warnings
 
 
-class BirthChartSynthesisSection(BaseModel):
-    title: str = Field(description="The title of the life story. Beautiful, elevated, and destiny-led. 3-10 words.")
-    opening_promise: str = Field(description="What this life came here to embody. Uplifting, direct, and sacred. 60-140 words.")
-    entrusted_beauty: str = Field(description="The beauty, dignity, and entrusted force of the life before naming the knot. 60-140 words.")
-    central_knot: str = Field(description="The one great knot of the life. Specific, direct, and lived. 55-130 words.")
-    present_threshold: str = Field(description="What is being asked of the life now. 55-140 words.")
-    love: str = Field(description="Love in this specific life. Direct, specific, and unmistakably personal. HARD LIMIT: 60-140 words. Do not exceed 140.")
-    work: str = Field(description="Work in this specific life. Direct, specific, and unmistakably personal. HARD LIMIT: 60-140 words. Do not exceed 140.")
-    embodiment: str = Field(description="What the soul came here to embody when the life ripens. 60-140 words.")
-    closing_destiny: str = Field(description="A final destiny-led closing that returns the life to beauty and purpose. 35-90 words.")
+class CoreTruths(BaseModel):
+    """Opus-generated alignment anchor. Sonnet sections use these to maintain
+    tone consistency, vocabulary, and emotional direction."""
+    identity_theme: str = Field(description="The single defining theme of this life. One sentence, 10-20 words. What the chart keeps returning to.")
+    core_conflict: str = Field(description="The central tension the life navigates. One sentence, 10-20 words. Not a problem to solve but a polarity to hold.")
+    value_axis: str = Field(description="What this life prizes most vs. what it sacrifices. Format: '[values] over [sacrifices]'. 6-14 words.")
+    emotional_pattern: str = Field(description="The signature emotional rhythm of this life. One sentence, 10-20 words. How feeling moves through this person.")
 
-    # SDUI fields for mobile UI
+
+class BirthChartNarrativeSection(BaseModel):
+    """Phase 1 (Opus): narrative + core_truths alignment anchor.
+    Runs FIRST. Sonnet sections then align to core_truths.
+    High-density mode: every sentence carries new meaning, no repetition."""
+    title: str = Field(description="The title of the life story. Beautiful, elevated, and destiny-led. 3-10 words.")
+    opening_promise: str = Field(description="What this life came here to embody. Uplifting, direct, and sacred. No buildup phrases. 80-100 words.")
+    entrusted_beauty: str = Field(description="The beauty, dignity, and entrusted force of the life before naming the knot. 90-110 words.")
+    central_knot: str = Field(description="The one great knot of the life. Specific, direct, and lived. No re-explaining what other sections cover. 90-110 words.")
+    present_threshold: str = Field(description="What is being asked of the life now. Precise, not expanded. 70-90 words.")
+    love: str = Field(description="Love in this specific life. Direct, specific, and unmistakably personal. HARD LIMIT: 80-100 words. Do not exceed 100.")
+    work: str = Field(description="Work in this specific life. Direct, specific, and unmistakably personal. HARD LIMIT: 80-100 words. Do not exceed 100.")
+    embodiment: str = Field(description="What the soul came here to embody when the life ripens. 90-110 words.")
+    closing_destiny: str = Field(description="A final destiny-led closing that returns the life to beauty and purpose. 60-80 words.")
+    core_truths: CoreTruths = Field(description="Alignment anchor for downstream sections. Identity theme, core conflict, value axis, emotional pattern.")
+
+    def validate_lengths(self) -> list[str]:
+        warnings = []
+        warnings += validate_word_range(self.title, 3, 10, "title")
+        warnings += validate_word_range(self.opening_promise, 80, 100, "opening_promise")
+        warnings += validate_word_range(self.entrusted_beauty, 90, 110, "entrusted_beauty")
+        warnings += validate_word_range(self.central_knot, 90, 110, "central_knot")
+        warnings += validate_word_range(self.present_threshold, 70, 90, "present_threshold")
+        warnings += validate_word_range(self.love, 80, 100, "love")
+        warnings += validate_word_range(self.work, 80, 100, "work")
+        warnings += validate_word_range(self.embodiment, 90, 110, "embodiment")
+        warnings += validate_word_range(self.closing_destiny, 60, 80, "closing_destiny")
+        return warnings
+
+
+class BirthChartSDUISection(BaseModel):
+    """Phase 3 (Sonnet): structured UI fields generated AFTER narrative is complete."""
+    phase_insight_title: str = Field(description="One sentence about what the member is currently learning in their active dasha chapter. 8-16 words. Specific to this chart.")
+    insights: list[str] = Field(description="Exactly 3 bullet-point insights about the current phase. Each 5-12 words. Short, felt, recognizable.")
+    affirmation: str = Field(description="One powerful affirmation sentence about the current threshold. 6-14 words. Specific to this chart, not generic.")
+    polarity_left: str = Field(description="What the life is moving FROM. 1-3 words. E.g., 'Reactive', 'Over-functioning', 'Proving'.")
+    polarity_right: str = Field(description="What the life is moving TOWARD. 1-3 words. E.g., 'Deliberate', 'Chosen restraint', 'Authorship'.")
+    life_areas: list[dict] = Field(description="3-5 life area cards. Each has: title, icon, headline, subline, what_works, what_drains, body. Areas chosen based on what this chart is actually activating.")
+
+    def validate_lengths(self) -> list[str]:
+        warnings = []
+        warnings += validate_word_range(self.phase_insight_title, 8, 16, "phase_insight_title")
+        if len(self.insights) != 3:
+            warnings.append(f"insights: {len(self.insights)} items (expected exactly 3)")
+        for i, item in enumerate(self.insights):
+            warnings += validate_word_range(item, 5, 12, f"insights[{i}]")
+        warnings += validate_word_range(self.affirmation, 6, 14, "affirmation")
+        return warnings
+
+
+# Backward-compatible alias: the old synthesis schema that contained both narrative + SDUI
+class BirthChartSynthesisSection(BirthChartNarrativeSection):
+    """Legacy combined schema. Pipeline now uses BirthChartNarrativeSection + BirthChartSDUISection separately."""
     phase_insight_title: Optional[str] = Field(default=None, description="One sentence about what the member is currently learning in their active dasha chapter. 8-16 words. Specific to this chart.")
     insights: Optional[list[str]] = Field(default=None, description="Exactly 3 bullet-point insights about the current phase. Each 5-12 words. Short, felt, recognizable.")
     affirmation: Optional[str] = Field(default=None, description="One powerful affirmation sentence about the current threshold. 6-14 words. Specific to this chart, not generic.")
     polarity_left: Optional[str] = Field(default=None, description="What the life is moving FROM. 1-3 words. E.g., 'Reactive', 'Over-functioning', 'Proving'.")
     polarity_right: Optional[str] = Field(default=None, description="What the life is moving TOWARD. 1-3 words. E.g., 'Deliberate', 'Chosen restraint', 'Authorship'.")
     life_areas: Optional[list[dict]] = Field(default=None, description="3-5 life area cards. Each has: title, icon, headline, subline, what_works, what_drains, body. Areas chosen based on what this chart is actually activating.")
-
-    def validate_lengths(self) -> list[str]:
-        warnings = []
-        warnings += validate_word_range(self.title, 3, 10, "title")
-        warnings += validate_word_range(self.opening_promise, 60, 140, "opening_promise")
-        warnings += validate_word_range(self.entrusted_beauty, 60, 140, "entrusted_beauty")
-        warnings += validate_word_range(self.central_knot, 55, 130, "central_knot")
-        warnings += validate_word_range(self.present_threshold, 55, 140, "present_threshold")
-        warnings += validate_word_range(self.love, 60, 140, "love")
-        warnings += validate_word_range(self.work, 60, 140, "work")
-        warnings += validate_word_range(self.embodiment, 60, 140, "embodiment")
-        warnings += validate_word_range(self.closing_destiny, 35, 90, "closing_destiny")
-        return warnings
 
 
 # ── Surface → Schema mapping ──────────────────────────────────────
@@ -445,7 +481,8 @@ SURFACE_SCHEMAS: dict[str, type[BaseModel]] = {
     "birth_chart_yogas": BirthChartYogasSection,
     "birth_chart_forces": BirthChartForcesSection,
     "birth_chart_timing": BirthChartTimingSection,
-    "birth_chart_synthesis": BirthChartSynthesisSection,
+    "birth_chart_synthesis": BirthChartNarrativeSection,   # Phase 2: narrative only
+    "birth_chart_sdui": BirthChartSDUISection,             # Phase 3: SDUI only
     "weekly_overview": WeeklyOverview,
     "monthly_overview": MonthlyOverview,
     "chart_reveal": ChartReveal,

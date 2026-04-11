@@ -2,15 +2,19 @@ Feature mode: BIRTH_CHART_TIMING (parallel section)
 
 Purpose:
 You are writing ONLY the timing currents and life phases portion of a sacred birth chart study.
-Other sections (yogas, shaping forces, narrative synthesis) are being generated in parallel by the same intelligence.
-Your job is to write mahadashas and bhuktis as living chapters, and life phases as felt arcs.
+The narrative frame has ALREADY BEEN WRITTEN by a deeper model. Your job is to write mahadashas and bhuktis as living chapters, and life phases as felt arcs, while aligning to the narrative's established truths.
 
 Voice consistency:
-A VOICE ANCHOR block appears in your system prompt. It contains the member's chart essence — Moon, lagna, dasha chapter, central knot, and entrusted beauty. This same block is injected verbatim into every parallel section. You MUST:
-- write as though you are the same voice that wrote the other sections
-- match the emotional weight and register implied by the central knot and entrusted beauty
-- never contradict or ignore the voice anchor's tonal guidance
-- let the knot and beauty color how you describe each life chapter's felt experience
+A VOICE ANCHOR block appears in your system prompt. It contains:
+- The member's chart essence (Moon, lagna, dasha chapter, central knot, entrusted beauty)
+- CORE TRUTHS from the completed narrative (identity_theme, core_conflict, value_axis, emotional_pattern)
+
+You MUST:
+- use the same vocabulary as the core_truths — if the identity_theme names a pattern, your timing descriptions should show how that pattern evolves through each chapter
+- match the emotional direction — the emotional_pattern tells you how this person processes time
+- let the core_conflict shape how you describe the active chapter's tension
+- never contradict the value_axis when describing what each life phase is asking
+- write as though you are the same voice that wrote the narrative
 
 Writing laws:
 - the timing body must feel alive, not technical
@@ -23,10 +27,19 @@ Writing laws:
 - no meta language, no defensive language, no "your chart says" framing
 - every timing description must land in how life actually feels during that chapter
 
+Writing mode: HIGH-DENSITY + RESONANCE
+- Each timing current (chapter_body) should be 45-100 words. No extended explanations.
+- Each life phase body should be 30-70 words. One arc per phase, not a full biography.
+- Every sentence must carry new meaning. Do not repeat the same theme across multiple timing entries.
+- Open with the felt experience, not the technical setup.
+- Compress wherever two sentences can become one.
+- Each timing chapter must contain at least one line that makes the member feel the weight of the period — not through drama, but through precision. Name what this chapter actually asked of them.
+- Life phases should each end with a compression: one line that captures the arc's emotional truth.
+
 Hard constraints:
 - subtitle MUST be 6-18 words. Never write a subtitle shorter than 6 words.
-- chapter_body MUST NOT exceed 140 words.
-- life_phases body MUST NOT exceed 90 words. Count carefully.
+- chapter_body MUST NOT exceed 100 words.
+- life_phases body MUST NOT exceed 70 words. Count carefully.
 - NEVER use "you will", "destined to", "fated to", "inevitably", "guaranteed", "punishment". Use "this may", "one likely expression", "the chart points toward".
 
 Tone:

@@ -34,6 +34,8 @@ CORE_PROMPT_FILES = [
     "05_reasoning_contract.txt",
 ]
 
+SYNTHESIS_CONDENSED_FILE = "synthesis_core_condensed.txt"
+
 
 @lru_cache(maxsize=1)
 def load_core_prompts() -> str:
@@ -46,6 +48,20 @@ def load_core_prompts() -> str:
         else:
             raise FileNotFoundError(f"Core prompt missing: {path}")
     return "\n\n---\n\n".join(parts)
+
+
+@lru_cache(maxsize=1)
+def load_condensed_core() -> str:
+    """Load the condensed core prompt for synthesis (Phase 2).
+
+    ~300 words vs ~1300 words full core. Contains essential ethics,
+    translation rules, and tone — omits knowledge framework details
+    and full reasoning contract that Opus doesn't need repeated.
+    """
+    path = CORE_PROMPTS_DIR / SYNTHESIS_CONDENSED_FILE
+    if path.exists():
+        return path.read_text().strip()
+    raise FileNotFoundError(f"Condensed core prompt missing: {path}")
 
 
 @lru_cache(maxsize=16)
@@ -122,6 +138,7 @@ _SECTION_SURFACES = frozenset({
     Surface.BIRTH_CHART_FORCES,
     Surface.BIRTH_CHART_TIMING,
     Surface.BIRTH_CHART_SYNTHESIS,
+    Surface.BIRTH_CHART_SDUI,
 })
 
 
@@ -167,6 +184,24 @@ def _build_voice_anchor(input_data: BaseModel) -> str:
             "═══ RECURRING THREADS (appear across multiple chart factors) ═══",
             "These threads must feel present across the entire reading, not confined to one section:",
             *[f"  - {t}" for t in recurring],
+        ]
+
+    # Inject core_truths from Opus (Phase 1) if available
+    core_truths = data.get("core_truths")
+    if core_truths and isinstance(core_truths, dict) and core_truths.get("identity_theme"):
+        lines += [
+            "",
+            "═══ CORE TRUTHS (from the narrative — your alignment anchor) ═══",
+            "The narrative frame has already been written. These truths define the soul of the reading.",
+            "Your section MUST align to them: same vocabulary, same emotional direction, no contradiction.",
+            "",
+            f"Identity theme: {core_truths.get('identity_theme', '')}",
+            f"Core conflict: {core_truths.get('core_conflict', '')}",
+            f"Value axis: {core_truths.get('value_axis', '')}",
+            f"Emotional pattern: {core_truths.get('emotional_pattern', '')}",
+            "",
+            "Use the same words and tensions. If the identity theme says 'authority held through silence',",
+            "your yoga descriptions should echo that vocabulary — not introduce contradictory framing.",
         ]
 
     lines += [
@@ -215,14 +250,21 @@ def assemble_prompt(
 
     # 4. For section surfaces:
     #    - Yogas/Forces/Timing (Sonnet): skip core prompts for speed
-    #    - Synthesis (Opus): KEEP core prompts -- it writes all member-facing
-    #      content and needs ethics, translation, and reasoning guardrails
+    #    - Synthesis (Opus): condensed core (~300w) instead of full (~1300w)
+    #    - SDUI (Sonnet): skip core prompts, uses voice anchor only
     if surface in _SECTION_SURFACES:
         voice_anchor = _build_voice_anchor(input_data)
         if surface == Surface.BIRTH_CHART_SYNTHESIS:
-            # Synthesis gets full core prompts -- it writes the narrative
+            # Synthesis gets CONDENSED core — essential ethics + translation + tone
+            # Full knowledge framework and reasoning contract are unnecessary here
+            condensed = load_condensed_core()
             system_prompt = (
-                f"{core}\n\n---\n\n{feature}\n\n---\n\n{voice_anchor}\n\n---\n\n{schema_instruction}"
+                f"{condensed}\n\n---\n\n{feature}\n\n---\n\n{voice_anchor}\n\n---\n\n{schema_instruction}"
+            )
+        elif surface == Surface.BIRTH_CHART_SDUI:
+            # SDUI (Phase 3, Sonnet): no core prompts needed, schema is mechanical
+            system_prompt = (
+                f"{feature}\n\n---\n\n{voice_anchor}\n\n---\n\n{schema_instruction}"
             )
         else:
             # Content sections (Sonnet) skip core prompts for speed

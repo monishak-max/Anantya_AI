@@ -279,22 +279,33 @@ class ChartEssence(BaseModel):
     recurring_threads: list[str] = Field(default_factory=list, description="Thematic threads that appear across multiple chart factors. All sections should honor these.")
 
 
+class CoreTruthsInput(BaseModel):
+    """Opus-generated alignment anchor passed to Sonnet sections."""
+    identity_theme: str = Field(description="The single defining theme of this life.")
+    core_conflict: str = Field(description="The central tension the life navigates.")
+    value_axis: str = Field(description="What this life prizes most vs. what it sacrifices.")
+    emotional_pattern: str = Field(description="The signature emotional rhythm of this life.")
+
+
 class BirthChartYogasInput(BaseModel):
     chart_essence: ChartEssence
     verified_yoga_ledger: list[LedgerEntry] = Field(default_factory=list)
     absent_or_do_not_claim_ledger: list[str] = Field(default_factory=list)
     grouped_insights: list[GroupedInsight] = Field(default_factory=list, description="Rule engine grouped insights relevant to yogas.")
+    core_truths: Optional[CoreTruthsInput] = Field(default=None, description="Opus-generated alignment anchor. Match vocabulary, emotional direction, and themes.")
 
 
 class BirthChartForcesInput(BaseModel):
     chart_essence: ChartEssence
     verified_shaping_forces_ledger: list[LedgerEntry] = Field(default_factory=list)
     grouped_insights: list[GroupedInsight] = Field(default_factory=list, description="Rule engine grouped insights relevant to forces.")
+    core_truths: Optional[CoreTruthsInput] = Field(default=None, description="Opus-generated alignment anchor. Match vocabulary, emotional direction, and themes.")
 
 
 class BirthChartTimingInput(BaseModel):
     chart_essence: ChartEssence
     verified_timing_ledger: list[TimingLedgerEntry] = Field(default_factory=list)
+    core_truths: Optional[CoreTruthsInput] = Field(default=None, description="Opus-generated alignment anchor. Match vocabulary, emotional direction, and themes.")
 
 
 class SectionDigest(BaseModel):
@@ -327,3 +338,17 @@ class BirthChartSynthesisInput(BaseModel):
     completed_yogas_prose: Optional[str] = Field(default=None, description="Actual prose written by the yogas section. Reference these exact themes in your narrative.")
     completed_forces_prose: Optional[str] = Field(default=None, description="Actual prose written by the forces section. Reference these exact themes in your narrative.")
     completed_timing_prose: Optional[str] = Field(default=None, description="Actual prose written by the timing section. Reference these chapter descriptions in your narrative.")
+
+
+class BirthChartSDUIInput(BaseModel):
+    """Phase 3 input: chart essence + summaries from Phase 1 and Phase 2 for SDUI generation."""
+    chart_essence: ChartEssence
+    # Summarized narrative from Phase 2 (Opus)
+    narrative_summary: str = Field(description="Condensed summary of the Opus narrative: title, central_knot, present_threshold, love theme, work theme.")
+    # Summarized content from Phase 1 (Sonnet)
+    yogas_summary: str = Field(default="", description="Compact summary of yogas section output.")
+    forces_summary: str = Field(default="", description="Compact summary of forces section output.")
+    timing_summary: str = Field(default="", description="Compact summary of timing section output.")
+    # Key chart data for specificity in life_area bodies
+    planets: Optional[list[PlanetPlacement]] = Field(default=None, description="Planet placements for chart-specific SDUI content.")
+    house_lords: Optional[list[HouseLordship]] = Field(default=None, description="House lordships for chart-specific life area references.")

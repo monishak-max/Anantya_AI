@@ -11,6 +11,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from pathlib import Path
+from typing import Callable
 
 from llm.core.config import Surface
 from llm.guards.style_guard import Violation, ViolationType
@@ -29,6 +30,7 @@ from llm.engine.bridge import (
     build_birth_chart_forces_input,
     build_birth_chart_timing_input,
     build_birth_chart_synthesis_input,
+    build_birth_chart_sdui_input,
 )
 from llm.engine.rules import (
     load_rules_from_file,
@@ -224,14 +226,25 @@ class AstroPipeline:
         self._save_to_cache("chart_reveal", token, birth_date, result)
         return result
 
-    def generate_birth_chart(self, name: str, birth_date: date, birth_time: str, lat: float, lng: float, external_modifiers: list[dict] | None = None) -> GenerationResult:
-        """Generate birth chart using parallel split-and-merge architecture.
+    def generate_birth_chart(
+        self,
+        name: str,
+        birth_date: date,
+        birth_time: str,
+        lat: float,
+        lng: float,
+        external_modifiers: list[dict] | None = None,
+        on_phase_complete: Callable[[str, dict], None] | None = None,
+    ) -> GenerationResult:
+        """Generate birth chart using 3-phase progressive architecture.
 
-        Splits the monolithic birth chart into 4 parallel sections:
-        - Yogas (Sonnet)
-        - Shaping Forces (Sonnet)
-        - Timing + Life Phases (Sonnet)
-        - Synthesis / Narrative Frame (Opus)
+        Phase 1 (parallel, Sonnet): Yogas + Forces + Timing (~20-25s)
+        Phase 2 (Opus): Narrative only — no SDUI (~25-30s)
+        Phase 3 (Sonnet): SDUI cards — life_areas, insights, polarity (~10-15s)
+
+        Args:
+            on_phase_complete: Optional callback(phase_name, phase_data) for
+                progressive delivery. Called after each phase completes.
 
         Falls back to monolithic generation on failure.
         """
@@ -244,7 +257,7 @@ class AstroPipeline:
         rule_matches = self._evaluate_rules(chart)
 
         try:
-            result = self._generate_birth_chart_parallel(chart, name, rule_matches, external_modifiers)
+            result = self._generate_birth_chart_parallel(chart, name, rule_matches, external_modifiers, on_phase_complete)
         except Exception as exc:
             logger.warning("Parallel birth chart failed (%s), falling back to monolithic", exc)
             input_data = build_birth_chart_input(chart, name, external_modifiers=external_modifiers, rule_matches=rule_matches)
@@ -259,30 +272,62 @@ class AstroPipeline:
         name: str,
         rule_matches: list,
         external_modifiers: list[dict] | None = None,
+        on_phase_complete: Callable[[str, dict], None] | None = None,
     ) -> GenerationResult:
-        """3+1 architecture: run content sections in parallel, then synthesis sees their actual output.
+        """Opus-first 3-phase architecture:
 
-        Phase 1 (parallel): Yogas + Forces + Timing run simultaneously on Sonnet (~20-25s)
-        Phase 2 (sequential): Synthesis runs on Opus WITH the actual prose from Phase 1 (~25-30s)
+        Phase 1 (Opus): Narrative + core_truths — runs FIRST (~25-30s)
+        Phase 2 (Sonnet, parallel): Yogas + Forces + Timing, aligned to core_truths (~20-25s)
+        Phase 3 (Sonnet): SDUI generation (~10-15s)
 
-        Total: ~45-55s. Only ~5-10s slower than full parallel, but zero coherence risk.
-        Synthesis genuinely references the exact words the other sections wrote.
+        Total: ~55-70s. Opus generates the soul of the reading first,
+        then Sonnet sections align vocabulary, tone, and direction to it.
         """
+        from llm.schemas.inputs import CoreTruthsInput
+
         essence = build_chart_essence(chart)
         start = time.monotonic()
+        gen = self.generator
 
-        # Build Phase 1 inputs (lightweight, no I/O)
+        # ── Phase 1: Opus narrative + core_truths ─────────────────────
+        logger.info("[birth_chart_opus_first] Phase 1: generating narrative + core_truths (Opus)...")
+        synthesis_input = build_birth_chart_synthesis_input(
+            chart, essence, external_modifiers, rule_matches,
+        )
+
+        synthesis_result = gen.generate(Surface.BIRTH_CHART_SYNTHESIS, synthesis_input, 0.7, 1)
+
+        phase1_ms = int((time.monotonic() - start) * 1000)
+        logger.info("[birth_chart_opus_first] Phase 1 done in %dms", phase1_ms)
+
+        # Extract core_truths for section alignment
+        raw_truths = synthesis_result.data.get("core_truths", {})
+        core_truths = CoreTruthsInput(
+            identity_theme=raw_truths.get("identity_theme", ""),
+            core_conflict=raw_truths.get("core_conflict", ""),
+            value_axis=raw_truths.get("value_axis", ""),
+            emotional_pattern=raw_truths.get("emotional_pattern", ""),
+        )
+
+        # Emit Phase 1 progressively
+        if on_phase_complete:
+            on_phase_complete("phase_1", synthesis_result.data)
+
+        # ── Phase 2: Sonnet sections in parallel, aligned to core_truths ──
+        logger.info("[birth_chart_opus_first] Phase 2: generating sections (Sonnet, aligned to core_truths)...")
         yogas_input = build_birth_chart_yogas_input(chart, essence, rule_matches)
         forces_input = build_birth_chart_forces_input(chart, essence, rule_matches)
         timing_input = build_birth_chart_timing_input(chart, essence)
 
-        # Phase 1: Yogas + Forces + Timing in parallel
-        gen = self.generator
-        logger.info("[birth_chart_3+1] Phase 1: generating yogas, forces, timing in parallel...")
-        with ThreadPoolExecutor(max_workers=3, thread_name_prefix="bc_content") as pool:
+        # Inject core_truths into each section input
+        yogas_input.core_truths = core_truths
+        forces_input.core_truths = core_truths
+        timing_input.core_truths = core_truths
+
+        with ThreadPoolExecutor(max_workers=3, thread_name_prefix="bc_section") as pool:
             yogas_future = pool.submit(
                 gen.generate, Surface.BIRTH_CHART_YOGAS, yogas_input,
-                0.7, 1,  # temperature, max_style_retries
+                0.7, 1,
             )
             forces_future = pool.submit(
                 gen.generate, Surface.BIRTH_CHART_FORCES, forces_input,
@@ -297,25 +342,45 @@ class AstroPipeline:
         forces_result = forces_future.result()
         timing_result = timing_future.result()
 
-        phase1_ms = int((time.monotonic() - start) * 1000)
-        logger.info("[birth_chart_3+1] Phase 1 done in %dms. Starting Phase 2 (synthesis with actual content)...", phase1_ms)
+        phase2_ms = int((time.monotonic() - start) * 1000) - phase1_ms
+        logger.info("[birth_chart_opus_first] Phase 2 done in %dms", phase2_ms)
 
-        # Phase 2: Build synthesis input WITH actual prose from Phase 1
-        synthesis_input = build_birth_chart_synthesis_input(
-            chart, essence, external_modifiers, rule_matches,
+        # Extract prose summaries for SDUI
+        yogas_prose = self._extract_section_prose(yogas_result.data, "yogas")
+        forces_prose = self._extract_section_prose(forces_result.data, "forces")
+        timing_prose = self._extract_section_prose(timing_result.data, "timing")
+
+        # Emit Phase 2 progressively
+        if on_phase_complete:
+            phase2_data = {
+                "great_yogas": yogas_result.data.get("great_yogas", []),
+                "finer_yogas": yogas_result.data.get("finer_yogas", []),
+                "deeper_shaping_forces": forces_result.data.get("deeper_shaping_forces", []),
+                "great_timing_currents": timing_result.data.get("great_timing_currents", []),
+                "life_phases": timing_result.data.get("life_phases", []),
+            }
+            on_phase_complete("phase_2", phase2_data)
+
+        # ── Phase 3: Sonnet SDUI generation ───────────────────────────
+        logger.info("[birth_chart_opus_first] Phase 3: generating SDUI cards (Sonnet)...")
+        sdui_input = build_birth_chart_sdui_input(
+            chart, essence, synthesis_result.data,
+            yogas_prose, forces_prose, timing_prose,
         )
-        # Inject the actual generated content so synthesis sees real prose, not just names
-        synthesis_input.completed_yogas_prose = self._extract_section_prose(yogas_result.data, "yogas")
-        synthesis_input.completed_forces_prose = self._extract_section_prose(forces_result.data, "forces")
-        synthesis_input.completed_timing_prose = self._extract_section_prose(timing_result.data, "timing")
+        sdui_result = gen.generate(Surface.BIRTH_CHART_SDUI, sdui_input, 0.7, 1)
 
-        synthesis_result = gen.generate(Surface.BIRTH_CHART_SYNTHESIS, synthesis_input, 0.7, 1)
-
+        phase3_ms = int((time.monotonic() - start) * 1000) - phase1_ms - phase2_ms
         elapsed_ms = int((time.monotonic() - start) * 1000)
+        logger.info("[birth_chart_opus_first] Phase 3 done in %dms", phase3_ms)
 
-        # Merge into single BirthChartCore-compatible dict
+        # Emit Phase 3 progressively
+        if on_phase_complete:
+            on_phase_complete("phase_3", sdui_result.data)
+
+        # ── Merge into single BirthChartCore-compatible dict ──────────
         merged = self._merge_birth_chart_sections(
             yogas_result, forces_result, timing_result, synthesis_result,
+            sdui_result,
         )
 
         # Post-merge validation on full combined output
@@ -325,10 +390,10 @@ class AstroPipeline:
         val_failures = gen.validator.validate(merged, "birth_chart_core")
         if val_failures:
             for f in val_failures:
-                logger.warning("[birth_chart_parallel] Validation: %s — %s", f.check, f.detail)
+                logger.warning("[birth_chart_opus_first] Validation: %s — %s", f.check, f.detail)
 
         # Aggregate metadata
-        all_results = [yogas_result, forces_result, timing_result, synthesis_result]
+        all_results = [yogas_result, forces_result, timing_result, synthesis_result, sdui_result]
         all_warnings: list[str] = []
         total_retries = 0
         for r in all_results:
@@ -337,13 +402,8 @@ class AstroPipeline:
 
         model_label = f"{synthesis_result.model}+{yogas_result.model}"
         logger.info(
-            "[birth_chart_parallel] Done in %dms (yogas=%dms, forces=%dms, timing=%dms, synthesis=%dms, retries=%d)",
-            elapsed_ms,
-            yogas_result.generation_time_ms,
-            forces_result.generation_time_ms,
-            timing_result.generation_time_ms,
-            synthesis_result.generation_time_ms,
-            total_retries,
+            "[birth_chart_opus_first] Done in %dms (p1_opus=%dms, p2_sections=%dms, p3_sdui=%dms, retries=%d)",
+            elapsed_ms, phase1_ms, phase2_ms, phase3_ms, total_retries,
         )
 
         return GenerationResult(
@@ -360,8 +420,8 @@ class AstroPipeline:
     def _extract_section_prose(data: dict, section_type: str) -> str:
         """Extract a compact prose summary from a completed section's output.
 
-        This is fed to synthesis so it can reference the actual words written
-        by the yoga/force/timing sections, not just the names.
+        This is fed to synthesis and SDUI so they can reference actual themes.
+        Prose truncated to 80 chars per entry to reduce prompt size.
         """
         parts = []
         if section_type == "yogas":
@@ -370,19 +430,19 @@ class AstroPipeline:
                     name = item.get("name", "")
                     cap = item.get("sacred_capacity", "")
                     if name and cap:
-                        parts.append(f"{name}: {cap[:150]}")
+                        parts.append(f"{name}: {cap[:80]}")
         elif section_type == "forces":
             for item in data.get("deeper_shaping_forces", []):
                 name = item.get("name", "")
                 cap = item.get("sacred_capacity", "")
                 if name and cap:
-                    parts.append(f"{name}: {cap[:150]}")
+                    parts.append(f"{name}: {cap[:80]}")
         elif section_type == "timing":
             for item in data.get("great_timing_currents", []):
                 name = item.get("name", "")
                 body = item.get("chapter_body", "")
                 if name and body:
-                    parts.append(f"{name}: {body[:150]}")
+                    parts.append(f"{name}: {body[:80]}")
         return "\n".join(parts)
 
     @staticmethod
@@ -391,23 +451,30 @@ class AstroPipeline:
         forces: GenerationResult,
         timing: GenerationResult,
         synthesis: GenerationResult,
+        sdui: GenerationResult | None = None,
     ) -> dict:
-        """Mechanically merge 4 section outputs into a BirthChartCore dict."""
+        """Mechanically merge section outputs into a BirthChartCore dict.
+
+        With 3-phase architecture, sdui is a separate result.
+        Falls back to reading SDUI fields from synthesis for backward compat.
+        """
         merged = {}
 
-        # Synthesis fields (narrative + SDUI)
+        # Narrative fields from Phase 2 (Opus)
         for field in (
             "title", "opening_promise", "entrusted_beauty", "central_knot",
             "present_threshold", "love", "work", "embodiment", "closing_destiny",
-            # SDUI fields
-            "phase_insight_title", "affirmation", "polarity_left", "polarity_right",
         ):
             merged[field] = synthesis.data.get(field, "")
-        # Lists, handle separately
-        merged["insights"] = synthesis.data.get("insights")
-        merged["life_areas"] = synthesis.data.get("life_areas")
 
-        # Structured section fields
+        # SDUI fields from Phase 3 (Sonnet) — or fallback to synthesis
+        sdui_source = sdui.data if sdui else synthesis.data
+        for field in ("phase_insight_title", "affirmation", "polarity_left", "polarity_right"):
+            merged[field] = sdui_source.get(field, "")
+        merged["insights"] = sdui_source.get("insights")
+        merged["life_areas"] = sdui_source.get("life_areas")
+
+        # Structured section fields from Phase 1 (Sonnet)
         merged["great_yogas"] = yogas.data.get("great_yogas", [])
         merged["finer_yogas"] = yogas.data.get("finer_yogas", [])
         merged["deeper_shaping_forces"] = forces.data.get("deeper_shaping_forces", [])

@@ -8,7 +8,7 @@ import urllib.parse
 from pathlib import Path
 from datetime import date
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -196,6 +196,72 @@ def generate_birth_chart():
     except Exception as e:
         traceback.print_exc()
         return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/birth-chart-progressive", methods=["POST"])
+def generate_birth_chart_progressive():
+    """Progressive birth chart generation — streams phase results as SSE.
+
+    Each phase emits a JSON event:
+      data: {"phase": "phase_1", "data": {...}}
+      data: {"phase": "phase_2", "data": {...}}
+      data: {"phase": "phase_3", "data": {...}}
+      data: {"phase": "complete", "data": {...}}  # full merged result
+    """
+    import queue
+    import threading
+
+    data = request.json
+    phase_queue: queue.Queue = queue.Queue()
+
+    def on_phase(phase_name: str, phase_data: dict):
+        phase_queue.put({"phase": phase_name, "data": phase_data})
+
+    def generate_in_thread():
+        try:
+            result = pipeline.generate_birth_chart(
+                name=data["name"],
+                birth_date=date.fromisoformat(data["birth_date"]),
+                birth_time=data["birth_time"],
+                lat=float(data["lat"]),
+                lng=float(data["lng"]),
+                external_modifiers=_modifiers(data),
+                on_phase_complete=on_phase,
+            )
+            # SDUI transform for final result
+            from llm.sdui import build_sdui_sections, calculate_age
+            user_age = calculate_age(data["birth_date"])
+            sections = build_sdui_sections(result.data, user_age)
+            phase_queue.put({
+                "phase": "complete",
+                "data": {
+                    "title": result.data.get("title", ""),
+                    "model": result.model,
+                    "sections": sections,
+                    "raw": result.data,
+                    "cached": result.generation_time_ms == 0,
+                },
+            })
+        except Exception as e:
+            phase_queue.put({"phase": "error", "data": {"error": str(e)}})
+        finally:
+            phase_queue.put(None)  # sentinel
+
+    def event_stream():
+        thread = threading.Thread(target=generate_in_thread, daemon=True)
+        thread.start()
+        while True:
+            try:
+                item = phase_queue.get(timeout=15)
+            except queue.Empty:
+                # Heartbeat to keep connection alive during long Opus generation
+                yield ": heartbeat\n\n"
+                continue
+            if item is None:
+                break
+            yield f"data: {json.dumps(item)}\n\n"
+
+    return Response(event_stream(), mimetype="text/event-stream")
 
 
 @app.route("/api/weekly-overview", methods=["POST"])
